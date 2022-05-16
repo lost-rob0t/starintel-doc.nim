@@ -5,6 +5,7 @@ import std/jsonutils
 var Joptions*: Joptions
 Joptions.allowMissingKeys = true
 Joptions.allowExtraKeys = true
+
 type
     BookerDocument* = ref object of RootObj
       ## Base Object to hold the document metadata thats used to make a dcoument and store it in couchdb
@@ -12,11 +13,14 @@ type
       operation_id*: int
       id*: string
       rev*: Option[string]
-      rev1*: Option[string]
       owner_id*: Option[int]
       source_dataset*: string
       dataset*: string
       `type`*: string
+      memberships*: seq[string]
+      date_added*: string
+      date_updated*: string
+
     BookerPerson* = ref object of BookerDocument
       ## A object that represents a person in starintel
       ## NOTE: person is merged with member and member is no longer used
@@ -34,21 +38,21 @@ type
       orgs*: seq[string]
       education*: seq[string]
       comments*: seq[string]
-      title*: Option[string]
-      roles*: seq[string]
+      gender*: Option[string]
+      political_party*: Option[string]
 
     BookerOrg* = ref object of BookerDocument
       ## An object that represents a compnay or organization 
+
+      ## Name Of org
       name*: string
       bio*: Option[string]
       country*: Option[string]
       reg_number*: Option[string]
-      id*: Option[string] # backup incase this is a social media group
       address*: seq[string]
       email_formats*: seq[string]
       organization_type*: Option[string]
-      members*: seq[string]
-    
+
     BookerAddress* = ref object of BookerDocument
       ## An address. Do not use to represent a reigon!
       ## may only work for us postal system
@@ -58,8 +62,7 @@ type
       state*: Option[string]
       zip*: Option[string]
       apt*: Option[string]
-      members*: seq[string]
-    
+
     BookerEmail* = ref object of BookerDocument
       ## A email address
       ## Owner and Password is Optional
@@ -69,12 +72,17 @@ type
       email_password*: Option[string]
       data_breach*: seq[string]
       owner*: Option[string]
+      username*: Option[string]
+
 
     BookerPhone* = ref object of BookerDocument
       ## A Phone number
       phone*: string
       owner*: Option[string]
-    
+      carrier*: Option[string]
+      status*: Option[string]
+      phone_type*: Option[string]
+
     BookerUser* = ref object of BookerDocument
       ## A object that represents a user
       url*: Option[string] # Url to the users page
@@ -89,11 +97,12 @@ type
       ## Use Booker EmailMessage For Email Content
       ## BookerSocialMPost for social media post
       message*: string
-      from_user*: string
-      to_user*: Option[string]
+      platform*: string
+      username*: string
+      is_reply*: bool
       mesage_id*: Option[string]
       reply_to*: Option[string]
-      group*: Option[string] # if none assume dm chat
+      group*: string # if none assume dm chat
       channel*: Option[string] # for discord
 
     BookerEmailMessage* = ref object of BookerDocument
@@ -106,7 +115,54 @@ type
       cc*: seq[string]
       bcc*: seq[string]
 
+    BookerMembership* = ref object of BookerDocument
+      ## Document holding metadata linking two documents
+      title*: string
+      roles*: seq[string]
+      start_date*: string
+      end_date*: string
+      child*: string
+      parent*: string
+
+    BookerBreach* = ref object of BookerDocument
+      total*: int
+      description*: string
+      url*: string
+
+    BookerWebService* = ref object of BookerDocument
+      port*: int
+      service_name*: string
+      source*: string
+      owner*: string
+      host*: string
+      service_name*: string
+      service_version*: string
+
+    BookerHost* = ref object of BookerDocument
+      ip*: string
+      hostname*: string
+      operating_system*: string
+      asn*: int
+      country*: string
+      network_name*: string
+      owner*: string
+      vulns*: seq[string]
+      services*: seq[string]
+
+    BookerCVE* = ref object of BookerDocument
+      cve_number*: string
+      score*: int
+
+
+
+
+
+
+
+
+
 func flatten_doc*(json_id: JsonNode): JsonNode =
+  ## TODO Remove this becuase its not needed anymore
   ## Flatten a doc so it can be marshalled into a object
 
   let metadata = json_id{"metadata"}
@@ -122,34 +178,4 @@ func flatten_doc*(json_id: JsonNode): JsonNode =
   data["type"] = json_id{"type"}
   return data
 
-
-func parseDoc*(doc: var BookerPerson, json_id: JsonNode)  =
-  ##  Marshall a json node directly into a BookerPerson
-  if json_id["type"].getStr() == "person":
-    let flat_doc = json_id.flatten_doc()
-    doc = flat_doc.to(BookerPerson)
-    
-func parseDoc*(doc: var BookerOrg, json_id: JsonNode) =
-  ##  Marshall a json node directly into a BookerOrg
-  if json_id["type"].getStr() == "org":
-    let flat_doc = json_id.flatten_doc()
-    result = json_id.to(BookerOrg)
-
-
-func parseDoc*(doc: var BookerAddress, json_id: JsonNode) =
-  ##  Marshall a json node directly into a Bookeraddress
-  if json_id["type"].getStr() == "address":
-    let flat_doc = json_id.flatten_doc()
-    result = flat_doc.to(BookerAddress)
-
-
-func parseDoc*(doc: var BookerEmail, json_id: JsonNode) =
-  ##  Marshall a json node directly into a BookerEmail
-  if json_id["type"].getStr() == "email":
-    let flat_doc = json_id.flatten_doc()
-    result = flat_doc.to(BookerEmail)
-
-
-      
-    
 
