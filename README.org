@@ -1,0 +1,9 @@
+#+TITLE: Readme
+
+* Starintel-doc.nim
+
+This is a port of the starintel-doc specification from pyton to nim.
+
+it is not 100% feature parity, but in the future i may try a nim2python solution for that.
+
+* TODO Define the document types
