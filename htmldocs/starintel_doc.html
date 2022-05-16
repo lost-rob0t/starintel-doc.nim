@@ -103,29 +103,79 @@ window.addEventListener('DOMContentLoaded', main);
   <ul class="simple simple-toc-section">
       <li><a class="reference" href="#BookerAddress"
     title="BookerAddress = ref object of BookerDocument
-  street*: Option[string]
-  city*: Option[string]
-  state*: Option[string]
-  zip*: Option[string]
-  apt*: Option[string]
-  members*: seq[string]">BookerAddress</a></li>
+  street*: string
+  city*: string
+  state*: string
+  zip*: string
+  apt*: Option[string]">BookerAddress</a></li>
+  <li><a class="reference" href="#BookerBreach"
+    title="BookerBreach = ref object of BookerDocument
+  total*: int
+  description*: string
+  url*: string">BookerBreach</a></li>
+  <li><a class="reference" href="#BookerCVE"
+    title="BookerCVE = ref object of BookerDocument
+  cve_number*: string
+  score*: int">BookerCVE</a></li>
   <li><a class="reference" href="#BookerDocument"
     title="BookerDocument = ref object of RootObj
   operation_id*: int
   id*: string
   rev*: Option[string]
-  rev1*: Option[string]
   owner_id*: Option[int]
   source_dataset*: string
   dataset*: string
-  `type`*: string">BookerDocument</a></li>
+  `type`*: string
+  memberships*: seq[string]
+  date_added*: string
+  date_updated*: string">BookerDocument</a></li>
   <li><a class="reference" href="#BookerEmail"
     title="BookerEmail = ref object of BookerDocument
-  email_username: string
-  email_domain: string
-  date_seen: Option[string]
-  email_password: Option[string]
-  data_breach: seq[string]">BookerEmail</a></li>
+  email_username*: string
+  email_domain*: string
+  email_password*: Option[string]
+  data_breach*: seq[string]
+  owner*: Option[string]
+  username*: Option[string]">BookerEmail</a></li>
+  <li><a class="reference" href="#BookerEmailMessage"
+    title="BookerEmailMessage = ref object of BookerDocument
+  body*: string
+  subject*: Option[string]
+  to*: string
+  `from`*: string
+  headers*: Option[string]
+  cc*: seq[string]
+  bcc*: seq[string]">BookerEmailMessage</a></li>
+  <li><a class="reference" href="#BookerHost"
+    title="BookerHost = ref object of BookerDocument
+  ip*: string
+  hostname*: string
+  operating_system*: string
+  asn*: int
+  country*: string
+  network_name*: string
+  owner*: string
+  vulns*: seq[string]
+  services*: seq[string]">BookerHost</a></li>
+  <li><a class="reference" href="#BookerMembership"
+    title="BookerMembership = ref object of BookerDocument
+  title*: string
+  roles*: seq[string]
+  start_date*: string
+  end_date*: string
+  child*: string
+  parent*: string">BookerMembership</a></li>
+  <li><a class="reference" href="#BookerMessage"
+    title="BookerMessage = ref object of BookerDocument
+  message*: string
+  platform*: string
+  username*: string
+  is_reply*: bool
+  media*: bool
+  mesage_id*: Option[string]
+  reply_to*: Option[string]
+  group*: string
+  channel*: Option[string]">BookerMessage</a></li>
   <li><a class="reference" href="#BookerOrg"
     title="BookerOrg = ref object of BookerDocument
   name*: string
@@ -134,8 +184,7 @@ window.addEventListener('DOMContentLoaded', main);
   reg_number*: Option[string]
   address*: seq[string]
   email_formats*: seq[string]
-  organization_type*: Option[string]
-  members*: seq[string]">BookerOrg</a></li>
+  organization_type*: Option[string]">BookerOrg</a></li>
   <li><a class="reference" href="#BookerPerson"
     title="BookerPerson = ref object of BookerDocument
   fname*: Option[string]
@@ -147,13 +196,37 @@ window.addEventListener('DOMContentLoaded', main);
   social_media*: seq[string]
   phones*: seq[string]
   emails*: seq[string]
-  locations*: seq[string]
+  address*: seq[string]
   ip*: seq[string]
   orgs*: seq[string]
   education*: seq[string]
   comments*: seq[string]
-  title*: Option[string]
-  roles*: seq[string]">BookerPerson</a></li>
+  gender*: Option[string]
+  political_party*: Option[string]">BookerPerson</a></li>
+  <li><a class="reference" href="#BookerPhone"
+    title="BookerPhone = ref object of BookerDocument
+  phone*: string
+  owner*: Option[string]
+  carrier*: Option[string]
+  status*: Option[string]
+  phone_type*: Option[string]">BookerPhone</a></li>
+  <li><a class="reference" href="#BookerUsername"
+    title="BookerUsername = ref object of BookerDocument
+  url*: Option[string]
+  username*: string
+  platform*: string
+  phones*: seq[string]
+  emails*: seq[string]
+  orgs*: seq[string]
+  owner*: string">BookerUsername</a></li>
+  <li><a class="reference" href="#BookerWebService"
+    title="BookerWebService = ref object of BookerDocument
+  port*: int
+  url*: Option[string]
+  owner*: string
+  host*: string
+  service_name*: Option[string]
+  service_version*: string">BookerWebService</a></li>
 
   </ul>
 </li>
@@ -168,20 +241,43 @@ window.addEventListener('DOMContentLoaded', main);
 <li>
   <a class="reference reference-toplevel" href="#12" id="62">Procs</a>
   <ul class="simple simple-toc-section">
-      <ul class="simple nested-toc-section">flatten_doc
-      <li><a class="reference" href="#flatten_doc%2CJsonNode"
-    title="flatten_doc(json_in: JsonNode): JsonNode">flatten_doc(json_in: JsonNode): JsonNode</a></li>
+      <ul class="simple nested-toc-section">fixDoc
+      <li><a class="reference" href="#fixDoc%2CJsonNode"
+    title="fixDoc(doc: JsonNode): JsonNode">fixDoc(doc: JsonNode): JsonNode</a></li>
 
   </ul>
-  <ul class="simple nested-toc-section">parseDoc
-      <li><a class="reference" href="#parseDoc%2Ctypedesc%5BBookerAddress%5D%2CJsonNode"
-    title="parseDoc(doc: typedesc[BookerAddress]; json_in: JsonNode): BookerAddress">parseDoc(doc: typedesc[BookerAddress]; json_in: JsonNode): BookerAddress</a></li>
-  <li><a class="reference" href="#parseDoc%2Ctypedesc%5BBookerEmail%5D%2CJsonNode"
-    title="parseDoc(doc: typedesc[BookerEmail]; json_in: JsonNode): BookerEmail">parseDoc(doc: typedesc[BookerEmail]; json_in: JsonNode): BookerEmail</a></li>
-  <li><a class="reference" href="#parseDoc%2Ctypedesc%5BBookerOrg%5D%2CJsonNode"
-    title="parseDoc(doc: typedesc[BookerOrg]; json_in: JsonNode): BookerOrg">parseDoc(doc: typedesc[BookerOrg]; json_in: JsonNode): BookerOrg</a></li>
-  <li><a class="reference" href="#parseDoc%2Ctypedesc%5BBookerPerson%5D%2CJsonNode"
-    title="parseDoc(doc: typedesc[BookerPerson]; json_in: JsonNode): BookerPerson">parseDoc(doc: typedesc[BookerPerson]; json_in: JsonNode): BookerPerson</a></li>
+  <ul class="simple nested-toc-section">makeHash
+      <li><a class="reference" href="#makeHash%2Cstring"
+    title="makeHash(input: string): string">makeHash(input: string): string</a></li>
+
+  </ul>
+  <ul class="simple nested-toc-section">makeId
+      <li><a class="reference" href="#makeId%2CBookerAddress"
+    title="makeId(doc: BookerAddress)">makeId(doc: BookerAddress)</a></li>
+  <li><a class="reference" href="#makeId%2CBookerBreach"
+    title="makeId(doc: BookerBreach)">makeId(doc: BookerBreach)</a></li>
+  <li><a class="reference" href="#makeId%2CBookerCVE"
+    title="makeId(doc: BookerCVE)">makeId(doc: BookerCVE)</a></li>
+  <li><a class="reference" href="#makeId%2CBookerEmail"
+    title="makeId(doc: BookerEmail)">makeId(doc: BookerEmail)</a></li>
+  <li><a class="reference" href="#makeId%2CBookerEmailMessage"
+    title="makeId(doc: BookerEmailMessage)">makeId(doc: BookerEmailMessage)</a></li>
+  <li><a class="reference" href="#makeId%2CBookerHost"
+    title="makeId(doc: BookerHost)">makeId(doc: BookerHost)</a></li>
+  <li><a class="reference" href="#makeId%2CBookerMembership"
+    title="makeId(doc: BookerMembership)">makeId(doc: BookerMembership)</a></li>
+  <li><a class="reference" href="#makeId%2CBookerMessage"
+    title="makeId(doc: BookerMessage)">makeId(doc: BookerMessage)</a></li>
+  <li><a class="reference" href="#makeId%2CBookerOrg"
+    title="makeId(doc: BookerOrg)">makeId(doc: BookerOrg)</a></li>
+  <li><a class="reference" href="#makeId%2CBookerPhone"
+    title="makeId(doc: BookerPhone)">makeId(doc: BookerPhone)</a></li>
+  <li><a class="reference" href="#makeId%2CBookerUsername"
+    title="makeId(doc: BookerUsername)">makeId(doc: BookerUsername)</a></li>
+  <li><a class="reference" href="#makeId%2CBookerWebService"
+    title="makeId(doc: BookerWebService)">makeId(doc: BookerWebService)</a></li>
+  <li><a class="reference" href="#makeId%2CBookerPerson%2Cint"
+    title="makeId(doc: var BookerPerson; id = 0)">makeId(doc: var BookerPerson; id = 0)</a></li>
 
   </ul>
 
@@ -201,16 +297,38 @@ window.addEventListener('DOMContentLoaded', main);
 <dl class="item">
 <div id="BookerAddress">
 <dt><pre><a href="starintel_doc.html#BookerAddress"><span class="Identifier">BookerAddress</span></a> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <a href="starintel_doc.html#BookerDocument"><span class="Identifier">BookerDocument</span></a>
-  <span class="Identifier">street</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">Option</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span>
-  <span class="Identifier">city</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">Option</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span>
-  <span class="Identifier">state</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">Option</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span>
-  <span class="Identifier">zip</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">Option</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span>
+  <span class="Identifier">street</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>
+  <span class="Identifier">city</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>
+  <span class="Identifier">state</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>
+  <span class="Identifier">zip</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>
   <span class="Identifier">apt</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">Option</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span>
-  <span class="Identifier">members</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span>
 </pre></dt>
 <dd>
 
 An address. Do not use to represent a reigon! may only work for us postal system Members is a seq of document id that point to other people or org docs.
+
+</dd>
+</div>
+<div id="BookerBreach">
+<dt><pre><a href="starintel_doc.html#BookerBreach"><span class="Identifier">BookerBreach</span></a> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <a href="starintel_doc.html#BookerDocument"><span class="Identifier">BookerDocument</span></a>
+  <span class="Identifier">total</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">int</span>
+  <span class="Identifier">description</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>
+  <span class="Identifier">url</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>
+</pre></dt>
+<dd>
+
+
+
+</dd>
+</div>
+<div id="BookerCVE">
+<dt><pre><a href="starintel_doc.html#BookerCVE"><span class="Identifier">BookerCVE</span></a> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <a href="starintel_doc.html#BookerDocument"><span class="Identifier">BookerDocument</span></a>
+  <span class="Identifier">cve_number</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>
+  <span class="Identifier">score</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">int</span>
+</pre></dt>
+<dd>
+
+
 
 </dd>
 </div>
@@ -219,11 +337,13 @@ An address. Do not use to represent a reigon! may only work for us postal system
   <span class="Identifier">operation_id</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">int</span>
   <span class="Identifier">id</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>
   <span class="Identifier">rev</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">Option</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span>
-  <span class="Identifier">rev1</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">Option</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span>
   <span class="Identifier">owner_id</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">Option</span><span class="Other">[</span><span class="Identifier">int</span><span class="Other">]</span>
   <span class="Identifier">source_dataset</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>
   <span class="Identifier">dataset</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>
   <span class="Other">`</span><span class="Keyword">type</span><span class="Other">`</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>
+  <span class="Identifier">memberships</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span>
+  <span class="Identifier">date_added</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>
+  <span class="Identifier">date_updated</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>
 </pre></dt>
 <dd>
 
@@ -233,15 +353,83 @@ Base Object to hold the document metadata thats used to make a dcoument and stor
 </div>
 <div id="BookerEmail">
 <dt><pre><a href="starintel_doc.html#BookerEmail"><span class="Identifier">BookerEmail</span></a> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <a href="starintel_doc.html#BookerDocument"><span class="Identifier">BookerDocument</span></a>
-  <span class="Identifier">email_username</span><span class="Other">:</span> <span class="Identifier">string</span>
-  <span class="Identifier">email_domain</span><span class="Other">:</span> <span class="Identifier">string</span>
-  <span class="Identifier">date_seen</span><span class="Other">:</span> <span class="Identifier">Option</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span>
-  <span class="Identifier">email_password</span><span class="Other">:</span> <span class="Identifier">Option</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span>
-  <span class="Identifier">data_breach</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span>
+  <span class="Identifier">email_username</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>
+  <span class="Identifier">email_domain</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>
+  <span class="Identifier">email_password</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">Option</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span>
+  <span class="Identifier">data_breach</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span>
+  <span class="Identifier">owner</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">Option</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span>
+  <span class="Identifier">username</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">Option</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span>
 </pre></dt>
 <dd>
 
-An email. Owner and Password is Optional data_breach is used to track what breaches the email is part of
+A email address Owner and Password is Optional data_breach is used to track what breaches the email is part of
+
+</dd>
+</div>
+<div id="BookerEmailMessage">
+<dt><pre><a href="starintel_doc.html#BookerEmailMessage"><span class="Identifier">BookerEmailMessage</span></a> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <a href="starintel_doc.html#BookerDocument"><span class="Identifier">BookerDocument</span></a>
+  <span class="Identifier">body</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>
+  <span class="Identifier">subject</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">Option</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span>
+  <span class="Identifier">to</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>
+  <span class="Other">`</span><span class="Keyword">from</span><span class="Other">`</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>
+  <span class="Identifier">headers</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">Option</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span>
+  <span class="Identifier">cc</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span>
+  <span class="Identifier">bcc</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span>
+</pre></dt>
+<dd>
+
+a object represented as a email message
+
+</dd>
+</div>
+<div id="BookerHost">
+<dt><pre><a href="starintel_doc.html#BookerHost"><span class="Identifier">BookerHost</span></a> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <a href="starintel_doc.html#BookerDocument"><span class="Identifier">BookerDocument</span></a>
+  <span class="Identifier">ip</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>
+  <span class="Identifier">hostname</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>
+  <span class="Identifier">operating_system</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>
+  <span class="Identifier">asn</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">int</span>
+  <span class="Identifier">country</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>
+  <span class="Identifier">network_name</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>
+  <span class="Identifier">owner</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>
+  <span class="Identifier">vulns</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span>
+  <span class="Identifier">services</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span>
+</pre></dt>
+<dd>
+
+
+
+</dd>
+</div>
+<div id="BookerMembership">
+<dt><pre><a href="starintel_doc.html#BookerMembership"><span class="Identifier">BookerMembership</span></a> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <a href="starintel_doc.html#BookerDocument"><span class="Identifier">BookerDocument</span></a>
+  <span class="Identifier">title</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>
+  <span class="Identifier">roles</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span>
+  <span class="Identifier">start_date</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>
+  <span class="Identifier">end_date</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>
+  <span class="Identifier">child</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>
+  <span class="Identifier">parent</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>
+</pre></dt>
+<dd>
+
+Document holding metadata linking two documents
+
+</dd>
+</div>
+<div id="BookerMessage">
+<dt><pre><a href="starintel_doc.html#BookerMessage"><span class="Identifier">BookerMessage</span></a> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <a href="starintel_doc.html#BookerDocument"><span class="Identifier">BookerDocument</span></a>
+  <span class="Identifier">message</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>
+  <span class="Identifier">platform</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>
+  <span class="Identifier">username</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>
+  <span class="Identifier">is_reply</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">bool</span>
+  <span class="Identifier">media</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">bool</span>
+  <span class="Identifier">mesage_id</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">Option</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span>
+  <span class="Identifier">reply_to</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">Option</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span>
+  <span class="Identifier">group</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>
+  <span class="Identifier">channel</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">Option</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span>
+</pre></dt>
+<dd>
+
+a object representing a instant message Use Booker EmailMessage For Email Content BookerSocialMPost for social media post
 
 </dd>
 </div>
@@ -254,7 +442,6 @@ An email. Owner and Password is Optional data_breach is used to track what breac
   <span class="Identifier">address</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span>
   <span class="Identifier">email_formats</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span>
   <span class="Identifier">organization_type</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">Option</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span>
-  <span class="Identifier">members</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span>
 </pre></dt>
 <dd>
 
@@ -273,17 +460,62 @@ An object that represents a compnay or organization
   <span class="Identifier">social_media</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span>
   <span class="Identifier">phones</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span>
   <span class="Identifier">emails</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span>
-  <span class="Identifier">locations</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span>
+  <span class="Identifier">address</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span>
   <span class="Identifier">ip</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span>
   <span class="Identifier">orgs</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span>
   <span class="Identifier">education</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span>
   <span class="Identifier">comments</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span>
-  <span class="Identifier">title</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">Option</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span>
-  <span class="Identifier">roles</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span>
+  <span class="Identifier">gender</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">Option</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span>
+  <span class="Identifier">political_party</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">Option</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span>
 </pre></dt>
 <dd>
 
 A object that represents a person in starintel NOTE: person is merged with member and member is no longer used
+
+</dd>
+</div>
+<div id="BookerPhone">
+<dt><pre><a href="starintel_doc.html#BookerPhone"><span class="Identifier">BookerPhone</span></a> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <a href="starintel_doc.html#BookerDocument"><span class="Identifier">BookerDocument</span></a>
+  <span class="Identifier">phone</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>
+  <span class="Identifier">owner</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">Option</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span>
+  <span class="Identifier">carrier</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">Option</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span>
+  <span class="Identifier">status</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">Option</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span>
+  <span class="Identifier">phone_type</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">Option</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span>
+</pre></dt>
+<dd>
+
+A Phone number
+
+</dd>
+</div>
+<div id="BookerUsername">
+<dt><pre><a href="starintel_doc.html#BookerUsername"><span class="Identifier">BookerUsername</span></a> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <a href="starintel_doc.html#BookerDocument"><span class="Identifier">BookerDocument</span></a>
+  <span class="Identifier">url</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">Option</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span>
+  <span class="Identifier">username</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>
+  <span class="Identifier">platform</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>
+  <span class="Identifier">phones</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span>
+  <span class="Identifier">emails</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span>
+  <span class="Identifier">orgs</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span>
+  <span class="Identifier">owner</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>
+</pre></dt>
+<dd>
+
+A object that represents a user
+
+</dd>
+</div>
+<div id="BookerWebService">
+<dt><pre><a href="starintel_doc.html#BookerWebService"><span class="Identifier">BookerWebService</span></a> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <a href="starintel_doc.html#BookerDocument"><span class="Identifier">BookerDocument</span></a>
+  <span class="Identifier">port</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">int</span>
+  <span class="Identifier">url</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">Option</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span>
+  <span class="Identifier">owner</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>
+  <span class="Identifier">host</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>
+  <span class="Identifier">service_name</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">Option</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span>
+  <span class="Identifier">service_version</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>
+</pre></dt>
+<dd>
+
+
 
 </dd>
 </div>
@@ -305,43 +537,125 @@ A object that represents a person in starintel NOTE: person is merged with membe
 <div class="section" id="12">
 <h1><a class="toc-backref" href="#12">Procs</a></h1>
 <dl class="item">
-<div id="flatten_doc,JsonNode">
-<dt><pre><span class="Keyword">func</span> <a href="#flatten_doc%2CJsonNode"><span class="Identifier">flatten_doc</span></a><span class="Other">(</span><span class="Identifier">json_in</span><span class="Other">:</span> <span class="Identifier">JsonNode</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">JsonNode</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">KeyError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
+<div id="fixDoc,JsonNode">
+<dt><pre><span class="Keyword">proc</span> <a href="#fixDoc%2CJsonNode"><span class="Identifier">fixDoc</span></a><span class="Other">(</span><span class="Identifier">doc</span><span class="Other">:</span> <span class="Identifier">JsonNode</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">JsonNode</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">KeyError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
 <dd>
 
-Flatten a doc so it can be marshelled into a object
+adds the _rev and _id fields this is becuase of a limitation of nim
 
 </dd>
 </div>
-<div id="parseDoc,typedesc[BookerAddress],JsonNode">
-<dt><pre><span class="Keyword">func</span> <a href="#parseDoc%2Ctypedesc%5BBookerAddress%5D%2CJsonNode"><span class="Identifier">parseDoc</span></a><span class="Other">(</span><span class="Identifier">doc</span><span class="Other">:</span> <span class="Identifier">typedesc</span><span class="Other">[</span><a href="starintel_doc.html#BookerAddress"><span class="Identifier">BookerAddress</span></a><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">json_in</span><span class="Other">:</span> <span class="Identifier">JsonNode</span><span class="Other">)</span><span class="Other">:</span> <a href="starintel_doc.html#BookerAddress"><span class="Identifier">BookerAddress</span></a></pre></dt>
+<div id="makeHash,string">
+<dt><pre><span class="Keyword">proc</span> <a href="#makeHash%2Cstring"><span class="Identifier">makeHash</span></a><span class="Other">(</span><span class="Identifier">input</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
 <dd>
 
-Marshell a json node directly into a Bookeraddress
+
 
 </dd>
 </div>
-<div id="parseDoc,typedesc[BookerEmail],JsonNode">
-<dt><pre><span class="Keyword">func</span> <a href="#parseDoc%2Ctypedesc%5BBookerEmail%5D%2CJsonNode"><span class="Identifier">parseDoc</span></a><span class="Other">(</span><span class="Identifier">doc</span><span class="Other">:</span> <span class="Identifier">typedesc</span><span class="Other">[</span><a href="starintel_doc.html#BookerEmail"><span class="Identifier">BookerEmail</span></a><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">json_in</span><span class="Other">:</span> <span class="Identifier">JsonNode</span><span class="Other">)</span><span class="Other">:</span> <a href="starintel_doc.html#BookerEmail"><span class="Identifier">BookerEmail</span></a></pre></dt>
+<div id="makeId,BookerAddress">
+<dt><pre><span class="Keyword">proc</span> <a href="#makeId%2CBookerAddress"><span class="Identifier">makeId</span></a><span class="Other">(</span><span class="Identifier">doc</span><span class="Other">:</span> <a href="starintel_doc.html#BookerAddress"><span class="Identifier">BookerAddress</span></a><span class="Other">)</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
 <dd>
 
-Marshell a json node directly into a BookerEmail
+Create a sha256 uuid.
 
 </dd>
 </div>
-<div id="parseDoc,typedesc[BookerOrg],JsonNode">
-<dt><pre><span class="Keyword">func</span> <a href="#parseDoc%2Ctypedesc%5BBookerOrg%5D%2CJsonNode"><span class="Identifier">parseDoc</span></a><span class="Other">(</span><span class="Identifier">doc</span><span class="Other">:</span> <span class="Identifier">typedesc</span><span class="Other">[</span><a href="starintel_doc.html#BookerOrg"><span class="Identifier">BookerOrg</span></a><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">json_in</span><span class="Other">:</span> <span class="Identifier">JsonNode</span><span class="Other">)</span><span class="Other">:</span> <a href="starintel_doc.html#BookerOrg"><span class="Identifier">BookerOrg</span></a></pre></dt>
+<div id="makeId,BookerBreach">
+<dt><pre><span class="Keyword">proc</span> <a href="#makeId%2CBookerBreach"><span class="Identifier">makeId</span></a><span class="Other">(</span><span class="Identifier">doc</span><span class="Other">:</span> <a href="starintel_doc.html#BookerBreach"><span class="Identifier">BookerBreach</span></a><span class="Other">)</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
 <dd>
 
-Marshell a json node directly into a BookerOrg
+Create a sha256 uuid.
 
 </dd>
 </div>
-<div id="parseDoc,typedesc[BookerPerson],JsonNode">
-<dt><pre><span class="Keyword">func</span> <a href="#parseDoc%2Ctypedesc%5BBookerPerson%5D%2CJsonNode"><span class="Identifier">parseDoc</span></a><span class="Other">(</span><span class="Identifier">doc</span><span class="Other">:</span> <span class="Identifier">typedesc</span><span class="Other">[</span><a href="starintel_doc.html#BookerPerson"><span class="Identifier">BookerPerson</span></a><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">json_in</span><span class="Other">:</span> <span class="Identifier">JsonNode</span><span class="Other">)</span><span class="Other">:</span> <a href="starintel_doc.html#BookerPerson"><span class="Identifier">BookerPerson</span></a></pre></dt>
+<div id="makeId,BookerCVE">
+<dt><pre><span class="Keyword">proc</span> <a href="#makeId%2CBookerCVE"><span class="Identifier">makeId</span></a><span class="Other">(</span><span class="Identifier">doc</span><span class="Other">:</span> <a href="starintel_doc.html#BookerCVE"><span class="Identifier">BookerCVE</span></a><span class="Other">)</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
 <dd>
 
-Marshell a json node directly into a BookerPerson
+Create a sha256 uuid.
+
+</dd>
+</div>
+<div id="makeId,BookerEmail">
+<dt><pre><span class="Keyword">proc</span> <a href="#makeId%2CBookerEmail"><span class="Identifier">makeId</span></a><span class="Other">(</span><span class="Identifier">doc</span><span class="Other">:</span> <a href="starintel_doc.html#BookerEmail"><span class="Identifier">BookerEmail</span></a><span class="Other">)</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
+<dd>
+
+Create a sha256 uuid.
+
+</dd>
+</div>
+<div id="makeId,BookerEmailMessage">
+<dt><pre><span class="Keyword">proc</span> <a href="#makeId%2CBookerEmailMessage"><span class="Identifier">makeId</span></a><span class="Other">(</span><span class="Identifier">doc</span><span class="Other">:</span> <a href="starintel_doc.html#BookerEmailMessage"><span class="Identifier">BookerEmailMessage</span></a><span class="Other">)</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">OSError</span><span class="Other">,</span> <span class="Identifier">IOError</span><span class="Other">]</span><span class="Other">,</span>
+                                       <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ReadIOEffect</span><span class="Other">]</span></span>.}</pre></dt>
+<dd>
+
+Create a uuid for the document
+
+</dd>
+</div>
+<div id="makeId,BookerHost">
+<dt><pre><span class="Keyword">proc</span> <a href="#makeId%2CBookerHost"><span class="Identifier">makeId</span></a><span class="Other">(</span><span class="Identifier">doc</span><span class="Other">:</span> <a href="starintel_doc.html#BookerHost"><span class="Identifier">BookerHost</span></a><span class="Other">)</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
+<dd>
+
+Create a sha256 uuid.
+
+</dd>
+</div>
+<div id="makeId,BookerMembership">
+<dt><pre><span class="Keyword">proc</span> <a href="#makeId%2CBookerMembership"><span class="Identifier">makeId</span></a><span class="Other">(</span><span class="Identifier">doc</span><span class="Other">:</span> <a href="starintel_doc.html#BookerMembership"><span class="Identifier">BookerMembership</span></a><span class="Other">)</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">OSError</span><span class="Other">,</span> <span class="Identifier">IOError</span><span class="Other">]</span><span class="Other">,</span>
+                                     <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ReadIOEffect</span><span class="Other">]</span></span>.}</pre></dt>
+<dd>
+
+Create a uuid for the document
+
+</dd>
+</div>
+<div id="makeId,BookerMessage">
+<dt><pre><span class="Keyword">proc</span> <a href="#makeId%2CBookerMessage"><span class="Identifier">makeId</span></a><span class="Other">(</span><span class="Identifier">doc</span><span class="Other">:</span> <a href="starintel_doc.html#BookerMessage"><span class="Identifier">BookerMessage</span></a><span class="Other">)</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
+<dd>
+
+Create a sha256 uuid.
+
+</dd>
+</div>
+<div id="makeId,BookerOrg">
+<dt><pre><span class="Keyword">proc</span> <a href="#makeId%2CBookerOrg"><span class="Identifier">makeId</span></a><span class="Other">(</span><span class="Identifier">doc</span><span class="Other">:</span> <a href="starintel_doc.html#BookerOrg"><span class="Identifier">BookerOrg</span></a><span class="Other">)</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
+<dd>
+
+Create a sha256 uuid.
+
+</dd>
+</div>
+<div id="makeId,BookerPhone">
+<dt><pre><span class="Keyword">proc</span> <a href="#makeId%2CBookerPhone"><span class="Identifier">makeId</span></a><span class="Other">(</span><span class="Identifier">doc</span><span class="Other">:</span> <a href="starintel_doc.html#BookerPhone"><span class="Identifier">BookerPhone</span></a><span class="Other">)</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
+<dd>
+
+Create a sha256 uuid. There may be many of the same phone number UUID here is based on the owner id and phone number
+
+</dd>
+</div>
+<div id="makeId,BookerUsername">
+<dt><pre><span class="Keyword">proc</span> <a href="#makeId%2CBookerUsername"><span class="Identifier">makeId</span></a><span class="Other">(</span><span class="Identifier">doc</span><span class="Other">:</span> <a href="starintel_doc.html#BookerUsername"><span class="Identifier">BookerUsername</span></a><span class="Other">)</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
+<dd>
+
+Create a sha256 uuid.
+
+</dd>
+</div>
+<div id="makeId,BookerWebService">
+<dt><pre><span class="Keyword">proc</span> <a href="#makeId%2CBookerWebService"><span class="Identifier">makeId</span></a><span class="Other">(</span><span class="Identifier">doc</span><span class="Other">:</span> <a href="starintel_doc.html#BookerWebService"><span class="Identifier">BookerWebService</span></a><span class="Other">)</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
+<dd>
+
+Create a sha256 uuid.
+
+</dd>
+</div>
+<div id="makeId,BookerPerson,int">
+<dt><pre><span class="Keyword">proc</span> <a href="#makeId%2CBookerPerson%2Cint"><span class="Identifier">makeId</span></a><span class="Other">(</span><span class="Identifier">doc</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="starintel_doc.html#BookerPerson"><span class="Identifier">BookerPerson</span></a><span class="Other">;</span> <span class="Identifier">id</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">)</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
+<dd>
+
+Create a sha256 uuid. if document with uuid exists increment id until a unique uuid is found Think of it like a john smith + 1, john smith + 2, ect
 
 </dd>
 </div>
@@ -355,7 +669,7 @@ Marshell a json node directly into a BookerPerson
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2022-03-19 11:23:24 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 1980-01-01 00:00:00 UTC</small>
       </div>
     </div>
   </div>
