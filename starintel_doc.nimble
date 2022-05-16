@@ -8,4 +8,5 @@ license     = "MIT"
 # Deps
 
 requires "nim >= 1.6.0"
-requires "nimSHA2 >= 0.1.1 "
+requires "libSHA >= 1.0"
+requires "urand >= 0.1.0"
