@@ -1,6 +1,8 @@
 import strutils, sequtils
 import json, options
 import std/jsonutils
+import urand
+import libsha / sha256
 
 var Joptions*: Joptions
 Joptions.allowMissingKeys = true
@@ -33,7 +35,7 @@ type
       social_media*: seq[string]
       phones*: seq[string]
       emails*: seq[string]
-      locations*: 
+      address*: seq[string]
       ip*: seq[string]
       orgs*: seq[string]
       education*: seq[string]
@@ -43,8 +45,6 @@ type
 
     BookerOrg* = ref object of BookerDocument
       ## An object that represents a compnay or organization 
-
-      ## Name Of org
       name*: string
       bio*: Option[string]
       country*: Option[string]
@@ -57,10 +57,10 @@ type
       ## An address. Do not use to represent a reigon!
       ## may only work for us postal system
       ## Members is a seq of document id that point to other people or org docs.
-      street*: Option[string]
-      city*: Option[string]
-      state*: Option[string]
-      zip*: Option[string]
+      street*: string
+      city*: string
+      state*: string
+      zip*: string
       apt*: Option[string]
 
     BookerEmail* = ref object of BookerDocument
@@ -72,7 +72,7 @@ type
       email_password*: Option[string]
       data_breach*: seq[string]
       owner*: Option[string]
-      username*: Option[string]
+      username*: Option[string] # points to the owner
 
 
     BookerPhone* = ref object of BookerDocument
@@ -83,14 +83,15 @@ type
       status*: Option[string]
       phone_type*: Option[string]
 
-    BookerUser* = ref object of BookerDocument
+    BookerUsername* = ref object of BookerDocument
       ## A object that represents a user
       url*: Option[string] # Url to the users page
       username*: string
-      domain*: string
+      platform*: string
       phones*: seq[string]
       emails*: seq[string]
       orgs*: seq[string]
+      owner*: string
 
     BookerMessage* = ref object of BookerDocument
       ## a object representing a instant message
@@ -100,6 +101,7 @@ type
       platform*: string
       username*: string
       is_reply*: bool
+      media*: bool
       mesage_id*: Option[string]
       reply_to*: Option[string]
       group*: string # if none assume dm chat
@@ -131,11 +133,10 @@ type
 
     BookerWebService* = ref object of BookerDocument
       port*: int
-      service_name*: string
-      source*: string
+      url*: Option[string]
       owner*: string
       host*: string
-      service_name*: string
+      service_name*: Option[string]
       service_version*: string
 
     BookerHost* = ref object of BookerDocument
@@ -154,28 +155,82 @@ type
       score*: int
 
 
+proc makeHash*(input: string): string =
+  let sha = newSha256()
+  sha.add(input)
+  result = $sha.hexdigest()
+
+proc makeId*(doc: var BookerPerson, id=0) =
+  ## Create a sha256 uuid.
+  ## if document with uuid exists increment id until a unique uuid is found
+  ## Think of it like a john smith + 1, john smith + 2, ect
+  doc.id = makeHash(doc.fname.get(" ") & doc.mname.get(" ") & doc.lname.get(" ") & $id)
+
+proc makeId*(doc: BookerOrg) =
+  ## Create a sha256 uuid.
+  doc.id = makeHash(doc.name & doc.country.get(" "))
+
+proc makeId*(doc: BookerEmail) =
+  ## Create a sha256 uuid.
+  doc.id = makeHash(doc.email_username & doc.email_domain)
+
+proc makeId*(doc: BookerAddress) =
+  ## Create a sha256 uuid.
+  doc.id = makeHash(doc.street & doc.city & doc.state & doc.zip)
+
+proc makeId*(doc: BookerPhone) =
+  ## Create a sha256 uuid.
+  ## There may be many of the same phone number
+  ## UUID here is based on the owner id and phone number
+  doc.id = makeHash(doc.phone & doc.owner.get(" "))
 
 
+proc makeId*(doc: BookerUsername) =
+  ## Create a sha256 uuid.
+  doc.id = makeHash(doc.username & doc.platform)
+
+proc makeId*(doc: BookerMessage) =
+  ## Create a sha256 uuid.
+  doc.id = makeHash(doc.username & doc.channel.get(" ") & doc.group & doc.date_added)
+
+proc makeId*(doc: BookerEmailMessage) =
+  ## Create a uuid for the document
+  var ur: Urand
+  ur.open()
+  doc.id = makeHash($ur.urand(128))
+
+proc makeId*(doc: BookerMembership) =
+  ## Create a uuid for the document
+  var ur: Urand
+  ur.open()
+  defer: ur.close()
+  doc.id = makeHash($ur.urand(128))
 
 
+proc makeId*(doc: BookerBreach) =
+  ## Create a sha256 uuid.
+  doc.id = makeHash(doc.url & $doc.total)
 
+proc makeId*(doc: BookerWebService) =
+  ## Create a sha256 uuid.
+  doc.id = makeHash($doc.port & doc.host & doc.service_name.get(" "))
 
+proc makeId*(doc: BookerHost) =
+  ## Create a sha256 uuid.
+  doc.id = makeHash(doc.ip & doc.hostname & $doc.asn)
 
-func flatten_doc*(json_id: JsonNode): JsonNode =
-  ## TODO Remove this becuase its not needed anymore
-  ## Flatten a doc so it can be marshalled into a object
+proc makeId*(doc: BookerCVE) =
+  ## Create a sha256 uuid.
+  doc.id = makeHash(doc.cve_number)
 
-  let metadata = json_id{"metadata"}
-  var data = metadata
-  data["operation_id"] = json_id{"operation_id"}
-  data["source_dataset"] = json_id{"source_dataset"}
-  data["dataset"] = json_id{"dataset"}
-  data["date_added"] = json_id{"date_added"}
-  data["date_updated"] = json_id{"date_updated"}
-  data["owner_id"] = json_id{"owner_id"}
-  data["id"] = json_id{"_id"}
-  data["rev"] = json_id{"_rev"}
-  data["type"] = json_id{"type"}
-  return data
+proc fixDoc*(doc: JsonNode ): JsonNode =
+  ## adds the _rev and _id fields
+  ## this is becuase of a limitation of nim
+  doc["_id"] = doc["id"]
+  doc.delete("id")
+  if doc["rev"].len > 0:
+    doc["_rev"] = doc["rev"]
+    doc.delete("rev")
+  result = doc
 
 
