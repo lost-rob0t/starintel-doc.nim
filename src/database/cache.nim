@@ -11,9 +11,6 @@ type
     emails*: LruCache[string, BookerEmail]
     memberships*: LruCache[string, BookerMembership]
 
-  using:
-    CC: CouchDBClient
-    ACC: AsyncCouchDBClient
 
 proc upSert*(doc1, doc2: BookerPerson): BookerPerson =
   ## Insert new data only and return document
