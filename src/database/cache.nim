@@ -2,7 +2,7 @@ import lrucache
 import ../spec/documents
 import mycouch
 import json
-
+import sequtils
 type
   DocumentCache* = ref object
     orgs*: LruCache[string, BookerOrg]
@@ -10,32 +10,44 @@ type
     locations*: LruCache[string, BookerAddress]
     emails*: LruCache[string, BookerEmail]
     memberships*: LruCache[string, BookerMembership]
+    phones*: LruCache[string, BookerPhone]
+
 
 
 proc upSert*(doc1, doc2: BookerPerson): BookerPerson =
   ## Insert new data only and return document
+  var nm: seq[string]
+  var na: seq[string]
+  var ne: seq[string]
   for membership in doc1.memberships:
     if membership notin doc2.memberships:
-      doc1.memberships.add(membership)
+      nm.add(membership)
   for address in doc1.address:
     if address notin doc2.address:
-      doc1.address.add(address)
+      na.add(address)
   for email in doc1.emails:
     if email notin doc2.emails:
-      doc1.emails.add(email)
+      ne.add(email)
+  doc1.memberships = concat(doc1.memberships, nm)
+  doc1.address = concat(doc1.address, na)
+  doc1.emails = concat(doc1.emails, na)
   return doc1
 
 proc upSert*(doc1, doc2: BookerAddress): BookerAddress =
   ## Insert new data only and return document
+  var nm: seq[string]
   for membership in doc1.memberships:
     if membership notin doc2.memberships:
-      doc1.memberships.add(membership)
+      nm.add(membership)
+  doc1.memberships = concat(nm, doc1.memberships)
   return doc1
 proc upSert*(doc1, doc2: var BookerOrg): BookerOrg =
   ## Insert new data only and return document
+  var nm: seq[string]
   for membership in doc1.memberships:
     if membership notin doc2.memberships:
-      doc1.memberships.add(membership)
+      nm.add(membership)
+  doc1.memberships = concat(nm, doc1.memberships)
   return doc1
 
 proc createCache*(size: int): DocumentCache =
