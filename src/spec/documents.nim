@@ -1,6 +1,8 @@
+# TODO Move all seqs to bottom of class
+# TODO add optional fast hash
 import std/[jsonutils, hashes, tables, json, options, sequtils, strutils]
-import urand
-import libsha / sha256
+import uuids
+
 var Joptions*: Joptions
 Joptions.allowMissingKeys = true
 Joptions.allowExtraKeys = true
@@ -167,82 +169,87 @@ type
       cve_number*: string
       score*: int
 
-proc makeHash*(input: string): string =
-  let sha = newSha256()
-  sha.add(input)
-  result = $sha.hexdigest()
+proc makeHash*(): string =
+  result = $genUUID()
 
-proc makeId*(doc: var BookerPerson, id=0) =
-  ## Create a sha256 uuid.
-  ## if document with uuid exists increment id until a unique uuid is found
-  ## Think of it like a john smith + 1, john smith + 2, ect
-  doc.id = makeHash(doc.fname.get(" ") & doc.mname.get(" ") & doc.lname.get(" ") & $id)
+proc makeId*(doc: BookerPerson, id=0) =
+  ## Create a uuid.
+  doc.id = makeHash()
 
 proc makeId*(doc: BookerOrg) =
-  ## Create a sha256 uuid.
-  doc.id = makeHash(doc.name & doc.country.get(" "))
+  ## Create a uuid.
+  doc.id = makeHash()
 
 proc makeId*(doc: BookerEmail) =
-  ## Create a sha256 uuid.
-  doc.id = makeHash(doc.email_username & doc.email_domain)
+  ## Create a uuid.
+  doc.id = makeHash()
 
 proc makeId*(doc: BookerAddress) =
-  ## Create a sha256 uuid.
-  doc.id = makeHash(doc.street & doc.city & doc.state & doc.zip)
+  ## Create a uuid.
+  doc.id = makeHash()
 
 proc makeId*(doc: BookerPhone) =
-  ## Create a sha256 uuid.
+  ## Create a uuid.
   ## There may be many of the same phone number
   ## UUID here is based on the owner id and phone number
-  doc.id = makeHash(doc.phone & doc.owner.get(" "))
+  doc.id = makeHash()
 
 
 proc makeId*(doc: BookerUsername) =
-  ## Create a sha256 uuid.
-  doc.id = makeHash(doc.username & doc.platform)
+  ## Create a uuid.
+  doc.id = makeHash()
 
 proc makeId*(doc: BookerMessage) =
-  ## Create a sha256 uuid.
-  doc.id = makeHash(doc.username & doc.channel.get(" ") & doc.group & doc.date_added)
+  ## Create a uuid.
+  doc.id = makeHash()
 
 proc makeId*(doc: BookerEmailMessage) =
   ## Create a uuid for the document
-  var ur: Urand
-  ur.open()
-  doc.id = makeHash($ur.urand(128))
+  doc.id = makeHash()
 
 proc makeId*(doc: BookerMembership) =
   ## Create a uuid for the document
-  var ur: Urand
-  ur.open()
-  defer: ur.close()
-  doc.id = makeHash($ur.urand(128))
+  doc.id = makeHash()
 
 
 proc makeId*(doc: BookerBreach) =
-  ## Create a sha256 uuid.
-  doc.id = makeHash(doc.url & $doc.total)
+  ## Create a uuid.
+  doc.id = makeHash()
 
 proc makeId*(doc: BookerWebService) =
-  ## Create a sha256 uuid.
-  doc.id = makeHash($doc.port & doc.host & doc.service_name.get(" "))
+  ## Create a uuid.
+  doc.id = makeHash()
 
 proc makeId*(doc: BookerHost) =
-  ## Create a sha256 uuid.
-  doc.id = makeHash(doc.ip & doc.hostname & $doc.asn)
+  ## Create a uuid.
+  doc.id = makeHash()
 
 proc makeId*(doc: BookerCVE) =
-  ## Create a sha256 uuid.
-  doc.id = makeHash(doc.cve_number)
+  ## Create a  uuid.
+  doc.id = makeHash()
 
 proc fixDoc*(doc: JsonNode ): JsonNode =
   ## adds the _rev and _id fields
   ## this is becuase of a limitation of nim
-  doc["_id"] = doc["id"]
-  doc.delete("id")
-  if doc["rev"].len > 0:
-    doc["_rev"] = doc["rev"]
+  # FIXME this is bad
+  if doc.hasKey("_id"):
+    doc{"id"} = doc["_id"]
+    doc.delete("_id")
+
+  if doc.hasKey("rev"):
+    doc{"_rev"} = doc["rev"]
+    doc.delete("_rev")
+
+  if doc.hasKey("_id"):
+    doc{"id"} = doc["_id"]
+    doc.delete("_rev")
+
+
+  if doc.hasKey("_rev"):
+    doc["rev"] = doc["_rev"]
     doc.delete("rev")
+  when defined(debug):
+    echo $doc
   result = doc
 
 
@@ -253,9 +260,6 @@ proc checkDiff*(doc1, doc2: BookerPerson): bool =
   for address in doc1.address:
     if address in doc2.address:
       score += ADDRESS_WEIGHT
-
-  # Why doesnt this work
-  # TODO fixme
   for email in doc1.emails:
     if email in doc2.emails:
       score += EMAIL_WEIGHT
