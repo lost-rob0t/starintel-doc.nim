@@ -15,6 +15,7 @@ type
 
 
 proc upSert*(doc1, doc2: BookerPerson): BookerPerson =
+  ## TODO add rev update
   ## Insert new data only and return document
   var nm: seq[string]
   var na: seq[string]
@@ -41,7 +42,8 @@ proc upSert*(doc1, doc2: BookerAddress): BookerAddress =
       nm.add(membership)
   doc1.memberships = concat(nm, doc1.memberships)
   return doc1
-proc upSert*(doc1, doc2: var BookerOrg): BookerOrg =
+
+proc upSert*(doc1, doc2:  BookerOrg): BookerOrg =
   ## Insert new data only and return document
   var nm: seq[string]
   for membership in doc1.memberships:
@@ -68,28 +70,38 @@ proc insert*(cache: var DocumentCache, doc: var BookerPerson) =
     if cache.people.contains(doc.id):
       if cache.people[doc.id].checkDiff(doc) == true:
         var ndoc = doc.upSert(cache.people[doc.id])
-        cache.people[doc.id] = ndoc
+        cache.people[doc.id]= ndoc
         checkpoint = true
       else:
         doc.makeId(id)
     else:
-      discard cache.people.put(doc.id, doc)
+      cache.people[doc.id]= doc
       checkpoint = true
     id += 1
 proc insert*(cache: var DocumentCache, doc: var BookerEmail) =
   var checkpoint: bool
   while checkpoint == false:
-    discard cache.emails.getOrPut(doc.id, doc) #emails should not conflict!
+    var ndoc = doc
+    cache.emails[doc.id]= doc #emails should not conflict!
     checkpoint = true;
 
 proc insert*(cache: var DocumentCache, doc: var BookerAddress) =
   var checkpoint: bool
   while checkpoint == false:
     if cache.locations.contains(doc.id):
-      cache.locations[doc.id] = cache.locations[doc.id].upSert(doc)
+      var ndoc = doc.upSert(cache.locations[doc.id])
+      cache.locations[doc.id]= ndoc
       checkpoint = true
     else:
       discard cache.locations.put(doc.id, doc)
       checkpoint = true
-
-
+proc insert*(cache: var DocumentCache, doc: var BookerOrg) =
+  var checkpoint: bool
+  while checkpoint == false:
+    if cache.orgs.contains(doc.id):
+      var ndoc = doc.upSert(cache.orgs[doc.id])
+      cache.orgs[doc.id]= ndoc
+      checkpoint = true
+    else:
+      discard cache.orgs.put(doc.id, doc)
+      checkpoint = true
