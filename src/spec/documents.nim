@@ -133,6 +133,7 @@ type
 
     BookerMembership* = ref object of BookerDocument
       ## Document holding metadata linking two documents
+      relation_type*: string
       title*: string
       roles*: seq[string]
       start_date*: string
