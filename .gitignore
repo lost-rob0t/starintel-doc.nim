@@ -1,0 +1,9 @@
+.DS_Store
+.idea
+*.log
+tmp/
+expirment/
+*.json
+*.txt
+*.db
+*.env
