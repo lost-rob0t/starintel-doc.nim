@@ -98,7 +98,7 @@ proc readConfig*(path: string): MetaConfig =
 proc parsePersonJ(line: JsonNode, config: MetaConfig): BookerPerson =
   ## Parse basic data about a person from a json line
   ## This DOES NOT GRAB EMAILS, OR PHONES
-  var person = BookerPerson()
+  var person = BookerPerson(`type`:"person")
   if config.peopleJ.name != "":
     when defined(debug):
       echo config.peopleJ.name
@@ -127,45 +127,66 @@ proc parsePersonJ(line: JsonNode, config: MetaConfig): BookerPerson =
 proc parsePersonOrgJ(line: JsonNode, config: MetaConfig): seq[BookerOrg] =
   var data: seq[BookerOrg]
   if config.peopleJ.orgName.len != 0:
-    var org = BookerOrg(name: line[config.peopleJ.orgName].getStr)
+    var org = BookerOrg(name: line[config.peopleJ.orgName].getStr, `type`: "org")
     org.makeId
     data.add(org)
-
   if config.peopleJ.orgArray.len != 0:
     for org in line[config.peopleJ.orgArray].getElems:
-      var o = BookerOrg(name: org.getStr)
+      var o = BookerOrg(name: org.getStr, `type`: "org")
       o.makeId
       data.add(o)
-
+      when defined(debug):
+        echo o.name
+  result = data
 proc parsePersonPhoneJ(line: JsonNode, config: MetaConfig): seq[BookerPhone] =
   var data:  seq[BookerPhone]
   if config.peopleJ.phone.len != 0:
-    var phone = BookerPhone(phone: line[config.peopleJ.phone].getStr)
+    var phone = BookerPhone(phone: line[config.peopleJ.phone].getStr, `type`: "phone")
     phone.makeId
     data.add(phone)
 
   if config.peopleJ.phoneArray.len != 0:
     for phone in line[config.peopleJ.phoneArray].getElems:
-      var p = BookerPhone(phone: phone.getStr)
+      var p = BookerPhone(phone: phone.getStr, `type`: "phone")
       p.makeId
       data.add(p)
 
+  result = data
 proc parsePersonEmailJ(line: JsonNode, config: MetaConfig): seq[BookerEmail] =
   var data: seq[BookerEmail]
   if config.peopleJ.email.len != 0:
     let edata = line[config.peopleJ.email].getStr.split("@")
-    var email = BookerEmail(email_username: edata[0], email_domain: edata[1])
+    var email = BookerEmail(email_username: edata[0], email_domain: edata[1], `type`: "email")
     email.makeId
     data.add(email)
-
+    when defined(debug):
+      echo edata
   if config.peopleJ.emailArray.len != 0:
     for email in line[config.peopleJ.emailArray].getElems:
       let edata = email.getStr.split("@")
-      var e = BookerEmail(email_username: edata[0], email_domain: edata[1])
+      var e = BookerEmail(email_username: edata[0], email_domain: edata[1], `type`: "email")
       e.makeId
       data.add(e)
+      when defined(debug):
+        echo edata
+  result = data
 
-
+proc parseOrgMetaJ*(line: JsonNode, data: var LineData, config: MetaConfig) =
+  var org = BookerOrg(name: line[config.peopleJ.orgName].getStr, `type`: "org")
+  org.makeId
+  data.orgs.add(org)
+proc parseRolesJ*(line: JsonNode, data: var LineData, config: MetaConfig) =
+  for key in line[config.peopleJ.roles].keys:
+    let d = line[config.peopleJ.roles][key]
+    var org = BookerOrg(name: key, `type`: "org")
+    org.makeID
+    var membership = BookerMembership(title: d["title"].getStr, child: data.person.id, parent: org.id,
+                                      `type`: "membership")
+    membership.makeId
+    org.memberships.add(membership.id)
+    data.person.memberships.add(membership.id)
+    data.orgs.add(org)
+    data.memberships.add(membership)
 proc makeRelations*(data: var LineData, line: JsonNode, config: MetaConfig) =
   for email in data.emails:
     email.owner = some(data.person.id)
@@ -173,25 +194,23 @@ proc makeRelations*(data: var LineData, line: JsonNode, config: MetaConfig) =
   for phone in data.phones:
     phone.owner = some(data.person.id)
     data.person.phones.add(phone.id)
-  for org in data.orgs:
-    var membership = BookerMembership(parent: org.id, child: data.person.id)
-    membership.title = line[config.peopleJ.roles][org.name]["title"].getStr
-    membership.relation_type = line[config.peopleJ.roles][org.name]["type"].getStr
-    membership.start_date = line[config.peopleJ.roles][org.name]["start_date"].getStr("")
-    membership.end_date = line[config.peopleJ.roles][org.name]["end_date"].getStr("")
-    membership.makeId
-    data.memberships.add(membership)
 
 proc parseJsonPerson*(line: JsonNode, config: MetaConfig): LineData =
   ## Parse a Json line and return LineData about a person
   when defined(debug):
     echo $line
   # TODO work on a proc to fill instead of creating a new object (thats slow)
-  # TODO Split this up
   var data = LineData()
   data.person = line.parsePersonJ(config)
   data.emails = line.parsePersonEmailJ(config)
-  data.orgs = line.parsePersonOrgJ(config)
+  if config.peopleJ.orgName.len != 0:
+    line.parseOrgMetaJ(data, config)
+  if config.peopleJ.roles.len != 0:
+    line.parseRolesJ(data, config)
   data.phones = line.parsePersonPhoneJ(config)
   data.makeRelations(line, config)
+  when defined(debug):
+    echo "Emails: " & $data.emails.len
+    echo "Orgs" & $data.orgs.len
+    echo "Memberships" & $data.memberships.len
   result = data
