@@ -8,7 +8,7 @@ Joptions.allowMissingKeys = true
 Joptions.allowExtraKeys = true
 const
   ORG_WEIGHT = 5
-  ADDRESS_WEIGHT = 5
+  ADDRESS_WEIGHT = 0
   EMAIL_WEIGHT = 0
   POL_WEIGHT = 0
   IP_WEIGHT = 0
@@ -38,6 +38,7 @@ type
       ## A object that represents a person in starvar intel
       ## NOTE: person is merged with member and member is no longer used
       fname*: Option[string]
+      pid*: Option[int]
       mname*: Option[string]
       lname*: Option[string]
       bio*: Option[string]
@@ -170,87 +171,81 @@ type
       cve_number*: string
       score*: int
 
-proc makeHash*(): string =
-  result = $genUUID()
-
+proc makeHash*(input: string): string =
+  result = $hash(input)
+  when defined(debug):
+    echo $result
 proc makeId*(doc: BookerPerson, id=0) =
   ## Create a uuid.
-  doc.id = makeHash()
+  doc.id = $genUUID()
 
 proc makeId*(doc: BookerOrg) =
   ## Create a uuid.
-  doc.id = makeHash()
+  doc.id = $genUUID()
 
 proc makeId*(doc: BookerEmail) =
   ## Create a uuid.
-  doc.id = makeHash()
+  doc.id = $genUUID()
 
 proc makeId*(doc: BookerAddress) =
   ## Create a uuid.
-  doc.id = makeHash()
+  doc.id = $genUUID()
 
 proc makeId*(doc: BookerPhone) =
   ## Create a uuid.
   ## There may be many of the same phone number
   ## UUID here is based on the owner id and phone number
-  doc.id = makeHash()
+  doc.id = $genUUID()
 
 
 proc makeId*(doc: BookerUsername) =
   ## Create a uuid.
-  doc.id = makeHash()
+  doc.id = $genUUID()
 
 proc makeId*(doc: BookerMessage) =
   ## Create a uuid.
-  doc.id = makeHash()
+  doc.id = $genUUID()
 
 proc makeId*(doc: BookerEmailMessage) =
   ## Create a uuid for the document
-  doc.id = makeHash()
+  doc.id = $genUUID()
 
 proc makeId*(doc: BookerMembership) =
   ## Create a uuid for the document
-  doc.id = makeHash()
+  doc.id = $genUUID()
 
 
 proc makeId*(doc: BookerBreach) =
   ## Create a uuid.
-  doc.id = makeHash()
+  doc.id = $genUUID()
 
 proc makeId*(doc: BookerWebService) =
   ## Create a uuid.
-  doc.id = makeHash()
+  doc.id = $genUUID()
 
 proc makeId*(doc: BookerHost) =
   ## Create a uuid.
-  doc.id = makeHash()
+  doc.id = $genUUID()
 
 proc makeId*(doc: BookerCVE) =
   ## Create a  uuid.
-  doc.id = makeHash()
+  doc.id = $genUUID()
 
-proc fixDoc*(doc: JsonNode ): JsonNode =
+proc fixDoc*(doc: JsonNode , mode="egress"): JsonNode =
   ## adds the _rev and _id fields
   ## this is becuase of a limitation of nim
+  ## Set mode to egress when sending docs, ingress
   # FIXME this is bad
-  if doc.hasKey("_id"):
-    doc{"id"} = doc["_id"]
-    doc.delete("_id")
+  case mode:
+    of "egress":
+      doc{"_id"} = doc["id"]
 
-  if doc.hasKey("rev"):
-    doc{"_rev"} = doc["rev"]
-    doc.delete("_rev")
+      if doc.hasKey("rev"):
+        doc{"_rev"} = doc["rev"]
 
-  if doc.hasKey("_id"):
-    doc{"id"} = doc["_id"]
-    doc.delete("_rev")
-
-
-  if doc.hasKey("_rev"):
-    doc["rev"] = doc["_rev"]
-    doc.delete("rev")
-  when defined(debug):
-    echo $doc
+    of "ingress":
+      doc{"id"} = doc["_id"]
+      doc["rev"] = doc["_rev"] # we should always have this
   result = doc
 
 

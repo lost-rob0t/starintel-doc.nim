@@ -47,7 +47,6 @@ type
   EmailJson* = ref object of BaseJson
     email*: string
     username*: string
-
     ## If you have the email username, domain and password
     emailUsername*: string
     emailDomain*: string
@@ -175,6 +174,7 @@ proc parseOrgMetaJ*(line: JsonNode, data: var LineData, config: MetaConfig) =
   var org = BookerOrg(name: line[config.peopleJ.orgName].getStr, `type`: "org")
   org.makeId
   data.orgs.add(org)
+
 proc parseRolesJ*(line: JsonNode, data: var LineData, config: MetaConfig) =
   for key in line[config.peopleJ.roles].keys:
     let d = line[config.peopleJ.roles][key]
@@ -187,6 +187,7 @@ proc parseRolesJ*(line: JsonNode, data: var LineData, config: MetaConfig) =
     data.person.memberships.add(membership.id)
     data.orgs.add(org)
     data.memberships.add(membership)
+
 proc makeRelations*(data: var LineData, line: JsonNode, config: MetaConfig) =
   for email in data.emails:
     email.owner = some(data.person.id)
@@ -214,3 +215,7 @@ proc parseJsonPerson*(line: JsonNode, config: MetaConfig): LineData =
     echo "Orgs" & $data.orgs.len
     echo "Memberships" & $data.memberships.len
   result = data
+
+
+
+#TODO https://nim-lang.org/docs/destructors.html#lifetimeminustracking-hooks

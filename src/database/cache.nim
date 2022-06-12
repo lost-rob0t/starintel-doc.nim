@@ -12,7 +12,14 @@ type
     memberships*: LruCache[string, BookerMembership]
     phones*: LruCache[string, BookerPhone]
 
-
+  DocumentBuffer* = ref object
+    orgs*: seq[BookerOrg]
+    people*: seq[BookerPerson]
+    emails*: seq[BookerEmail]
+    phones*: seq[BookerPhone]
+    locations*: seq[BookerAddress]
+    memberships*: seq[BookerMembership]
+    max*: int
 
 proc upSert*(doc1, doc2: BookerPerson): BookerPerson =
   ## TODO add rev update
@@ -62,46 +69,13 @@ proc createCache*(size: int): DocumentCache =
   d.memberships = newLRUCache[string, BookerMembership](size)
   result = d
 
-proc insert*(cache: var DocumentCache, doc: var BookerPerson) =
-  var
-    id = 1
-    checkpoint: bool
-  while checkpoint == false:
-    if cache.people.contains(doc.id):
-      if cache.people[doc.id].checkDiff(doc) == true:
-        var ndoc = doc.upSert(cache.people[doc.id])
-        cache.people[doc.id]= ndoc
-        checkpoint = true
-      else:
-        doc.makeId(id)
-    else:
-      cache.people[doc.id]= doc
-      checkpoint = true
-    id += 1
-proc insert*(cache: var DocumentCache, doc: var BookerEmail) =
-  var checkpoint: bool
-  while checkpoint == false:
-    var ndoc = doc
-    cache.emails[doc.id]= doc #emails should not conflict!
-    checkpoint = true;
+proc createBuffer*(size: int): DocumentBuffer =
+  result = DocumentBuffer()
+  result.max = size
 
-proc insert*(cache: var DocumentCache, doc: var BookerAddress) =
-  var checkpoint: bool
-  while checkpoint == false:
-    if cache.locations.contains(doc.id):
-      var ndoc = doc.upSert(cache.locations[doc.id])
-      cache.locations[doc.id]= ndoc
-      checkpoint = true
-    else:
-      discard cache.locations.put(doc.id, doc)
-      checkpoint = true
-proc insert*(cache: var DocumentCache, doc: var BookerOrg) =
-  var checkpoint: bool
-  while checkpoint == false:
-    if cache.orgs.contains(doc.id):
-      var ndoc = doc.upSert(cache.orgs[doc.id])
-      cache.orgs[doc.id]= ndoc
-      checkpoint = true
-    else:
-      discard cache.orgs.put(doc.id, doc)
-      checkpoint = true
+
+proc len*(buffer: DocumentBuffer): int =
+  let result = buffer.people.len + buffer.emails.len + buffer.phones.len + buffer.orgs.len + buffer.locations.len + buffer.memberships.len
+
+proc clearBuffer*(size: int): DocumentBuffer =
+  result = createBuffer(size)
