@@ -1,4 +1,7 @@
 #+TITLE: Readme
+* NOTE
+This is going to be going under a heavy rewrite.
+Goals are to split up the project and to abstract away from a end user application.
 
 * Starintel-doc.nim
 
