@@ -6,19 +6,6 @@ import uuids
 var Joptions*: Joptions
 Joptions.allowMissingKeys = true
 Joptions.allowExtraKeys = true
-const
-  ORG_WEIGHT = 5
-  ADDRESS_WEIGHT = 0
-  EMAIL_WEIGHT = 0
-  POL_WEIGHT = 0
-  IP_WEIGHT = 0
-  EDUCATION_WEIGHT = 0
-  GENDER_WEIGHT = 0
-  AGE_WEIGHT = 0
-  DOB_WEIGHT = 0
-  SOCIAL_WEIGHT = 0
-  MAX_SCORE = ORG_WEIGHT + ADDRESS_WEIGHT + EMAIL_WEIGHT
-  THRESHOLD = 0.6
 type
     BookerDocument* = ref object of RootObj
       ## Base Object to hold the document metadata thats used to make a dcoument and store it in couchdb
@@ -30,7 +17,6 @@ type
       source_dataset*: string
       dataset*: string
       `type`*: string
-      memberships*: seq[string]
       date_added*: string
       date_updated*: string
 
@@ -54,7 +40,7 @@ type
       comments*:  seq[string]
       gender*: Option[string]
       political_party*: Option[string]
-
+      memberships*: seq[string]
 
 
     BookerOrg* = ref object of BookerDocument
@@ -181,15 +167,25 @@ proc makeId*(doc: BookerPerson, id=0) =
 
 proc makeId*(doc: BookerOrg) =
   ## Create a uuid.
-  doc.id = $genUUID()
+  ## Doc Duplicate is "faster" but also wastes space
+  ## Use -d:fast to allow duplicates
+  when defined(fast):
+    doc.id = $genUUID()
+  else:
+    doc.id = makeHash(doc.name)
 
 proc makeId*(doc: BookerEmail) =
   ## Create a uuid.
-  doc.id = $genUUID()
+  ## Doc Duplicate is "faster" but also wastes space
+  ## Use -d:fast to allow duplicates
+  when defined(fast):
+    doc.id = $genUUID()
+  else:
+    doc.id = makeHash(doc.email_username & doc.email_domain)
 
 proc makeId*(doc: BookerAddress) =
   ## Create a uuid.
-  doc.id = $genUUID()
+  doc.id = makeHash(doc.street & doc.city & doc.state & doc.zip)
 
 proc makeId*(doc: BookerPhone) =
   ## Create a uuid.
@@ -239,57 +235,13 @@ proc fixDoc*(doc: JsonNode , mode="egress"): JsonNode =
   case mode:
     of "egress":
       doc{"_id"} = doc["id"]
-
-      if doc.hasKey("rev"):
-        doc{"_rev"} = doc["rev"]
-
+      doc{"_rev"} = doc["rev"] # we should always have this
     of "ingress":
       doc{"id"} = doc["_id"]
       doc["rev"] = doc["_rev"] # we should always have this
+    of "create":
+      doc{"_id"} = doc["id"]
+      doc.delete("rev")
   result = doc
 
 
-proc checkDiff*(doc1, doc2: BookerPerson): bool =
-  ## Checks if 2 BookerPerson docs are simlar.
-  ## if 1 field matches return true
-  var score: int
-  for address in doc1.address:
-    if address in doc2.address:
-      score += ADDRESS_WEIGHT
-  for email in doc1.emails:
-    if email in doc2.emails:
-      score += EMAIL_WEIGHT
-  if doc1.gender == doc2.gender:
-    score += GENDER_WEIGHT
-  for social in doc1.social_media:
-    if social in doc2.social_media:
-      score += SOCIAL_WEIGHT
-
-  for org in doc1.orgs:
-    if org in doc2.orgs:
-      score += ORG_WEIGHT
-
-
-
-  let fuzz = score / MAX_SCORE
-  if fuzz >= THRESHOLD:
-    return true
-  else:
-    return false
-
-proc docInsertNew*(doc1, doc2: BookerPerson) =
-  for membership in doc1.memberships:
-    if membership notin doc2.memberships:
-      doc1.memberships.add(membership)
-  for address in doc1.address:
-    if address notin doc2.address:
-      doc1.address.add(address)
-  #TODO fix me
-  for email in doc1.emails:
-    if email notin doc2.emails:
-      doc1.emails.add(email)
-
-proc docInsertNew*(doc1, doc2: BookerAddress) =
-   for membership in doc1.memberships:
-    if membership notin doc2.memberships:
-      doc1.memberships.add(membership)

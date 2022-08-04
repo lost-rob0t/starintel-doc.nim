@@ -1,0 +1,10 @@
+* Inbox
+** TODO Remove deps and imports that are not used
+
+[[file:~/Documents/Projects/starintel-doc-nim/starintel_doc.nimble::requires "libSHA >= 1.0"]]
+** TODO Create bindings for libpostal in nim
+
+[[file:~/Documents/Projects/starintel-doc-nim/src/parsing/parse_json.nim::if config.phoneArray.len != 0:]]
+** TODO Make object clear functions :starintel:
+
+[[file:~/Documents/Projects/starintel-doc-nim/src/parsing/parse_json.nim::if config.emailArray.len != 0:]]
