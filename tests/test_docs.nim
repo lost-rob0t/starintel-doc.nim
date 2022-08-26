@@ -1,0 +1,42 @@
+import ../src/starintel_doc
+import strutils
+import options
+proc testBookerDoc() =
+  var doc = BookerDocument(operation_id: 1,
+                            source_dataset: "Tests", dataset: "Tests",
+                            dtype: "test_doc", date_added: "test", date_updated: "test", id: "test")
+  assert doc.operation_id == 1
+  assert doc.source_dataset == "Tests"
+  assert doc.dataset == "Tests"
+  assert doc.dtype == "test_doc"
+  assert doc.date_added == "test"
+  assert doc.date_updated == "test"
+  assert doc.id == "test"
+
+proc testBookerPerson() =
+  var doc = BookerPerson(operation_id: 1, source_dataset: "Tests", dataset: "Tests", dtype: "person",
+                         date_added: "test", date_updated: "test", id: "test")
+  doc.fname = some("Joe")
+  doc.mname = some("l")
+  doc.lname = some("shmoe")
+
+  assert doc.operation_id == 1
+  assert doc.source_dataset == "Tests"
+  assert doc.dataset == "Tests"
+  assert doc.dtype == "person"
+  assert doc.date_added == "test"
+  assert doc.date_updated == "test"
+  assert doc.id == "test"
+
+  doc.makeUUID
+  assert doc.id.len > 10
+  assert doc.fname == some("Joe")
+  assert doc.mname == some("l")
+  assert doc.lname == some("shmoe")
+
+proc testBookerOrg() =
+  # TODO
+  discard
+when isMainModule:
+  testBookerDoc()
+  testBookerPerson()
