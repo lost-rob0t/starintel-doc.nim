@@ -1,0 +1,5 @@
+repos:
+-   repo: https://github.com/juancarlospaco/pre-commit-nim
+    rev: master
+    hooks:
+    -   id: nimble check
