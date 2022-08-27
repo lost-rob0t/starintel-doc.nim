@@ -36,6 +36,18 @@ proc testBookerPerson() =
 proc testBookerOrg() =
   # TODO
   discard
+
+proc testBookerEmail() =
+  let email = "test@foo.bar"
+  var doc = newEmail(email)
+  assert doc.email_username == "test"
+  assert doc.email_domain == "foo.bar"
+  var docp = newEmail(email, "password")
+  assert docp.email_username == "test"
+  assert docp.email_domain == "foo.bar"
+  assert docp.email_password == some("password")
+
 when isMainModule:
   testBookerDoc()
   testBookerPerson()
+  testBookerEmail()

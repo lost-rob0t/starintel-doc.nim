@@ -5,7 +5,6 @@ type
   BookerWebService* = ref object of BookerDocument
     port*: int
     url*: Option[string]
-    owner*: string
     host*: string
     service_name*: Option[string]
     service_version*: string
@@ -52,21 +51,6 @@ type
     cc*: seq[string]
     bcc*: seq[string]
 
-
-  BookerMessage* = ref object of BookerDocument
-    ## a object representing a instant message
-    ## Use Booker EmailMessage For Email Content
-    ## BookerSocialMPost for social media post
-    message*: string
-    platform*: string
-    username*: string
-    is_reply*: bool
-    media*: bool
-    mesage_id*: Option[string]
-    reply_to*: Option[string]
-    group*: string # if none assume dm chat
-    channel*: Option[string] # for discord
-
   BookerUsername* = ref object of BookerDocument
     ## A object that represents a user
     url*: Option[string] # Url to the users page
@@ -75,6 +59,20 @@ type
     phones*: seq[string]
     emails*: seq[BookerEmail]
 
+  BookerMessage* = ref object of BookerDocument
+    ## a object representing a instant message
+    ## Use Booker EmailMessage For Email Content
+    ## BookerSocialMPost for social media post
+    message*: string
+    platform*: string
+    username*: BookerUsername
+    is_reply*: bool
+    media*: bool
+    message_id*: Option[string]
+    reply_to*: Option[BookerMessage]
+    group*: string # if none assume dm chat
+    channel*: Option[string] # for discord
+    mentions*: seq[BookerUsername]
 
 
 proc newEmail*(email: string): BookerEmail =
@@ -89,3 +87,7 @@ proc newEmail*(email, password: string): BookerEmail =
 
 proc newUsername*(username, platform: string, url=none(string)): BookerUsername =
   BookerUsername(username: username, platform: platform)
+
+proc newMessage*(message, platform, group: string, username: BookerUsername, message_id, channel = none(string)): BookerMessage =
+  BookerMessage(message: message, platform: platform, group: group, username: username, message_id: message_id, channel: channel)
+
