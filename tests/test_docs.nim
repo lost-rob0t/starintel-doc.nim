@@ -47,7 +47,14 @@ proc testBookerEmail() =
   assert docp.email_domain == "foo.bar"
   assert docp.email_password == some("password")
 
+proc testBookerUsername() =
+  let doc = newUsername("user", "localhost")
+  assert doc.url == none(string)
+  assert doc.username == "user"
+  assert doc.platform == "localhost"
+
 when isMainModule:
   testBookerDoc()
   testBookerPerson()
   testBookerEmail()
+  testBookerUsername()
