@@ -2,10 +2,8 @@ import ../src/starintel_doc
 import strutils
 import options
 proc testBookerDoc() =
-  var doc = BookerDocument(operation_id: 1,
-                            source_dataset: "Tests", dataset: "Tests",
+  var doc = BookerDocument(source_dataset: "Tests", dataset: "Tests",
                             dtype: "test_doc", date_added: "test", date_updated: "test", id: "test")
-  assert doc.operation_id == 1
   assert doc.source_dataset == "Tests"
   assert doc.dataset == "Tests"
   assert doc.dtype == "test_doc"
@@ -14,13 +12,14 @@ proc testBookerDoc() =
   assert doc.id == "test"
 
 proc testBookerPerson() =
-  var doc = BookerPerson(operation_id: 1, source_dataset: "Tests", dataset: "Tests", dtype: "person",
+  var doc = BookerPerson(source_dataset: "Tests", dataset: "Tests", dtype: "person",
                          date_added: "test", date_updated: "test", id: "test")
+  var phone = newPhone("1234567890")
+  link[BookerPerson, BookerPhone](doc, doc.phones, phone)
   doc.fname = some("Joe")
   doc.mname = some("l")
   doc.lname = some("shmoe")
-
-  assert doc.operation_id == 1
+  echo doc.phones[0].phone
   assert doc.source_dataset == "Tests"
   assert doc.dataset == "Tests"
   assert doc.dtype == "person"

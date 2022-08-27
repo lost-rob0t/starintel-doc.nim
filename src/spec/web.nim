@@ -1,4 +1,4 @@
-import std/[options]
+import std/[options, strutils]
 import uuids, documents
 
 type
@@ -40,8 +40,6 @@ type
     email_domain*: string
     email_password*: Option[string]
     data_breach*: seq[string]
-    owner*: Option[string]
-    username*: Option[string] # points to the owner
 
 
   BookerEmailMessage* = ref object of BookerDocument
@@ -75,8 +73,19 @@ type
     username*: string
     platform*: string
     phones*: seq[string]
-    emails*: seq[string]
-    orgs*: seq[string]
-    owner*: string
+    emails*: seq[BookerEmail]
 
 
+
+proc newEmail*(email: string): BookerEmail =
+  ## Take a email in the format of user@foo.bar and return a booker email
+  let emailData = email.split("@")
+  BookerEmail(email_username: emailData[0], email_domain: emailData[1])
+
+proc newEmail*(email, password: string): BookerEmail =
+  let emailData = email.split("@")
+  BookerEmail(email_username: emailData[0],
+              email_domain: emailData[1], email_password: some(password))
+
+proc newUsername*(username, platform: string, url=none(string)): BookerUsername =
+  BookerUsername(username: username, platform: platform)

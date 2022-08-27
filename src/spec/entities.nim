@@ -1,5 +1,5 @@
 import std/[options, ]
-import documents, locations, web
+import documents, locations, web, phones
 
 type
   BookerEntity* = ref object of BookerDocument
@@ -19,7 +19,7 @@ type
     emailFormat*: Option[string]
     officers*: seq[BookerPerson]
     website*: Option[string]
-    boardMembers*: seq[BookerOrg]
+    boardMembers*: seq[BookerPerson]
     address*: seq[BookerAddress]
 
   BookerPerson* = ref object of BookerEntity
@@ -32,11 +32,11 @@ type
     dob*: Option[string]
     age*: Option[int]
     social_media*:  seq[string]
-    phones*: seq[string]
+    phones*: seq[BookerPhone]
     emails*: seq[BookerEmail]
     address*: seq[BookerAddress]
     ip*: seq[string]
-    orgs*: seq[string]
+    orgs*: seq[BookerOrg]
     education*: seq[string]
     gender*: Option[string]
     political_party*: Option[string]

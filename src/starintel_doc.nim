@@ -1,2 +1,2 @@
-import spec/[documents, entities, web]
-export documents, entities, web
+import spec/spec
+export spec
