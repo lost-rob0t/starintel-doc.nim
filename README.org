@@ -1,12 +1,8 @@
 #+TITLE: Readme
-* NOTE
-This is going to be going under a heavy rewrite.
-Goals are to split up the project and to abstract away from a end user application.
-
 * Starintel-doc.nim
+Star intel is a project that helps osint operators injest larges amounts of information relating to social orgs for osint uses.
 
-This is a port of the starintel-doc specification from python to nim.
-
-it is not 100% feature parity, but in the future i may try a nim2python solution for that.
-
-* TODO Define the document types
+some usage examples can be found in the ~tests/~ dir.
+You can also run
+~nim doc --project src/starintel_doc.nim~ to get html docs.
+feel free to reach out if you need help.
