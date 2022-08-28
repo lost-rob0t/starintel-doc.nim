@@ -1,9 +1,6 @@
-import std/[jsonutils, hashes, tables, json, options, sequtils, strutils]
+import std/[hashes]
 import uuids
 # TODO whendifed fast is using uuids, which is slow, flip them
-var Joptions*: Joptions
-Joptions.allowMissingKeys = true
-Joptions.allowExtraKeys = true
 
 type
     BookerDocument* = ref object of RootObj
