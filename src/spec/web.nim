@@ -65,13 +65,14 @@ type
     ## BookerSocialMPost for social media post
     message*: string
     platform*: string
-    username*: BookerUsername
+    user*: BookerUsername
     is_reply*: bool
     media*: bool
-    message_id*: Option[string]
+    message_id*: string
     reply_to*: Option[BookerMessage]
     group*: string # if none assume dm chat
-    channel*: Option[string] # for discord
+    channel*: string # for discord
+    owner*: BookerUsername
     mentions*: seq[BookerUsername]
 
 
@@ -80,14 +81,34 @@ proc newEmail*(email: string): BookerEmail =
   let emailData = email.split("@")
   BookerEmail(email_username: emailData[0], email_domain: emailData[1])
 
-proc newEmail*(email, password: string): BookerEmail =
-  let emailData = email.split("@")
-  BookerEmail(email_username: emailData[0],
-              email_domain: emailData[1], email_password: some(password))
+
+proc newEmail*(username, domain: string): BookerEmail =
+  ## Create a new BookerEmail from username and domain
+  BookerEmail(email_username: username, email_domain: domain)
+
+
+proc newEmail*(username, domain, password: string): BookerEmail =
+  ## Create a new BookerEmail from username and domain with the leaked password
+  BookerEmail(email_username: username, email_domain: domain, email_password: some(password))
+
 
 proc newUsername*(username, platform: string, url=none(string)): BookerUsername =
   BookerUsername(username: username, platform: platform)
 
-proc newMessage*(message, platform, group: string, username: BookerUsername, message_id, channel = none(string)): BookerMessage =
-  BookerMessage(message: message, platform: platform, group: group, username: username, message_id: message_id, channel: channel)
 
+proc newMessage*(message, group, platform: string, user: BookerUsername, channel="", message_id=""): BookerMessage =
+  ## Create a new message from a instant messaging platform
+  BookerMessage(message: message, platform: platform, group: group,
+                user: user, message_id: message_id, channel: channel)
+
+
+proc replyMessage*(source: var BookerMessage, dest: BookerMessage) =
+  source.reply_to = some(dest)
+
+
+proc replyMessage*(source: BookerMessage, dest: BookerMessage): BookerMessage =
+  source.reply_to = some(dest)
+
+
+proc getReply*(message: BookerMessage): BookerMessage =
+  result = message.reply_to.get()

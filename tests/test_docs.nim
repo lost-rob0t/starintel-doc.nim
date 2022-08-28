@@ -1,6 +1,7 @@
 import ../src/starintel_doc
 import strutils
 import options
+
 proc testBookerDoc() =
   var doc = BookerDocument(source_dataset: "Tests", dataset: "Tests",
                             dtype: "test_doc", date_added: "test", date_updated: "test", id: "test")
@@ -42,10 +43,15 @@ proc testBookerEmail() =
   var doc = newEmail(email)
   assert doc.email_username == "test"
   assert doc.email_domain == "foo.bar"
-  var docp = newEmail(email, "password")
-  assert docp.email_username == "test"
-  assert docp.email_domain == "foo.bar"
-  assert docp.email_password == some("password")
+
+  var doc1 = newEmail("test", "foo.bar")
+  assert doc1.email_username == "test"
+  assert doc1.email_domain == "foo.bar"
+  var doc2 = newEmail("test", "foo.bar", "password")
+  assert doc2.email_username == "test"
+  assert doc2.email_domain == "foo.bar"
+  assert doc2.email_password.get == "password"
+
 
 proc testBookerUsername() =
   let doc = newUsername("user", "localhost")
@@ -53,8 +59,30 @@ proc testBookerUsername() =
   assert doc.username == "user"
   assert doc.platform == "localhost"
 
+proc testBookerMessage() =
+  let message = "Wow Star intel is a really cool project!"
+  var user = newUsername("user", "localhost")
+  let doc = newMessage(message=message, platform="irc", group="#star-intel-irc", user=user)
+  assert doc.message == message
+  assert doc.user == user
+  assert doc.platform == "irc"
+  assert doc.group == "#star-intel-irc"
+  assert doc.message_id == ""
+  assert doc.message_id == ""
+  assert doc.is_reply == false
+  assert doc.reply_to == none(BookerMessage)
+  var doc1 = doc
+  doc1.replyMessage(doc)
+  let doc3 = doc1.getReply
+  assert doc3.message == message
 when isMainModule:
+  echo "Testing: BookerDocument"
   testBookerDoc()
+  echo "Testing: BookerPerson"
   testBookerPerson()
+  echo "Testing: BookerEmail"
   testBookerEmail()
+  echo "Testing: BookerUsername"
   testBookerUsername()
+  echo "Testing BookerMessage"
+  testBookerMessage()
