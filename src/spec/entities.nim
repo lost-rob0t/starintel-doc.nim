@@ -5,40 +5,43 @@ type
   BookerEntity* = ref object of BookerDocument
     ## A base object that represents a entity
     ## Type of entity such as group, NGO, person, software, ect.
-    etype: string
+    etype*: string
 
     ## Entity uuid that is globaly unique
-    eid: string
+    eid*: string
 
 
   BookerOrg* = ref object of BookerEntity
-    reg*: Option[string]
-    country*: Option[string]
+    reg*: string
+    country*: string
     name*: string
     founders*: seq[BookerPerson]
-    emailFormat*: Option[string]
     officers*: seq[BookerPerson]
-    website*: Option[string]
+    website*: string
     boardMembers*: seq[BookerPerson]
     address*: seq[BookerAddress]
 
   BookerPerson* = ref object of BookerEntity
     ## A object that represents a person in starintel
     ## NOTE: person is merged with member and member is no longer used
-    fname*: Option[string]
-    mname*: Option[string]
-    lname*: Option[string]
-    bio*: Option[string]
-    dob*: Option[string]
-    age*: Option[int]
-    social_media*:  seq[string]
+    fname*: string
+    mname*: string
+    lname*: string
+    bio*: string
+    dob*: string
+    age*: int
+    social_media*: seq[BookerUsername]
     phones*: seq[BookerPhone]
     emails*: seq[BookerEmail]
     address*: seq[BookerAddress]
     ip*: seq[string]
     orgs*: seq[BookerOrg]
-    education*: seq[string]
-    gender*: Option[string]
+    education*: seq[BookerOrg]
+    gender*: string
     political_party*: Option[string]
     interests*: seq[string]
     memberships*: seq[string]
+
+
+proc newOrg*(name, etype: string): BookerOrg =
+  BookerOrg(name: name, etype: etype, reg: "", country: "", website: "")

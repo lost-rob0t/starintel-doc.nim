@@ -17,9 +17,9 @@ proc testBookerPerson() =
                          date_added: "test", date_updated: "test", id: "test")
   var phone = newPhone("1234567890")
   link[BookerPerson, BookerPhone](doc, doc.phones, phone)
-  doc.fname = some("Joe")
-  doc.mname = some("l")
-  doc.lname = some("shmoe")
+  doc.fname = "Joe"
+  doc.mname = "l"
+  doc.lname = "shmoe"
   echo doc.phones[0].phone
   assert doc.source_dataset == "Tests"
   assert doc.dataset == "Tests"
@@ -30,14 +30,14 @@ proc testBookerPerson() =
 
   doc.makeUUID
   assert doc.id.len > 10
-  assert doc.fname == some("Joe")
-  assert doc.mname == some("l")
-  assert doc.lname == some("shmoe")
+  assert doc.fname == "Joe"
+  assert doc.mname == "l"
+  assert doc.lname == "shmoe"
 
 proc testBookerOrg() =
-  # TODO
-  discard
-
+  var doc = newOrg(name="Star Intel", etype="Software")
+  assert doc.name == "Star Intel"
+  assert doc.etype == "Software"
 proc testBookerEmail() =
   let email = "test@foo.bar"
   var doc = newEmail(email)
@@ -80,6 +80,8 @@ when isMainModule:
   testBookerDoc()
   echo "Testing: BookerPerson"
   testBookerPerson()
+  echo "Testing: BookerOrg"
+  testBookerOrg()
   echo "Testing: BookerEmail"
   testBookerEmail()
   echo "Testing: BookerUsername"
