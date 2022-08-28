@@ -63,6 +63,9 @@ type
     ## a object representing a instant message
     ## Use Booker EmailMessage For Email Content
     ## BookerSocialMPost for social media post
+    ## This is a link list of sorts
+    ## Just check the reply_to field until it is empty
+    # TODO add iterator to traverse replys
     message*: string
     platform*: string
     user*: BookerUsername
