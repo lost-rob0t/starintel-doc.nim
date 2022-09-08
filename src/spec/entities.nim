@@ -41,7 +41,6 @@ type
     political_party*: Option[string]
     interests*: seq[string]
     memberships*: seq[string]
-
-
+    region*: string
 proc newOrg*(name, etype: string): BookerOrg =
   BookerOrg(name: name, etype: etype, reg: "", country: "", website: "")
