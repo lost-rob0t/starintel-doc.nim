@@ -39,7 +39,7 @@ type
     email_domain*: string
     email_password*: Option[string]
     data_breach*: seq[string]
-
+    eid*: string
 
   BookerEmailMessage* = ref object of BookerDocument
     ## a object represented as a email message
@@ -58,6 +58,7 @@ type
     platform*: string
     phones*: seq[string]
     emails*: seq[BookerEmail]
+    eid*: string
 
   BookerMessage* = ref object of BookerDocument
     ## a object representing a instant message
@@ -82,18 +83,24 @@ type
 proc newEmail*(email: string): BookerEmail =
   ## Take a email in the format of user@foo.bar and return a booker email
   let emailData = email.split("@")
-  BookerEmail(email_username: emailData[0], email_domain: emailData[1])
-
+  var e = BookerEmail(email_username: emailData[0], email_domain: emailData[1])
+  e.makeUUID()
+  e.makeEID(email)
+  result = e
 
 proc newEmail*(username, domain: string): BookerEmail =
   ## Create a new BookerEmail from username and domain
-  BookerEmail(email_username: username, email_domain: domain)
-
+  var e = BookerEmail(email_username: username, email_domain: domain)
+  e.makeEID(username & domain)
+  e.makeUUID
+  result = e
 
 proc newEmail*(username, domain, password: string): BookerEmail =
   ## Create a new BookerEmail from username and domain with the leaked password
-  BookerEmail(email_username: username, email_domain: domain, email_password: some(password))
-
+  var e = BookerEmail(email_username: username, email_domain: domain, email_password: some(password))
+  e.makeEID(username & domain)
+  e.makeUUID
+  result = e
 
 proc newUsername*(username, platform: string, url=none(string)): BookerUsername =
   BookerUsername(username: username, platform: platform)

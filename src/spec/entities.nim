@@ -43,4 +43,9 @@ type
     memberships*: seq[string]
     region*: string
 proc newOrg*(name, etype: string): BookerOrg =
-  BookerOrg(name: name, etype: etype, reg: "", country: "", website: "")
+  var o = BookerOrg(name: name, etype: etype, reg: "", country: "", website: "")
+  o.makeEID(name)
+  o.makeUUID()
+  result = o
+
+# TODO add procs for adding board members/officers

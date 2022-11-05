@@ -38,19 +38,30 @@ proc testBookerOrg() =
   var doc = newOrg(name="Star Intel", etype="Software")
   assert doc.name == "Star Intel"
   assert doc.etype == "Software"
+  assert doc.eid.len > 0
+  assert doc.id.len > 0
 proc testBookerEmail() =
   let email = "test@foo.bar"
   var doc = newEmail(email)
   assert doc.email_username == "test"
   assert doc.email_domain == "foo.bar"
+  assert doc.eid.len > 0
+  assert doc.id.len > 0
 
   var doc1 = newEmail("test", "foo.bar")
   assert doc1.email_username == "test"
   assert doc1.email_domain == "foo.bar"
+  assert doc.eid.len > 0
+  assert doc.id.len > 0
+
+
   var doc2 = newEmail("test", "foo.bar", "password")
   assert doc2.email_username == "test"
   assert doc2.email_domain == "foo.bar"
   assert doc2.email_password.get == "password"
+  assert doc.eid.len > 0
+  assert doc.id.len > 0
+
 
 
 proc testBookerUsername() =

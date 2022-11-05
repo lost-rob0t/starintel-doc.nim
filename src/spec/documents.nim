@@ -1,6 +1,5 @@
 import std/[hashes]
 import uuids
-
 type
     BookerDocument* = ref object of RootObj
       ## Base Object to hold the document metadata thats used to make a dcoument and store it in couchdb
