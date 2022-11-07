@@ -49,3 +49,11 @@ proc newOrg*(name, etype: string): BookerOrg =
   result = o
 
 # TODO add procs for adding board members/officers
+
+proc clear*(doc: var BookerPerson) =
+  doc.emails = @[]
+  doc.phones = @[]
+  doc.ip = @[]
+  doc.social_media = @[]
+  doc.address = @[]
+  doc.orgs = @[]
