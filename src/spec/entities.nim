@@ -20,7 +20,7 @@ type
     website*: string
     boardMembers*: seq[BookerPerson]
     address*: seq[BookerAddress]
-
+    bio*: string
   BookerPerson* = ref object of BookerEntity
     ## A object that represents a person in starintel
     ## NOTE: person is merged with member and member is no longer used
@@ -42,6 +42,20 @@ type
     interests*: seq[string]
     memberships*: seq[string]
     region*: string
+
+proc renameHook*(v: var BookerPerson, fieldName: var string) =
+  if fieldName == "rev":
+    fieldName = "_rev"
+  if fieldName == "id":
+    fieldName = "_id"
+proc renameHook*(v: var BookerOrg, fieldName: var string) =
+  if fieldName == "rev":
+    fieldName = "_rev"
+  if fieldName == "id":
+    fieldName = "_id"
+
+
+
 proc newOrg*(name, etype: string): BookerOrg =
   var o = BookerOrg(name: name, etype: etype, reg: "", country: "", website: "")
   o.makeEID(name)
