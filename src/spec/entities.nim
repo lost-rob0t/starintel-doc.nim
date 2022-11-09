@@ -1,4 +1,3 @@
-import std/[options, ]
 import documents, locations, web, phones
 
 type
@@ -38,7 +37,7 @@ type
     orgs*: seq[BookerOrg]
     education*: seq[BookerOrg]
     gender*: string
-    political_party*: Option[string]
+    political_party*: string
     interests*: seq[string]
     memberships*: seq[string]
     region*: string
