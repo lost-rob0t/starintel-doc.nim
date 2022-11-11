@@ -84,20 +84,17 @@ proc newEmail*(email: string): BookerEmail =
   let emailData = email.split("@")
   var e = BookerEmail(email_username: emailData[0], email_domain: emailData[1])
   e.makeUUID()
-  e.makeEID(email)
   result = e
 
 proc newEmail*(username, domain: string): BookerEmail =
   ## Create a new BookerEmail from username and domain
   var e = BookerEmail(email_username: username, email_domain: domain)
-  e.makeEID(username & domain)
   e.makeUUID
   result = e
 
 proc newEmail*(username, domain, password: string): BookerEmail =
   ## Create a new BookerEmail from username and domain with the leaked password
   var e = BookerEmail(email_username: username, email_domain: domain, email_password: some(password))
-  e.makeEID(username & domain)
   e.makeUUID
   result = e
 

@@ -1,13 +1,13 @@
 import options
 import parsecsv
 import json
-import ../starintel_doc
+import ../spec/spec
 import strutils
 ## Parse Json or csv data into spec complient json data.
 
 type
 
-  People* = ref object
+  People* = object
     ## Configuration for json data holding data about people
     ## Fields are used to hold the name of the field
     fname*: string
@@ -31,20 +31,19 @@ type
     phoneArray*: string # TODO
     bio*: string
     socialMediaArray*: string
+    socialMedia*: string
     lat*: string
     long*: string
-    ip*: string
-    interests*: string
     dob*: string
     gender*: string
-  Orgs* = ref object
+  Orgs* = object
     ## Configuration for json data holding organization data
     name*: string
     orgType*: string
     reg*: string
 
 
-  Emails* = ref object
+  Emails* =  object
     email*: string
     username*: string
     ## If you have the email username, domain and password
@@ -52,7 +51,7 @@ type
     emailDomain*: string
     emailPassword*: string
 
-  Address* = ref object
+  Address* =  object
     ## Configuration for json data holding address data
     street*: string
     city*: string
@@ -60,14 +59,14 @@ type
     zip*: string
     street2*: string
 
-  MetaData* = ref object
+  MetaData* =  object
     ## Not to Be confused with MetaConfig, this is the object holding metadata like dats and dataset info
     dateAdded*: string
     dateUpdated*: string
     dataset*: string
     sourceDataset*: string
     defaultOrgType*: string
-  MetaConfig* = ref object
+  MetaConfig* =  object
     ## Meta config holding all configrations for import jobs
     peopleJ*: People
     orgJ*: Orgs
@@ -124,12 +123,8 @@ proc parsePerson*(config: MetaConfig, line: JsonNode): BookerPerson =
     let address = newAddress(street, street2, city, postal, state, country, lat, long)
     person.address.add(address)
     person.region = city & ", " & country
-  if config.peopleJ.interests != "":
-    for i in line[config.peopleJ.interests].getElems:
-        person.interests.add(i.getStr)
   person.dob = line{config.peopleJ.dob}.getStr("")
   person.gender = line{config.peopleJ.gender}.getStr("")
-
   result = person
 
 
