@@ -14,11 +14,8 @@ type
     reg*: string
     country*: string
     name*: string
-    founders*: seq[BookerPerson]
     officers*: seq[BookerPerson]
     website*: string
-    boardMembers*: seq[BookerPerson]
-    address*: seq[BookerAddress]
     bio*: string
   BookerPerson* = ref object of BookerEntity
     ## A object that represents a person in starintel
@@ -28,20 +25,14 @@ type
     lname*: string
     bio*: string
     dob*: string
-    age*: int
     social_media*: seq[BookerUsername]
     phones*: seq[BookerPhone]
     emails*: seq[BookerEmail]
     address*: seq[BookerAddress]
-    ip*: seq[string]
     orgs*: seq[BookerOrg]
-    education*: seq[BookerOrg]
     gender*: string
-    political_party*: string
-    interests*: seq[string]
-    memberships*: seq[string]
     region*: string
-
+    misc*: seq[string]
 proc renameHook*(v: var BookerPerson, fieldName: var string) =
   if fieldName == "rev":
     fieldName = "_rev"
@@ -66,7 +57,6 @@ proc newOrg*(name, etype: string): BookerOrg =
 proc clear*(doc: var BookerPerson) =
   doc.emails = @[]
   doc.phones = @[]
-  doc.ip = @[]
   doc.social_media = @[]
   doc.address = @[]
   doc.orgs = @[]

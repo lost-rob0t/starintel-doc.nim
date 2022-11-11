@@ -1,6 +1,6 @@
 # Package
 
-version     = "1.0.1"
+version     = "0.2.2"
 author      = "nsaspy"
 description = "Parse and handle starintel docs"
 license     = "MIT"
