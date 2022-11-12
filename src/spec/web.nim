@@ -1,6 +1,6 @@
 import std/[options, strutils]
 import uuids, documents
-
+import json
 type
   BookerWebService* = ref object of BookerDocument
     port*: int
