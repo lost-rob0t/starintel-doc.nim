@@ -60,6 +60,7 @@ type
     emails*: seq[BookerEmail]
     eid*: string
     misc*: seq[JsonNode]
+    bio*: string
   BookerMessage* = ref object of BookerDocument
     ## a object representing a instant message
     ## Use Booker EmailMessage For Email Content
