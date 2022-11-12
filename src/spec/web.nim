@@ -8,7 +8,7 @@ type
     host*: string
     service_name*: Option[string]
     service_version*: string
-
+    eid*: string
   BookerHost* = ref object of BookerDocument
     ip*: string
     hostname*: string
@@ -19,7 +19,7 @@ type
     owner*: string
     vulns*: seq[string]
     services*: seq[string]
-
+    eid*: string
   BookerCVE* = ref object of BookerDocument
     cve_number*: string
     score*: int
@@ -30,6 +30,7 @@ type
     description*: string
     url*: string
 
+    eid*: string
 
   BookerEmail* = ref object of BookerDocument
     ## A email address
@@ -37,9 +38,9 @@ type
     ## data_breach is used to track what breaches the email is part of
     email_username*: string
     email_domain*: string
-    email_password*: Option[string]
+    email_password*: string
     data_breach*: seq[string]
-
+    eid*: string
   BookerEmailMessage* = ref object of BookerDocument
     ## a object represented as a email message
     body*: string
@@ -49,15 +50,15 @@ type
     headers*: Option[string]
     cc*: seq[string]
     bcc*: seq[string]
-
+    eid*: string
   BookerUsername* = ref object of BookerDocument
     ## A object that represents a user
-    url*: Option[string] # Url to the users page
+    url*: string # Url to the users page
     username*: string
     platform*: string
     phones*: seq[string]
     emails*: seq[BookerEmail]
-
+    eid*: string
   BookerMessage* = ref object of BookerDocument
     ## a object representing a instant message
     ## Use Booker EmailMessage For Email Content
@@ -71,7 +72,7 @@ type
     is_reply*: bool
     media*: bool
     message_id*: string
-    reply_to*: Option[BookerMessage]
+    reply_to*: BookerMessage
     group*: string # if none assume dm chat
     channel*: string # for discord
     owner*: BookerUsername
@@ -83,23 +84,28 @@ proc newEmail*(email: string): BookerEmail =
   let emailData = email.split("@")
   var e = BookerEmail(email_username: emailData[0], email_domain: emailData[1])
   e.makeUUID()
+  e.makeEID(email)
   result = e
 
 proc newEmail*(username, domain: string): BookerEmail =
   ## Create a new BookerEmail from username and domain
   var e = BookerEmail(email_username: username, email_domain: domain)
   e.makeUUID
+  e.makeEID(e.email_username & e.email_domain)
   result = e
 
 proc newEmail*(username, domain, password: string): BookerEmail =
   ## Create a new BookerEmail from username and domain with the leaked password
-  var e = BookerEmail(email_username: username, email_domain: domain, email_password: some(password))
+  var e = BookerEmail(email_username: username, email_domain: domain, email_password: password)
   e.makeUUID
+  e.makeEID(e.email_username & e.email_domain)
   result = e
 
-proc newUsername*(username, platform: string, url=none(string)): BookerUsername =
-  BookerUsername(username: username, platform: platform)
-
+proc newUsername*(username, platform: string, url=""): BookerUsername =
+  var u = BookerUsername(username: username, platform: platform)
+  u.makeEID(u.username)
+  u.makeUUID
+  result = u
 
 proc newMessage*(message, group, platform: string, user: BookerUsername, channel="", message_id=""): BookerMessage =
   ## Create a new message from a instant messaging platform
@@ -108,12 +114,12 @@ proc newMessage*(message, group, platform: string, user: BookerUsername, channel
 
 
 proc replyMessage*(source: var BookerMessage, dest: BookerMessage) =
-  source.reply_to = some(dest)
+  source.reply_to = dest
 
 
 proc replyMessage*(source: BookerMessage, dest: BookerMessage): BookerMessage =
-  source.reply_to = some(dest)
+  source.reply_to = dest
 
 
 proc getReply*(message: BookerMessage): BookerMessage =
-  result = message.reply_to.get()
+  result = message.reply_to

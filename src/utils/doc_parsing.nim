@@ -64,7 +64,6 @@ type
     dateAdded*: string
     dateUpdated*: string
     dataset*: string
-    sourceDataset*: string
     defaultOrgType*: string
   MetaConfig* =  object
     ## Meta config holding all configrations for import jobs
@@ -88,7 +87,7 @@ proc readConfig*(path: string): MetaConfig =
 
 
 proc parsePerson*(config: MetaConfig, line: JsonNode): BookerPerson =
-  var person = BookerPerson(dtype: "person", dataset: config.metadataJ.dataset, source_dataset: config.metadataJ.source_dataset)
+  var person = BookerPerson(dtype: "person", dataset: config.metadataJ.dataset)
   var orgs: seq[BookerOrg]
   person.fname = line{config.peopleJ.fname}.getStr("")
   person.lname = line{config.peopleJ.lname}.getStr("")
@@ -96,7 +95,7 @@ proc parsePerson*(config: MetaConfig, line: JsonNode): BookerPerson =
   person.bio = line{config.peopleJ.bio}.getStr("")
   if config.peopleJ.orgArray != "":
     for o in line[config.peopleJ.orgArray].getElems:
-      var org = BookerOrg(dtype: "org", dataset: config.metadataJ.dataset, source_dataset: config.metadataJ.source_dataset, name: o.getStr(""))
+      var org = BookerOrg(dtype: "org", dataset: config.metadataJ.dataset, name: o.getStr(""))
       person.orgs.add(org)
   if config.peopleJ.orgName != "":
     #var org = BookerOrg(dtype: "org", dataset: config.metadataJ.dataset, source_dataset: config.metadataJ.source_dataset)
@@ -129,7 +128,7 @@ proc parsePerson*(config: MetaConfig, line: JsonNode): BookerPerson =
 
 
 proc parsePerson*(config: MetaConfig, parser: var CsvParser): BookerPerson =
-  var person = BookerPerson(dtype: "person", dataset: config.metadataJ.dataset, source_dataset: config.metadataJ.source_dataset)
+  var person = BookerPerson(dtype: "person", dataset: config.metadataJ.dataset)
   person.fname = parser.rowEntry(config.peopleJ.fname)
   person.mname = parser.rowEntry(config.peopleJ.mname)
   person.lname = parser.rowEntry(config.peopleJ.lname)

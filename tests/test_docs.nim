@@ -3,9 +3,8 @@ import strutils
 import options
 
 proc testBookerDoc() =
-  var doc = BookerDocument(source_dataset: "Tests", dataset: "Tests",
+  var doc = BookerDocument(dataset: "Tests",
                             dtype: "test_doc", date_added: "test", date_updated: "test", id: "test")
-  assert doc.source_dataset == "Tests"
   assert doc.dataset == "Tests"
   assert doc.dtype == "test_doc"
   assert doc.date_added == "test"
@@ -13,7 +12,7 @@ proc testBookerDoc() =
   assert doc.id == "test"
 
 proc testBookerPerson() =
-  var doc = BookerPerson(source_dataset: "Tests", dataset: "Tests", dtype: "person",
+  var doc = BookerPerson(dataset: "Tests", dtype: "person",
                          date_added: "test", date_updated: "test", id: "test")
   var phone = newPhone("1234567890")
   link[BookerPerson, BookerPhone](doc, doc.phones, phone)
@@ -21,7 +20,6 @@ proc testBookerPerson() =
   doc.mname = "l"
   doc.lname = "shmoe"
   echo doc.phones[0].phone
-  assert doc.source_dataset == "Tests"
   assert doc.dataset == "Tests"
   assert doc.dtype == "person"
   assert doc.date_added == "test"
@@ -45,28 +43,25 @@ proc testBookerEmail() =
   var doc = newEmail(email)
   assert doc.email_username == "test"
   assert doc.email_domain == "foo.bar"
-  assert doc.eid.len > 0
   assert doc.id.len > 0
 
   var doc1 = newEmail("test", "foo.bar")
   assert doc1.email_username == "test"
   assert doc1.email_domain == "foo.bar"
-  assert doc.eid.len > 0
   assert doc.id.len > 0
 
 
   var doc2 = newEmail("test", "foo.bar", "password")
   assert doc2.email_username == "test"
   assert doc2.email_domain == "foo.bar"
-  assert doc2.email_password.get == "password"
-  assert doc.eid.len > 0
+  assert doc2.email_password == "password"
   assert doc.id.len > 0
 
 
 
 proc testBookerUsername() =
   let doc = newUsername("user", "localhost")
-  assert doc.url == none(string)
+  assert doc.url == ""
   assert doc.username == "user"
   assert doc.platform == "localhost"
 
@@ -81,7 +76,6 @@ proc testBookerMessage() =
   assert doc.message_id == ""
   assert doc.message_id == ""
   assert doc.is_reply == false
-  assert doc.reply_to == none(BookerMessage)
   var doc1 = doc
   doc1.replyMessage(doc)
   let doc3 = doc1.getReply

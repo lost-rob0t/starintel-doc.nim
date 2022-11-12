@@ -4,7 +4,6 @@ type
     BookerDocument* = ref object of RootObj
       ## Base Object to hold the document metadata thats used to make a dcoument and store it in couchdb
       id*: string
-      source_dataset*: string
       dataset*: string
       dtype*: string
       date_added*: string
