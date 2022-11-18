@@ -8,6 +8,7 @@ type
     rev*: string
     dataset*: string
     date*: string
+    dtype*: string
   BookerWebService* = ref object of BookerWebDocument
     port*: int
     url*: Option[string]
@@ -83,27 +84,27 @@ type
 proc newEmail*(email: string): BookerEmail =
   ## Take a email in the format of user@foo.bar and return a booker email
   let emailData = email.split("@")
-  var e = BookerEmail(email_username: emailData[0], email_domain: emailData[1])
+  var e = BookerEmail(email_username: emailData[0], email_domain: emailData[1], dtype: "email")
   e.makeUUID()
   e.makeEID(email)
   result = e
 
 proc newEmail*(username, domain: string): BookerEmail =
   ## Create a new BookerEmail from username and domain
-  var e = BookerEmail(email_username: username, email_domain: domain)
+  var e = BookerEmail(email_username: username, email_domain: domain, dtype: "email")
   e.makeUUID
   e.makeEID(e.email_username & e.email_domain)
   result = e
 
 proc newEmail*(username, domain, password: string): BookerEmail =
   ## Create a new BookerEmail from username and domain with the leaked password
-  var e = BookerEmail(email_username: username, email_domain: domain, email_password: password)
+  var e = BookerEmail(email_username: username, email_domain: domain, email_password: password, dtype: "email")
   e.makeUUID
-  e.makeEID(e.email_username & e.email_domain)
+  e.makeEID(e.email_username & e.email_domain & e.email_password)
   result = e
 
 proc newUsername*(username, platform: string, url=""): BookerUsername =
-  var u = BookerUsername(username: username, platform: platform)
+  var u = BookerUsername(username: username, platform: platform, dtype: "username")
   u.makeEID(u.username)
   u.makeUUID
   result = u
@@ -111,16 +112,14 @@ proc newUsername*(username, platform: string, url=""): BookerUsername =
 proc newMessage*(message, group, platform: string, user: BookerUsername, channel="", message_id=""): BookerMessage =
   ## Create a new message from a instant messaging platform
   BookerMessage(message: message, platform: platform, group: group,
-                user: user, message_id: message_id, channel: channel)
+                user: user, message_id: message_id, channel: channel, dtype: "message")
 
 
 proc replyMessage*(source: var BookerMessage, dest: BookerMessage) =
   source.reply_to = dest
 
-
 proc replyMessage*(source: BookerMessage, dest: BookerMessage): BookerMessage =
   source.reply_to = dest
-
 
 proc getReply*(message: BookerMessage): BookerMessage =
   result = message.reply_to
