@@ -2,14 +2,19 @@ import std/[options, strutils]
 import uuids, documents
 import json
 type
-  BookerWebService* = ref object of BookerDocument
+  BookerWebDocument* = ref object of RootObj
+    eid*: string
+    id*: string
+    rev*: string
+    dataset*: string
+    date*: string
+  BookerWebService* = ref object of BookerWebDocument
     port*: int
     url*: Option[string]
     host*: string
     service_name*: Option[string]
     service_version*: string
-    eid*: string
-  BookerHost* = ref object of BookerDocument
+  BookerHost* = ref object of BookerWebDocument
     ip*: string
     hostname*: string
     operating_system*: string
@@ -19,20 +24,17 @@ type
     owner*: string
     vulns*: seq[string]
     services*: seq[string]
-    eid*: string
-  BookerCVE* = ref object of BookerDocument
+  BookerCVE* = ref object of BookerWebDocument
     cve_number*: string
     score*: int
 
 
-  BookerBreach* = ref object of BookerDocument
+  BookerBreach* = ref object of BookerWebDocument
     total*: int
     description*: string
     url*: string
 
-    eid*: string
-
-  BookerEmail* = ref object of BookerDocument
+  BookerEmail* = ref object of BookerWebDocument
     ## A email address
     ## Owner and Password is Optional
     ## data_breach is used to track what breaches the email is part of
@@ -40,8 +42,7 @@ type
     email_domain*: string
     email_password*: string
     data_breach*: seq[string]
-    eid*: string
-  BookerEmailMessage* = ref object of BookerDocument
+  BookerEmailMessage* = ref object of BookerWebDocument
     ## a object represented as a email message
     body*: string
     subject*: Option[string]
@@ -50,18 +51,16 @@ type
     headers*: Option[string]
     cc*: seq[string]
     bcc*: seq[string]
-    eid*: string
-  BookerUsername* = ref object of BookerDocument
+  BookerUsername* = ref object of BookerWebDocument
     ## A object that represents a user
     url*: string # Url to the users page
     username*: string
     platform*: string
     phones*: seq[string]
     emails*: seq[BookerEmail]
-    eid*: string
     misc*: seq[JsonNode]
     bio*: string
-  BookerMessage* = ref object of BookerDocument
+  BookerMessage* = ref object of BookerWebDocument
     ## a object representing a instant message
     ## Use Booker EmailMessage For Email Content
     ## BookerSocialMPost for social media post
