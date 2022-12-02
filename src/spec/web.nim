@@ -43,12 +43,9 @@ type
     email_domain*: string
     email_password*: string
     data_breach*: seq[string]
-<<<<<<< HEAD
   BookerEmailMessage* = ref object of BookerWebDocument
-=======
     eid*: string
   BookerEmailMessage* = ref object of BookerDocument
->>>>>>> dev
     ## a object represented as a email message
     body*: string
     subject*: Option[string]
