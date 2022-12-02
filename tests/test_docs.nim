@@ -58,7 +58,7 @@ proc testBookerEmail() =
   var doc2 = newEmail("test", "foo.bar", "password")
   assert doc2.email_username == "test"
   assert doc2.email_domain == "foo.bar"
-  assert doc2.email_password.get == "password"
+  assert doc2.email_password == "password"
   assert doc.eid.len > 0
   assert doc.id.len > 0
 
@@ -86,6 +86,16 @@ proc testBookerMessage() =
   doc1.replyMessage(doc)
   let doc3 = doc1.getReply
   assert doc3.message == message
+
+proc testBookerTarget() =
+  let target = "nsaspy"
+  let dataset = "git accounts"
+  let actor = "GitBot"
+  var doc = newTarget(dataset, target, actor)
+  assert doc.target == target
+  assert doc.dataset == dataset
+  assert doc.actor == actor
+
 when isMainModule:
   echo "Testing: BookerDocument"
   testBookerDoc()
@@ -97,5 +107,7 @@ when isMainModule:
   testBookerEmail()
   echo "Testing: BookerUsername"
   testBookerUsername()
-  echo "Testing BookerMessage"
+  echo "Testing: BookerMessage"
   testBookerMessage()
+  echo "Testing: BookerTarget"
+  testBookerTarget()

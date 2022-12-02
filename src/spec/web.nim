@@ -37,9 +37,9 @@ type
     ## data_breach is used to track what breaches the email is part of
     email_username*: string
     email_domain*: string
-    email_password*: Option[string]
+    email_password*: string
     data_breach*: seq[string]
-
+    eid*: string
   BookerEmailMessage* = ref object of BookerDocument
     ## a object represented as a email message
     body*: string
@@ -84,18 +84,21 @@ proc newEmail*(email: string): BookerEmail =
   let emailData = email.split("@")
   var e = BookerEmail(email_username: emailData[0], email_domain: emailData[1])
   e.makeUUID()
+  e.makeEID(e.email_password & e.email_domain)
   result = e
 
 proc newEmail*(username, domain: string): BookerEmail =
   ## Create a new BookerEmail from username and domain
   var e = BookerEmail(email_username: username, email_domain: domain)
   e.makeUUID
+  e.makeEID(e.email_password & e.email_domain)
   result = e
 
 proc newEmail*(username, domain, password: string): BookerEmail =
   ## Create a new BookerEmail from username and domain with the leaked password
-  var e = BookerEmail(email_username: username, email_domain: domain, email_password: some(password))
+  var e = BookerEmail(email_username: username, email_domain: domain, email_password: password)
   e.makeUUID
+  e.makeEID(e.email_password & e.email_domain)
   result = e
 
 proc newUsername*(username, platform: string, url=none(string)): BookerUsername =

@@ -15,9 +15,9 @@ type
 
 
 
-proc createTarget*(dataset, target, actor: string, options: JsonNode): BookerTarget =
+proc newTarget*(dataset, target, actor: string, options: JsonNode): BookerTarget =
   BookerTarget(dataset: dataset, target: target, actor: actor, options: options)
 
 
-proc createTarget*(dataset, target, actor: string): BookerTarget =
+proc newTarget*(dataset, target, actor: string): BookerTarget =
   BookerTarget(dataset: dataset, target: target, actor: actor)
