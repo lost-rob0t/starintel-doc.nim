@@ -43,7 +43,12 @@ type
     email_domain*: string
     email_password*: string
     data_breach*: seq[string]
+<<<<<<< HEAD
   BookerEmailMessage* = ref object of BookerWebDocument
+=======
+    eid*: string
+  BookerEmailMessage* = ref object of BookerDocument
+>>>>>>> dev
     ## a object represented as a email message
     body*: string
     subject*: Option[string]
@@ -87,6 +92,7 @@ proc newEmail*(email: string): BookerEmail =
   var e = BookerEmail(email_username: emailData[0], email_domain: emailData[1], dtype: "email")
   e.makeUUID()
   e.makeEID(email)
+  e.makeEID(e.email_password & e.email_domain)
   result = e
 
 proc newEmail*(username, domain: string): BookerEmail =
@@ -101,6 +107,9 @@ proc newEmail*(username, domain, password: string): BookerEmail =
   var e = BookerEmail(email_username: username, email_domain: domain, email_password: password, dtype: "email")
   e.makeUUID
   e.makeEID(e.email_username & e.email_domain & e.email_password)
+  var e = BookerEmail(email_username: username, email_domain: domain, email_password: password)
+  e.makeUUID
+  e.makeEID(e.email_password & e.email_domain)
   result = e
 
 proc newUsername*(username, platform: string, url=""): BookerUsername =
