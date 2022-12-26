@@ -1,4 +1,4 @@
-import std/[options, strutils]
+import std/[strutils]
 import uuids, documents
 import json
 type
@@ -11,9 +11,8 @@ type
     dtype*: string
   BookerWebService* = ref object of BookerWebDocument
     port*: int
-    url*: Option[string]
-    host*: string
-    service_name*: Option[string]
+    url*: string
+    service_name*: string
     service_version*: string
   BookerHost* = ref object of BookerWebDocument
     ip*: string
@@ -24,7 +23,7 @@ type
     network_name*: string
     owner*: string
     vulns*: seq[string]
-    services*: seq[string]
+    services*: seq[BookerWebService]
   BookerCVE* = ref object of BookerWebDocument
     cve_number*: string
     score*: int
