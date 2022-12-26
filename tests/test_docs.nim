@@ -1,7 +1,7 @@
 import ../src/starintel_doc
 import strutils
 import options
-
+import jsony
 proc testBookerDoc() =
   var doc = BookerDocument(dataset: "Tests",
                             dtype: "test_doc", date_added: "test", date_updated: "test", id: "test")
@@ -90,7 +90,7 @@ proc testBookerTarget() =
   assert doc.target == target
   assert doc.dataset == dataset
   assert doc.actor == actor
-
+  echo doc.toJson
 when isMainModule:
   echo "Testing: BookerDocument"
   testBookerDoc()
