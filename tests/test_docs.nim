@@ -90,9 +90,7 @@ proc testBookerTarget() =
   assert doc.target == target
   assert doc.dataset == dataset
   assert doc.actor == actor
-<<<<<<< HEAD
   echo doc.toJson
-=======
 
 proc testRelation() =
   let sourceId = "testfoobar"
@@ -102,7 +100,7 @@ proc testRelation() =
   assert doc.target == targetId
   assert doc.relation == Relations.to
   echo $doc.toJson
->>>>>>> dev
+
 when isMainModule:
   echo "Testing: BookerDocument"
   testBookerDoc()
