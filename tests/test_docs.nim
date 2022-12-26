@@ -1,7 +1,7 @@
 import ../src/starintel_doc
 import strutils
 import options
-import jsony
+import json, jsony
 proc testBookerDoc() =
   var doc = BookerDocument(dataset: "Tests",
                             dtype: "test_doc", date_added: "test", date_updated: "test", id: "test")
@@ -90,7 +90,19 @@ proc testBookerTarget() =
   assert doc.target == target
   assert doc.dataset == dataset
   assert doc.actor == actor
+<<<<<<< HEAD
   echo doc.toJson
+=======
+
+proc testRelation() =
+  let sourceId = "testfoobar"
+  let targetId = "testbarfoo"
+  var doc = newRelation(source=sourceId, target=targetId, relation = Relations.to)
+  assert doc.source == sourceId
+  assert doc.target == targetId
+  assert doc.relation == Relations.to
+  echo $doc.toJson
+>>>>>>> dev
 when isMainModule:
   echo "Testing: BookerDocument"
   testBookerDoc()
@@ -106,3 +118,5 @@ when isMainModule:
   testBookerMessage()
   echo "Testing: BookerTarget"
   testBookerTarget()
+  echo "Testing BookerRelations"
+  testRelation()
