@@ -1,4 +1,15 @@
 * Unreleased
+** [2022-12-26 Mon 18:30] 0.2.7
+Added new types
+Removed optional types from bookerweb objects
+*** BookerRelation
+Map Relations btween objects, will be useful for relating two objects
+For example a org holding a meeting or a protest with BookerPerson object attending it.
+
+*** BookerEvent
+Experimental object to represent an event such as a protest.
+Will be worked on an expanded with time.
+
 ** [2022-12-01 Thu 20:47] 0.2.6
 Added targets
 Readded EID until local hashing is implemented
