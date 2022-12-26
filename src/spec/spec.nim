@@ -1,2 +1,2 @@
-import documents, entities, locations, phones, web, targets
-export documents, entities, locations, phones, web, targets
+import documents, entities, locations, phones, web, targets, relation
+export documents, entities, locations, phones, web, targets, relation
