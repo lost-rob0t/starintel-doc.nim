@@ -12,6 +12,7 @@ type
   BookerWebService* = ref object of BookerWebDocument
     port*: int
     url*: string
+    host*: string
     service_name*: string
     service_version*: string
   BookerHost* = ref object of BookerWebDocument
@@ -46,10 +47,10 @@ type
   BookerEmailMessage* = ref object of BookerDocument
     ## a object represented as a email message
     body*: string
-    subject*: Option[string]
+    subject*: string
     to*: string
     fromF*: string
-    headers*: Option[string]
+    headers*: string
     cc*: seq[string]
     bcc*: seq[string]
   BookerUsername* = ref object of BookerWebDocument
@@ -109,7 +110,6 @@ proc newUsername*(username, platform: string, url=""): BookerUsername =
   u.makeEID(u.username)
   u.makeUUID
   result = u
-
 proc newMessage*(message, group, platform: string, user: BookerUsername, channel="", message_id=""): BookerMessage =
   ## Create a new message from a instant messaging platform
   BookerMessage(message: message, platform: platform, group: group,
