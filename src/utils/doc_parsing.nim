@@ -122,6 +122,8 @@ proc parsePerson*(config: MetaConfig, line: JsonNode): BookerPerson =
     let address = newAddress(street, street2, city, postal, state, country, lat, long)
     person.address.add(address)
     person.region = city & ", " & country
+  else:
+    person.region = line{config.peopleJ.region}.getStr("")
   person.dob = line{config.peopleJ.dob}.getStr("")
   person.gender = line{config.peopleJ.gender}.getStr("")
   result = person
@@ -164,4 +166,6 @@ proc parsePerson*(config: MetaConfig, parser: var CsvParser): BookerPerson =
         long = parser.rowEntry(config.peopleJ.long).parseFloat
     let address = newAddress(street, street2, city, postal, state, country, lat, long)
     person.address.add(address)
+  else:
+    person.region = parser.rowEntry(config.peopleJ.region)
   result = person
