@@ -4,9 +4,9 @@ import uuids, documents
 type
   BookerWebService* = ref object of BookerDocument
     port*: int
-    url*: Option[string]
+    url*: string
     host*: string
-    service_name*: Option[string]
+    service_name*: string
     service_version*: string
 
   BookerHost* = ref object of BookerDocument
@@ -43,16 +43,16 @@ type
   BookerEmailMessage* = ref object of BookerDocument
     ## a object represented as a email message
     body*: string
-    subject*: Option[string]
+    subject*: string
     to*: string
     fromF*: string
-    headers*: Option[string]
+    headers*: string
     cc*: seq[string]
     bcc*: seq[string]
 
   BookerUsername* = ref object of BookerDocument
     ## A object that represents a user
-    url*: Option[string] # Url to the users page
+    url*: string # Url to the users page
     username*: string
     platform*: string
     phones*: seq[string]
@@ -72,7 +72,7 @@ type
     is_reply*: bool
     media*: bool
     message_id*: string
-    reply_to*: Option[BookerMessage]
+    reply_to*: BookerMessage
     group*: string # if none assume dm chat
     channel*: string # for discord
     owner*: BookerUsername
@@ -101,7 +101,7 @@ proc newEmail*(username, domain, password: string): BookerEmail =
   e.makeEID(e.email_password & e.email_domain)
   result = e
 
-proc newUsername*(username, platform: string, url=none(string)): BookerUsername =
+proc newUsername*(username, platform: string, url: string = ""): BookerUsername =
   BookerUsername(username: username, platform: platform)
 
 
