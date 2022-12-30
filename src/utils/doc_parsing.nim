@@ -3,6 +3,7 @@ import parsecsv
 import json
 import ../spec/spec
 import strutils
+import strformat
 ## Parse Json or csv data into spec complient json data.
 
 type
@@ -125,7 +126,7 @@ proc parsePerson*(config: MetaConfig, line: JsonNode): BookerPerson =
   else:
     if line{config.peopleJ.region}.kind == JArray:
       for region in line{config.peopleJ.region}.getElems:
-        person.region &= region & ", "
+        person.region &= fmt"{region}, "
     person.region = line{config.peopleJ.region}.getStr("")
   person.dob = line{config.peopleJ.dob}.getStr("")
   person.gender = line{config.peopleJ.gender}.getStr("")
