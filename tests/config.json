@@ -1,0 +1,70 @@
+{
+    "jsonConfig": {
+        "meta": {
+            "id": "id",
+            "rev": "rev",
+            "dateAdded": "date",
+            "dateUpdated": "date",
+            "dataset": "YGL database",
+            "sourceDataset": "Young Global Leaders",
+            "memberships": "",
+            "operationId": "Young Global Leaders",
+            "defaultOrgType": "NGO"
+        },
+        "people": {
+            "dtype": "person",
+            "name": "",
+            "fname": "fname",
+            "mname": "mname",
+            "lname": "lname",
+            "email": "email",
+            "phone": "",
+            "orgName": "",
+            "orgType": "",
+            "phoneArray": "",
+            "emailArray": "",
+            "orgArray": "orgs",
+            "street": "",
+            "street2": "",
+            "city": "",
+            "postal": "",
+            "region": "",
+            "country": "",
+            "address": "",
+            "nameOrder": [],
+            "roles": "roles",
+            "title": "title",
+            "bio": "",
+            "socialMediaArray": "",
+            "lat": "",
+            "long": "",
+            "ip": "",
+            "dob": "",
+            "gender": "",
+            "interests": "",
+            "region": "region"
+        },
+        "orgs": {
+            "dtype": "org",
+            "name": "name",
+            "orgType": "type",
+            "reg": "reg"
+        },
+        "emails": {
+            "dtype": "email",
+            "emailUsername": "emailUsername",
+            "emailDomain": "emailDomain",
+            "emailPassword": "emailPassword",
+            "username": "username"
+        },
+        "address": {
+            "dtype": "type",
+            "street": "street",
+            "street2": "street2",
+            "city": "city",
+            "region": "region",
+            "zip": "zip",
+            "country": "country"
+        }
+    }
+}
