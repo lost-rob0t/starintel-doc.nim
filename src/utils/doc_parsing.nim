@@ -124,7 +124,7 @@ proc parsePerson*(config: MetaConfig, line: JsonNode): BookerPerson =
     person.region = city & ", " & country
   else:
     if line{config.peopleJ.region}.kind == JArray:
-      for region in line{config.peopleJ}.getElems:
+      for region in line{config.peopleJ.region}.getElems:
         person.region &= region & ", "
     person.region = line{config.peopleJ.region}.getStr("")
   person.dob = line{config.peopleJ.dob}.getStr("")
