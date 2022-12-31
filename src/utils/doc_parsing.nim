@@ -123,11 +123,11 @@ proc parsePerson*(config: MetaConfig, line: JsonNode): BookerPerson =
     let address = newAddress(street, street2, city, postal, state, country, lat, long)
     person.address.add(address)
     person.region = city & ", " & country
-  else:
-    if line{config.peopleJ.region}.kind == JArray:
-      for region in line{config.peopleJ.region}.getElems:
-        person.region &= fmt"{region}, "
-    person.region = line{config.peopleJ.region}.getStr("")
+  #else:
+  #  if line{config.peopleJ.region}.kind == JArray:
+  #    person.region.add(region & "")
+  #  else:
+  #    person.region = line{config.peopleJ.region}.getStr("")
   person.dob = line{config.peopleJ.dob}.getStr("")
   person.gender = line{config.peopleJ.gender}.getStr("")
   result = person
