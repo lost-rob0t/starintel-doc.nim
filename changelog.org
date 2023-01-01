@@ -16,9 +16,8 @@ benchmark "Test std json":
   for x in countup(1, 10_000_000):
     discard t.parseJson().smartParse(config)
 benchmark "Test Jsony":
-  for x in countup(1, 10_000):
+  for x in countup(1, 10_000_000):
     discard t.fromJson(config)
-
 #+end_src
 
 #+begin_example
