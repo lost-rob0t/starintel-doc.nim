@@ -1,4 +1,33 @@
 * Unreleased
+** [2023-01-01 Sun 02:01] 0.3.0
+Added ~remap~.
+
+~remap~ lets you build a new json document with the selcted fields and same document structure as the input json
+
+Using ~remapInject~ it is possible to inject values into the JsonNode
+
+/*IMPORTANT*/: ~remap~  ~remapInject~ and the parse hooks are *slow*. Around 40K/s time kind of slow, this does not take into account Parsing it into a ~BookerDocument~.
+So this is a *convenience* feature for scripting rather then a proper parsing method. May simplify bot creation if 40k docs a second is ok with you.
+Bench marks for 10,000,000 json lines
+
+bench code:
+#+begin_src nim
+benchmark "Test std json":
+  for x in countup(1, 10_000):
+    discard t.parseJson().smartParse(config)
+benchmark "Test Jsony":
+  for x in countup(1, 10_000):
+    discard t.fromJson(config)
+
+#+end_src
+
+#+begin_example
+CPU Time [Test std json] 286.772s
+CPU Time [Test Jsony] 222.768s
+#+end_example
+Its far from the 200k docs/s then the ~parsePerson~ function clock in at.
+
+[[file:~/Documents/Projects/starintel/doc/starintel_doc.nimble::requires "nim >= 1.6.0"]]
 ** [2022-12-26 Mon 18:30] 0.2.7
 Added new types
 Removed optional types from bookerweb objects
