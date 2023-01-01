@@ -99,7 +99,6 @@ proc parsePerson*(config: MetaConfig, line: JsonNode): BookerPerson =
       var org = BookerOrg(dtype: "org", dataset: config.metadataJ.dataset, name: o.getStr(""))
       person.orgs.add(org)
   if config.peopleJ.orgName != "":
-    #var org = BookerOrg(dtype: "org", dataset: config.metadataJ.dataset, source_dataset: config.metadataJ.source_dataset)
     var org = newOrg(line{config.peopleJ.orgName}.getStr(""),
                     line{config.peopleJ.orgType}.getStr(config.metadataJ.defaultOrgType))
     person.orgs.add(org)
