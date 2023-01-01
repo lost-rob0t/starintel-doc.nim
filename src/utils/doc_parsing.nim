@@ -1,6 +1,6 @@
 import options
 import parsecsv
-import json
+import json, jsony
 import ../spec/spec
 import strutils
 import strformat
@@ -172,3 +172,39 @@ proc parsePerson*(config: MetaConfig, parser: var CsvParser): BookerPerson =
   else:
     person.region = parser.rowEntry(config.peopleJ.region)
   result = person
+
+
+proc remap*(j, config: JsonNode): JsonNode =
+  ## Warning this is slow
+  ## Benchmarks show it can do 44K Json docs a second with jsony
+  ## Rename fields mapped from a config
+  ## for each key in `config` gets the value of the key from `j` and returns `JsonNode`
+  ## This should really Only be used for bots wantin to simplify parsing!
+  result = newJObject()
+  #let cpairs = config.getFields
+  for key in config.keys:
+    case config[key].kind:
+      of Jobject:
+          let jkey = key.split("-")
+          result{jkey[0]} = remap(j[jkey[1]], config[key])
+      of Jarray:
+        let jkey = key.split("-")
+        result{jkey[0]} = result[jkey[1]]
+      else:
+        result[key] = j[config[key].getStr]
+
+proc remapInject*(j, config, inject: JsonNode): JsonNode =
+  var r = remap(j, config)
+  for key in inject.keys:
+    r[key] = inject[key]
+  result = r
+
+proc parseHook*(s: string, i: var int, v: var JsonNode, config: JsonNode) =
+  var j: JsonNode
+  parseHook(s, i, j)
+  var v = remap(j, config)
+
+proc fromJson*(s: string, config: JsonNode): JsonNode =
+  ## Takes json parses it into `JsonNode`s.
+  var i = 0
+  s.parseHook(i, result, config)
