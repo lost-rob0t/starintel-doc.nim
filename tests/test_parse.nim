@@ -38,14 +38,13 @@ proc testCsv() =
     discard meta.parsePerson(p)
   p.close
 
-when isMainModule:
-  benchmark "Basic eample test":
-    testBasic()
-  benchmark "Full json":
-    testAdress()
-  benchmark "Jsony Test":
-    testJsony()
-  benchmark "Csv":
-    testCsv()
-  benchmark "test clear":
-    testClear()
+benchmark "Basic eample test":
+  testBasic()
+benchmark "Full json":
+  testAdress()
+benchmark "Jsony Test":
+  testJsony()
+benchmark "Csv":
+  testCsv()
+benchmark "test clear":
+  testClear()

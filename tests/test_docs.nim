@@ -101,20 +101,19 @@ proc testRelation() =
   assert doc.relation == Relations.to
   echo $doc.toJson
 
-when isMainModule:
-  echo "Testing: BookerDocument"
-  testBookerDoc()
-  echo "Testing: BookerPerson"
-  testBookerPerson()
-  echo "Testing: BookerOrg"
-  testBookerOrg()
-  echo "Testing: BookerEmail"
-  testBookerEmail()
-  echo "Testing: BookerUsername"
-  testBookerUsername()
-  echo "Testing: BookerMessage"
-  testBookerMessage()
-  echo "Testing: BookerTarget"
-  testBookerTarget()
-  echo "Testing BookerRelations"
-  testRelation()
+echo "Testing: BookerDocument"
+testBookerDoc()
+echo "Testing: BookerPerson"
+testBookerPerson()
+echo "Testing: BookerOrg"
+testBookerOrg()
+echo "Testing: BookerEmail"
+testBookerEmail()
+echo "Testing: BookerUsername"
+testBookerUsername()
+echo "Testing: BookerMessage"
+testBookerMessage()
+echo "Testing: BookerTarget"
+testBookerTarget()
+echo "Testing BookerRelations"
+testRelation()
