@@ -18,17 +18,17 @@ proc hash(x: BookerTarget): Hash =
   ## Hash a Target.
   ## ID field here instead of a uuid is a hash
   var h: Hash = 0
-  h = h !& x.actor
-  h = h !& x.dataset
-  h = h !& x.target
+  h = h !& hash(x.actor)
+  h = h !& hash(x.dataset)
+  h = h !& hash(x.target)
   result = !$h
 
 proc newTarget*(dataset, target, actor: string, options: JsonNode): BookerTarget =
   var doc = BookerTarget(dataset: dataset, target: target, actor: actor, options: options)
-  doc.id = doc.hash
+  doc.id = $doc.hash
   result = doc
 
 proc newTarget*(dataset, target, actor: string): BookerTarget =
   var doc = BookerTarget(dataset: dataset, target: target, actor: actor)
-  doc.id = doc.hash
+  doc.id = $doc.hash
   result = doc

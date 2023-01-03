@@ -112,12 +112,12 @@ proc newMessage*(message, group, platform: string, user: BookerUsername, channel
 
 
 proc replyMessage*(source: var BookerMessage, dest: BookerMessage) =
-  source.reply_to = some(dest)
+  source.reply_to = dest
 
 
 proc replyMessage*(source: BookerMessage, dest: BookerMessage): BookerMessage =
-  source.reply_to = some(dest)
+  source.reply_to = dest
 
 
 proc getReply*(message: BookerMessage): BookerMessage =
-  result = message.reply_to.get()
+  result = message.reply_to
