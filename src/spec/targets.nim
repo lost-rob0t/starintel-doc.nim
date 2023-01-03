@@ -6,7 +6,7 @@ type
     ## Actors can find docs tagged with their name/id and load them and run their jobs
     ## Actor should be used as a bot id
     ## Options field may be used by the bot but SHOULD NOT be indexed into the database.
-    id*: string
+    id*: int
     rev*: string
     actor*: string
     dataset*: string
@@ -25,10 +25,10 @@ proc hash(x: BookerTarget): Hash =
 
 proc newTarget*(dataset, target, actor: string, options: JsonNode): BookerTarget =
   var doc = BookerTarget(dataset: dataset, target: target, actor: actor, options: options)
-  doc.id = $doc.hash
+  doc.id = doc.hash
   result = doc
 
 proc newTarget*(dataset, target, actor: string): BookerTarget =
   var doc = BookerTarget(dataset: dataset, target: target, actor: actor)
-  doc.id = $doc.hash
+  doc.id = doc.hash
   result = doc
