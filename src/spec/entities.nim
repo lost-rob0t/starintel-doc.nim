@@ -46,6 +46,7 @@ proc renameHook*(v: var BookerOrg, fieldName: var string) =
 
 
 
+
 proc newOrg*(name, etype: string): BookerOrg =
   var o = BookerOrg(name: name, etype: etype, reg: "", country: "", website: "")
   o.makeEID(name)
