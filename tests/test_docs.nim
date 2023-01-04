@@ -66,7 +66,7 @@ proc testBookerEmail() =
 
 proc testBookerUsername() =
   let doc = newUsername("user", "localhost")
-  assert doc.url == none(string)
+  assert doc.url == ""
   assert doc.username == "user"
   assert doc.platform == "localhost"
 
@@ -81,7 +81,6 @@ proc testBookerMessage() =
   assert doc.message_id == ""
   assert doc.message_id == ""
   assert doc.is_reply == false
-  assert doc.reply_to == none(BookerMessage)
   var doc1 = doc
   doc1.replyMessage(doc)
   let doc3 = doc1.getReply
@@ -95,7 +94,7 @@ proc testBookerTarget() =
   assert doc.target == target
   assert doc.dataset == dataset
   assert doc.actor == actor
-
+  echo doc.id
 proc testRelation() =
   let sourceId = "testfoobar"
   let targetId = "testbarfoo"
