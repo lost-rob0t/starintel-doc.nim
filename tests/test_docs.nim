@@ -91,7 +91,7 @@ proc testBookerTarget() =
   assert doc.dataset == dataset
   assert doc.actor == actor
   echo doc.toJson
-
+  echo doc.id
 proc testRelation() =
   let sourceId = "testfoobar"
   let targetId = "testbarfoo"
