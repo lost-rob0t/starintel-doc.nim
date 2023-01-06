@@ -56,14 +56,11 @@ proc testBookerEmail() =
   var doc1 = newEmail("test", "foo.bar")
   assert doc1.email_username == "test"
   assert doc1.email_domain == "foo.bar"
-<<<<<<< HEAD
   assert doc.id.len > 0
 
-=======
   assert doc1.eid.len > 0
   assert doc1.id.len > 0
   echo doc1.toJson
->>>>>>> dev
 
   var doc2 = newEmail("test", "foo.bar", "password")
   assert doc2.email_username == "test"
