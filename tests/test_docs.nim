@@ -103,6 +103,19 @@ proc testRelation() =
   assert doc.target == targetId
   assert doc.relation == Relations.to
   echo $doc.toJson
+
+proc testSocialMediaPost() =
+  let author = newUsername("nsaspy", "github", "https://github.com/lost-rob0t")
+  let m = "Starintel is simply and flexable for any osint project!"
+  let m1 = "Yes im going to patch support for other tools i use!"
+  let author1 = newUsername("cia", "cia.gov")
+  var doc = author.newPost(m)
+  doc.replies.add(author1.newPost(m1))
+  assert doc.user == author
+  assert doc.content == m
+  assert doc.replies[0].content == m1
+  assert doc.replies[0].user == author1
+  echo doc.toJson
 when isMainModule:
   echo "Testing: BookerDocument"
   testBookerDoc()
@@ -120,3 +133,5 @@ when isMainModule:
   testBookerTarget()
   echo "Testing BookerRelations"
   testRelation()
+  echo "Testing BookerSocialMPost"
+  testSocialMediaPost()
