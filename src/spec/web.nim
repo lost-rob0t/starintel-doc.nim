@@ -1,6 +1,5 @@
 import strutils
-import uuids, documents, hashes
-
+import uuids, documents, hashes, json
 type
   BookerWebDocument* = ref object of RootObj
     eid*: string
