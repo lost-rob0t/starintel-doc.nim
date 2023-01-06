@@ -75,7 +75,6 @@ type
     reply_to*: BookerMessage
     group*: string # if none assume dm chat
     channel*: string # for discord
-    owner*: BookerUsername
     mentions*: seq[BookerUsername]
 
   BookerSocialMPost* = ref object of BookerDocument
@@ -123,8 +122,9 @@ proc newUsername*(username, platform: string, url: string = ""): BookerUsername 
 
 proc newMessage*(message, group, platform: string, user: BookerUsername, channel="", message_id=""): BookerMessage =
   ## Create a new message from a instant messaging platform
-  BookerMessage(message: message, platform: platform, group: group,
-                user: user, message_id: message_id, channel: channel)
+  var doc = BookerMessage(message: message, platform: platform, group: group,
+                          user: user, message_id: message_id, channel: channel, reply_to: BookerMessage())
+  result = doc
 
 
 proc replyMessage*(source: var BookerMessage, dest: BookerMessage) =

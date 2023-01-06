@@ -2,6 +2,12 @@ import ../src/starintel_doc
 import strutils
 import options
 import json, jsony
+
+proc renameHook*(v: var BookerPerson, fieldName: var string) =
+  if fieldName == "rev":
+    fieldName = "_rev"
+  if fieldName == "id":
+    fieldName = "_id"
 proc testBookerDoc() =
   var doc = BookerDocument(source_dataset: "Tests", dataset: "Tests",
                             dtype: "test_doc", date_added: "test", date_updated: "test", id: "test")
@@ -33,13 +39,14 @@ proc testBookerPerson() =
   assert doc.fname == "Joe"
   assert doc.mname == "l"
   assert doc.lname == "shmoe"
-
+  echo doc.toJson
 proc testBookerOrg() =
   var doc = newOrg(name="Star Intel", etype="Software")
   assert doc.name == "Star Intel"
   assert doc.etype == "Software"
   assert doc.eid.len > 0
   assert doc.id.len > 0
+  echo doc.toJson
 proc testBookerEmail() =
   let email = "test@foo.bar"
   var doc = newEmail(email)
@@ -47,21 +54,22 @@ proc testBookerEmail() =
   assert doc.email_domain == "foo.bar"
   assert doc.eid.len > 0
   assert doc.id.len > 0
+  echo doc.toJson
 
   var doc1 = newEmail("test", "foo.bar")
   assert doc1.email_username == "test"
   assert doc1.email_domain == "foo.bar"
-  assert doc.eid.len > 0
-  assert doc.id.len > 0
-
+  assert doc1.eid.len > 0
+  assert doc1.id.len > 0
+  echo doc1.toJson
 
   var doc2 = newEmail("test", "foo.bar", "password")
   assert doc2.email_username == "test"
   assert doc2.email_domain == "foo.bar"
   assert doc2.email_password == "password"
-  assert doc.eid.len > 0
-  assert doc.id.len > 0
-
+  assert doc2.eid.len > 0
+  assert doc2.id.len > 0
+  echo doc2.toJson
 
 
 proc testBookerUsername() =
@@ -69,11 +77,14 @@ proc testBookerUsername() =
   assert doc.url == ""
   assert doc.username == "user"
   assert doc.platform == "localhost"
+  echo doc.toJson
 
 proc testBookerMessage() =
   let message = "Wow Star intel is a really cool project!"
+  let message1 = "Wow Star intel is a really awsome project!"
   var user = newUsername("user", "localhost")
-  let doc = newMessage(message=message, platform="irc", group="#star-intel-irc", user=user)
+  var doc = newMessage(message=message, platform="irc", group="#star-intel-irc", user=user)
+  var doc1 = newMessage(message=message1, platform="irc", group="#star-intel-irc", user=user)
   assert doc.message == message
   assert doc.user == user
   assert doc.platform == "irc"
@@ -81,10 +92,12 @@ proc testBookerMessage() =
   assert doc.message_id == ""
   assert doc.message_id == ""
   assert doc.is_reply == false
-  var doc1 = doc
-  doc1.replyMessage(doc)
-  let doc3 = doc1.getReply
-  assert doc3.message == message
+  doc.reply_to = doc1
+  let doc3 = doc.getReply
+  assert doc3.message == message1
+  echo %*doc
+  echo doc1.toJson
+  echo doc3.toJson
 
 proc testBookerTarget() =
   let target = "nsaspy"
@@ -95,6 +108,7 @@ proc testBookerTarget() =
   assert doc.dataset == dataset
   assert doc.actor == actor
   echo doc.id
+  echo doc.toJson
 proc testRelation() =
   let sourceId = "testfoobar"
   let targetId = "testbarfoo"
