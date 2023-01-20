@@ -1,7 +1,5 @@
 import web
-import strutils
-import uuids, documents, hashes
-import times
+import documents, hashes
 type
   BookerMessage* = ref object of BookerDocument
     ## a object representing a instant message
@@ -25,7 +23,7 @@ type
     ## An Object Representing a social media post, Such as on reddit, mastodon, 4chan, ect
     content*: string
     user*: BookerUsername
-    replies*: seq[BookerSocialMPost]
+    replies*: seq[BookerSocialMPost] ## Used when you have the complete reply chain.
     media*: seq[string]
     replyCount*: int
     repostCount*: int
@@ -36,9 +34,9 @@ type
     title*: string
     group*: string
     # NOTE: How Should i keep tracks of older versions?
+    #XXX nsaspy <2023-01-20 Fri> You dont. Each document is to be treated as a snapshot in time.
 
-
-
+    replyTo*: BookerSocialMPost ## Linked List, when empty assume top of reply chain
 proc newMessage*(message, group, platform: string, user: BookerUsername, channel="", message_id=""): BookerMessage =
   ## Create a new message from a instant messaging platform
   var doc = BookerMessage(message: message, platform: platform, group: group,
