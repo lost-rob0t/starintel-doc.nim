@@ -2,36 +2,41 @@ import ../src/starintel_doc
 import strutils
 import options
 import json, jsony
-
+import times
 proc renameHook*(v: var BookerPerson, fieldName: var string) =
   if fieldName == "rev":
     fieldName = "_rev"
   if fieldName == "id":
     fieldName = "_id"
 proc testBookerDoc() =
+  let time = now().toTime.toUnix
+  echo "time is, ", $time
   var doc = BookerDocument(source_dataset: "Tests", dataset: "Tests",
-                            dtype: "test_doc", date_added: "test", date_updated: "test", id: "test")
+                            dtype: "test_doc", date_added: time, date_updated: time, id: "test")
   assert doc.source_dataset == "Tests"
   assert doc.dataset == "Tests"
   assert doc.dtype == "test_doc"
-  assert doc.date_added == "test"
-  assert doc.date_updated == "test"
+  assert doc.date_added == time
+  assert doc.date_updated == time
   assert doc.id == "test"
 
 proc testBookerPerson() =
+  let time = now().toTime.toUnix
+  echo "time is, ", $time
   var doc = BookerPerson(source_dataset: "Tests", dataset: "Tests", dtype: "person",
-                         date_added: "test", date_updated: "test", id: "test")
+                         date_added: time, date_updated: time, id: "test")
   var phone = newPhone("1234567890")
   link[BookerPerson, BookerPhone](doc, doc.phones, phone)
   doc.fname = "Joe"
   doc.mname = "l"
   doc.lname = "shmoe"
+
   echo doc.phones[0].phone
   assert doc.source_dataset == "Tests"
   assert doc.dataset == "Tests"
   assert doc.dtype == "person"
-  assert doc.date_added == "test"
-  assert doc.date_updated == "test"
+  assert doc.date_added == time
+  assert doc.date_updated == time
   assert doc.id == "test"
 
   doc.makeUUID
