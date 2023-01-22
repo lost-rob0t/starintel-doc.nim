@@ -84,4 +84,4 @@ proc newEmail*(username, domain, password: string): BookerEmail =
 proc newUsername*(username, platform: string, url: string = ""): BookerUsername =
   BookerUsername(username: username, platform: platform)
 
-
+# TODO hash procs for username and email docs, uuids are deprecated

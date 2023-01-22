@@ -30,13 +30,12 @@ type
     url*: string
     links*: seq[string]
     tags*: seq[string]
-    isReply*: bool
     # NOTE are keeping track of these also needed?
     title*: string
     group*: string
     # NOTE: How Should i keep tracks of older versions?
     #XXX nsaspy <2023-01-20 Fri> You dont. Each document is to be treated as a snapshot in time.
-    replyTo*: BookerSocialMPost ## Linked List, when isReply is false, assume you are at the last of the replies
+    replyTo*: string ## Linked List, when isReply is false, assume you are at the last of the replies
 proc newMessage*(message, group, platform: string, user: BookerUsername, channel="", message_id=""): BookerMessage =
   ## Create a new message from a instant messaging platform
   var doc = BookerMessage(message: message, platform: platform, group: group,
