@@ -46,3 +46,7 @@ Will be worked on an expanded with time.
 Added targets
 Readded EID until local hashing is implemented
 
+* Changelog
+** [2023-01-22 Sun 06:48] 0.4.1
+Timestamps from now on are unix timestamps
+Requires int64 to use.

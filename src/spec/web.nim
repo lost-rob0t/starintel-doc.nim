@@ -1,6 +1,6 @@
-import strutils
-import uuids, documents, hashes
-import times
+import documents, phones
+import uuids
+import json, strutils
 type
   BookerWebDocument* = ref object of RootObj
     eid*: string
@@ -53,15 +53,15 @@ type
     headers*: string
     cc*: seq[string]
     bcc*: seq[string]
-  BookerUsername* = ref object of BookerWebDocument
+  BookerUsername* = ref object of BookerDocument
     ## A object that represents a user
     url*: string # Url to the users page
     username*: string
     platform*: string
-    phones*: seq[string]
+    phones*: seq[BookerPhone]
     emails*: seq[BookerEmail]
-    eid*: string
-
+    misc*: seq[JsonNode]
+    bio*: string
 proc newEmail*(email: string): BookerEmail =
   ## Take a email in the format of user@foo.bar and return a booker email
   let emailData = email.split("@")
@@ -87,7 +87,6 @@ proc newEmail*(username, domain, password: string): BookerEmail =
 
 
 proc newUsername*(username, platform: string, url: string = ""): BookerUsername =
-  BookerUsername(username: username, platform: platform)
+  BookerUsername(username: username, platform: platform, url: url)
 
 # TODO hash procs for username and email docs, uuids are deprecated
->>>>>>> dev
