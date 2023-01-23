@@ -78,10 +78,14 @@ proc testBookerEmail() =
 
 
 proc testBookerUsername() =
-  let doc = newUsername("user", "localhost")
-  assert doc.url == ""
+  var doc = newUsername("user", "localhost", "http://127.0.0.1")
+  doc.bio = "He is the local host user!"
+  doc.misc.add(%*{"foo": "bar"})
+  assert doc.url == "http://127.0.0.1"
   assert doc.username == "user"
   assert doc.platform == "localhost"
+  assert doc.bio == "He is the local host user!"
+  assert doc.misc[0]["foo"].getStr == "bar"
   echo doc.toJson
 
 proc testBookerMessage() =
