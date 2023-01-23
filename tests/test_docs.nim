@@ -48,6 +48,7 @@ proc testBookerOrg() =
   var doc = newOrg(name="Star Intel", etype="Software")
   assert doc.name == "Star Intel"
   assert doc.etype == "Software"
+  assert doc.dtype == "org"
   assert doc.eid.len > 0
   assert doc.id.len > 0
   echo doc.toJson
@@ -57,6 +58,7 @@ proc testBookerEmail() =
   assert doc.email_username == "test"
   assert doc.email_domain == "foo.bar"
   assert doc.id.len > 0
+  assert doc.dtype == "email"
   echo doc.toJson
 
   var doc1 = newEmail("test", "foo.bar")
@@ -86,6 +88,7 @@ proc testBookerUsername() =
   assert doc.platform == "localhost"
   assert doc.bio == "He is the local host user!"
   assert doc.misc[0]["foo"].getStr == "bar"
+  assert doc.dtype == "user"
   echo doc.toJson
 
 proc testBookerMessage() =

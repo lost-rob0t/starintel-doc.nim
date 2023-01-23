@@ -9,4 +9,4 @@ type
 
 
 proc newPhone*(phone: string, carrier, status, phone_type = ""): BookerPhone =
-  BookerPhone(phone: phone, carrier: carrier, status: status, phone_type: phone_type)
+  BookerPhone(phone: phone, carrier: carrier, status: status, phone_type: phone_type, dtype: "phone")

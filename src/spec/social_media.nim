@@ -39,7 +39,7 @@ type
 proc newMessage*(message, group, platform: string, user: BookerUsername, channel="", message_id=""): BookerMessage =
   ## Create a new message from a instant messaging platform
   var doc = BookerMessage(message: message, platform: platform, group: group,
-                          user: user, message_id: message_id, channel: channel, reply_to: BookerMessage())
+                          user: user, message_id: message_id, channel: channel, reply_to: BookerMessage(), dtype: "instant-message")
   result = doc
 
 
@@ -67,6 +67,6 @@ proc hash(x: BookerSocialMPost): Hash =
 
 proc newPost*(user: BookerUsername, content: string, title, group, url: string = ""): BookerSocialMPost =
   ## Create a New social media post
-  var doc = BookerSocialMPost(user: user, content: content, title: title, group: group, url: url)
+  var doc = BookerSocialMPost(user: user, content: content, title: title, group: group, url: url, dtype: "socialMPost")
   doc.id = $doc.hash
   result = doc
