@@ -36,7 +36,7 @@ type
     # NOTE: How Should i keep tracks of older versions?
     #XXX nsaspy <2023-01-20 Fri> You dont. Each document is to be treated as a snapshot in time.
     replyTo*: string ## Linked List, when isReply is false, assume you are at the last of the replies
-proc newMessage*(message, group, platform: string, user: BookerUsername, channel="", message_id=""): BookerMessage =
+proc newMessage*(message, group, platform: string, user: BookerUsername, channel="", message_id="", date: int64 = 0): BookerMessage =
   ## Create a new message from a instant messaging platform
   var doc = BookerMessage(message: message, platform: platform, group: group,
                           user: user, message_id: message_id, channel: channel, reply_to: BookerMessage(), dtype: "instant-message")
@@ -65,8 +65,8 @@ proc hash(x: BookerSocialMPost): Hash =
   h = h !& hash(x.url)
   result = !$h
 
-proc newPost*(user: BookerUsername, content: string, title, group, url: string = ""): BookerSocialMPost =
+proc newPost*(user: BookerUsername, content: string, title, group, url: string = "", date: int64 = 0): BookerSocialMPost =
   ## Create a New social media post
   var doc = BookerSocialMPost(user: user, content: content, title: title, group: group, url: url, dtype: "socialMPost")
-  doc.id = $doc.hash
+  doc.makeMD5ID(content & url & $date)
   result = doc

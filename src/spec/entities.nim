@@ -48,16 +48,9 @@ proc renameHook*(v: var BookerOrg, fieldName: var string) =
 
 
 proc newOrg*(name, etype: string): BookerOrg =
+  ## Create a new booker organization
   var o = BookerOrg(name: name, etype: etype, reg: "", country: "", website: "", dtype: "org")
-  o.makeEID(name)
-  o.makeUUID()
+  o.makeMD5ID(name & etype)
   result = o
 
 # TODO add procs for adding board members/officers
-
-proc clear*(doc: var BookerPerson) =
-  doc.emails = @[]
-  doc.phones = @[]
-  doc.social_media = @[]
-  doc.address = @[]
-  doc.orgs = @[]

@@ -1,4 +1,4 @@
-import std/[hashes]
+import std/[hashes, md5, sha1]
 import uuids
 import times
 type
@@ -31,3 +31,10 @@ template makeEID*[T](doc: T, data: string) =
   doc.eid = makeHash(data)
 
 
+template makeMD5ID*[T](doc: T, data: string) =
+  ## Generate a MD5 checksum for the document id
+  doc.id = $toMD5(data)
+
+template makeSHAID*[T](doc: T, data: string) =
+  ## Generate a SHA1 checksume for the document ID
+  doc.id = $secureHash(data)

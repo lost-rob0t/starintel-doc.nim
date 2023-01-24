@@ -20,13 +20,6 @@ proc testJsony() =
   for line in f.lines:
     discard meta.parsePerson(line.fromJson)
 
-proc testClear() =
-  var meta = readConfig("config-address.json")
-  var p: BookerPerson
-  let f = open("test-address.json", fmRead)
-  for line in f.lines:
-    p = meta.parsePerson(line.fromJson)
-    p.clear
 
 
 proc testCsv() =
@@ -46,5 +39,3 @@ benchmark "Jsony Test":
   testJsony()
 benchmark "Csv":
   testCsv()
-benchmark "test clear":
-  testClear()

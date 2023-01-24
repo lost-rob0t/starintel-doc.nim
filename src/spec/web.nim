@@ -66,27 +66,24 @@ proc newEmail*(email: string): BookerEmail =
   ## Take a email in the format of user@foo.bar and return a booker email
   let emailData = email.split("@")
   var e = BookerEmail(email_username: emailData[0], email_domain: emailData[1], dtype: "email")
-  e.makeUUID()
-  e.makeEID(email)
-  e.makeEID(e.email_password & e.email_domain)
+  e.makeMD5ID(e.email_password & e.email_domain)
   result = e
 
 proc newEmail*(username, domain: string): BookerEmail =
   ## Create a new BookerEmail from username and domain
   var e = BookerEmail(email_username: username, email_domain: domain, dtype: "email")
-  e.makeUUID
-  e.makeEID(e.email_username & e.email_domain)
+  e.makeMD5ID(e.email_username & e.email_domain)
   result = e
 
 proc newEmail*(username, domain, password: string): BookerEmail =
   ## Create a new BookerEmail from username and domain with the leaked password
   var e = BookerEmail(email_username: username, email_domain: domain, email_password: password, dtype: "email")
-  e.makeUUID
-  e.makeEID(e.email_username & e.email_domain & e.email_password)
+  e.makeMD5ID(e.email_username & e.email_domain & e.email_password)
   result = e
 
 
 proc newUsername*(username, platform: string, url: string = ""): BookerUsername =
-  BookerUsername(username: username, platform: platform, url: url, dtype: "user")
-
+  var doc = BookerUsername(username: username, platform: platform, url: url, dtype: "user")
+  doc.makeMD5ID(username & url)
+  result = doc
 # TODO hash procs for username and email docs, uuids are deprecated

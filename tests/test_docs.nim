@@ -49,7 +49,6 @@ proc testBookerOrg() =
   assert doc.name == "Star Intel"
   assert doc.etype == "Software"
   assert doc.dtype == "org"
-  assert doc.eid.len > 0
   assert doc.id.len > 0
   echo doc.toJson
 proc testBookerEmail() =
@@ -66,7 +65,6 @@ proc testBookerEmail() =
   assert doc1.email_domain == "foo.bar"
   assert doc.id.len > 0
 
-  assert doc1.eid.len > 0
   assert doc1.id.len > 0
   echo doc1.toJson
 
@@ -74,7 +72,6 @@ proc testBookerEmail() =
   assert doc2.email_username == "test"
   assert doc2.email_domain == "foo.bar"
   assert doc2.email_password == "password"
-  assert doc2.eid.len > 0
   assert doc2.id.len > 0
   echo doc2.toJson
 
