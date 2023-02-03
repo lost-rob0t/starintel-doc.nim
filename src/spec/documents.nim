@@ -1,10 +1,12 @@
 import std/[hashes, md5, sha1]
 import uuids
 import times
+import json
 type
     BookerDocument* = ref object of RootObj
       ## Base Object to hold the document metadata thats used to make a dcoument and store it in couchdb
       id*: string
+      rev*: string
       dataset*: string
       dtype*: string
       date_added*: int64
@@ -38,3 +40,18 @@ template makeMD5ID*[T](doc: T, data: string) =
 template makeSHAID*[T](doc: T, data: string) =
   ## Generate a SHA1 checksume for the document ID
   doc.id = $secureHash(data)
+
+proc dump*[T](doc: T): JsonNode =
+  var jdoc = %*doc
+  jdoc{"_id"} = newJString(doc.id)
+  jdoc.delete("id")
+  if doc.rev.len != 0:
+    jdoc{"_rev"} = newJString(doc.rev)
+    jdoc.delete("rev")
+  result = jdoc
+
+proc load*[T](doc: JsonNode): T =
+  var jdoc = doc
+  jdoc{"id"} = jdoc["_id"]
+  jdoc{"rev"} = jdoc["_rev"]
+  result = jdoc.to(T)
