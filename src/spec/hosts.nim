@@ -21,7 +21,7 @@ type
 
 
   BookerNetwork* = object
-    org*: BookerOrg
+    org*: string
     asn*: BookerASN
 
   BookerHost* = ref object of BookerWeb
