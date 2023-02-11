@@ -50,12 +50,9 @@ proc newPort*(port: int16, services: seq[string]): BookerPort =
 proc newASN*(asn: int32, subnet: string): BookerASN =
   BookerASN(asn: asn, subnet: subnet)
 
-proc newNetwork*(asn: BookerASN, org: BookerOrg): BookerNetwork =
+proc newNetwork*(asn: BookerASN, org: string): BookerNetwork =
   BookerNetwork(asn: asn, org: org)
 
-proc newNetwork*(asn: BookerASN, org: string): BookerNetwork =
-  let o = newOrg(org, "Network Organization")
-  result = BookerNetwork(asn: asn, org: o)
 
 proc newHost*(ip, hostname: string = ""): BookerHost =
   var doc = BookerHost(hostname: hostname, ip: ip)
