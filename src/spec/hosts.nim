@@ -20,16 +20,16 @@ type
     subnet*: string
 
 
-  BookerNetwork* = object
+  BookerNetwork* = object of BookerWeb
     org*: string
     asn*: BookerASN
+
 
   BookerHost* = ref object of BookerWeb
     hostname*: string
     ip*: string
     ports*: seq[BookerPort]
     os*: string
-    network*: BookerNetwork
 
   BookerUrl* = ref object of BookerWeb
     url*: string
@@ -37,7 +37,7 @@ type
 
 
 proc newDomain*(domain: string, recordType, ip: string = ""): BookerDomain =
-  var doc = BookerDomain(recordType: recordType, domain: domain, ip: ip)
+  var doc = BookerDomain(recordType: recordType, domain: domain, ip: ip, dtype: "domain")
   doc.makeMD5ID(doc.domain & doc.ip & doc.recordType)
   result = doc
 
@@ -51,14 +51,14 @@ proc newASN*(asn: int32, subnet: string): BookerASN =
   BookerASN(asn: asn, subnet: subnet)
 
 proc newNetwork*(asn: BookerASN, org: string): BookerNetwork =
-  BookerNetwork(asn: asn, org: org)
+  BookerNetwork(asn: asn, org: org, dtype: "network")
 
 
 proc newHost*(ip, hostname: string = ""): BookerHost =
-  var doc = BookerHost(hostname: hostname, ip: ip)
+  var doc = BookerHost(hostname: hostname, ip: ip, dtype: "host")
   doc.makeMD5ID(doc.hostname & doc.ip)
   result = doc
 proc newHost*(ip, hostname: string, network: BookerNetwork): BookerHost =
-  var doc = BookerHost(hostname: hostname, ip: ip, network: network)
+  var doc = BookerHost(hostname: hostname, ip: ip, network: network, dtype: "host")
   doc.makeMD5ID(doc.hostname & doc.ip)
   result = doc
