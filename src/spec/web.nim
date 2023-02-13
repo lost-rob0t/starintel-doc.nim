@@ -9,22 +9,7 @@ type
     dataset*: string
     date*: string
     dtype*: string
-  BookerWebService* = ref object of BookerWebDocument
-    port*: int
-    url*: string
-    host*: string
-    service_name*: string
-    service_version*: string
-  BookerHost* = ref object of BookerWebDocument
-    ip*: string
-    hostname*: string
-    operating_system*: string
-    asn*: int
-    country*: string
-    network_name*: string
-    owner*: string
-    vulns*: seq[string]
-    services*: seq[BookerWebService]
+
   BookerCVE* = ref object of BookerWebDocument
     cve_number*: string
     score*: int
