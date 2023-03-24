@@ -5,6 +5,7 @@ type
   BookerGeo* = ref object of RootObj
     lat*: float64
     long*: float64
+    alt*: float64
     gid*: string
 
   BookerAddress* = ref object of BookerGeo
