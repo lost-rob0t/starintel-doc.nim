@@ -2,40 +2,18 @@ import documents, phones
 import uuids
 import json, strutils
 type
-  BookerWebDocument* = ref object of RootObj
-    eid*: string
-    id*: string
-    rev*: string
-    dataset*: string
-    date*: string
-    dtype*: string
-  BookerWebService* = ref object of BookerWebDocument
-    port*: int
-    url*: string
-    host*: string
-    service_name*: string
-    service_version*: string
-  BookerHost* = ref object of BookerWebDocument
-    ip*: string
-    hostname*: string
-    operating_system*: string
-    asn*: int
-    country*: string
-    network_name*: string
-    owner*: string
-    vulns*: seq[string]
-    services*: seq[BookerWebService]
-  BookerCVE* = ref object of BookerWebDocument
+
+  BookerCVE* = ref object of BookerDocument
     cve_number*: string
     score*: int
 
 
-  BookerBreach* = ref object of BookerWebDocument
+  BookerBreach* = ref object of BookerDocument
     total*: int
     description*: string
     url*: string
 
-  BookerEmail* = ref object of BookerWebDocument
+  BookerEmail* = ref object of BookerDocument
     ## A email address
     ## Owner and Password is Optional
     ## data_breach is used to track what breaches the email is part of
@@ -53,6 +31,8 @@ type
     headers*: string
     cc*: seq[string]
     bcc*: seq[string]
+
+
   BookerUsername* = ref object of BookerDocument
     ## A object that represents a user
     url*: string # Url to the users page
@@ -62,6 +42,8 @@ type
     emails*: seq[BookerEmail]
     misc*: seq[JsonNode]
     bio*: string
+
+
 proc newEmail*(email: string): BookerEmail =
   ## Take a email in the format of user@foo.bar and return a booker email
   let emailData = email.split("@")
