@@ -7,3 +7,17 @@ expirment/
 *.txt
 *.db
 *.env
+docs/
+nimcache/
+notes.org
+src/htmldocs/
+test.csv
+test.jl
+tests/.~lock.test.csv#
+tests/big.csv
+tests/megatest
+tests/test_docs
+tests/test_docs.html
+tests/test_parse
+tests/test_relations.nim
+tests/test_remap
