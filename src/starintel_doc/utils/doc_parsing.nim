@@ -1,9 +1,7 @@
-import options
 import parsecsv
 import json, jsony
-import ../spec/spec
+import ../entities, ../locations, ../web
 import strutils
-import strformat
 ## Parse Json or csv data into spec complient json data.
 
 type
@@ -89,7 +87,6 @@ proc readConfig*(path: string): MetaConfig =
 
 proc parsePerson*(config: MetaConfig, line: JsonNode): BookerPerson =
   var person = BookerPerson(dtype: "person", dataset: config.metadataJ.dataset)
-  var orgs: seq[BookerOrg]
   person.fname = line{config.peopleJ.fname}.getStr("")
   person.lname = line{config.peopleJ.lname}.getStr("")
   person.mname = line{config.peopleJ.mname}.getStr("")
@@ -202,7 +199,7 @@ proc remapInject*(j, config, inject: JsonNode): JsonNode =
 proc parseHook*(s: string, i: var int, v: var JsonNode, config: JsonNode) =
   var j: JsonNode
   parseHook(s, i, j)
-  var v = remap(j, config)
+  v = remap(j, config)
 
 proc fromJson*(s: string, config: JsonNode): JsonNode =
   ## Takes json parses it into `JsonNode`s.

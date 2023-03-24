@@ -1,0 +1,11 @@
+repos:
+-   repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.4.0
+    hooks:
+    -   id: check-yaml
+    -   id: end-of-file-fixer
+    -   id: trailing-whitespace
+-   repo: https://github.com/juancarlospaco/pre-commit-nim
+    rev: f3e8249a482c72d02654e2babaa733782bca6175
+    hooks:
+    -   id: nimble-check

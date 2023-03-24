@@ -31,10 +31,13 @@ type
     links*: seq[string]
     tags*: seq[string]
     # NOTE are keeping track of these also needed?
+    # XXX nsaspy <2023-02-04 Sat> Yes group and title can be usedd for reddit but no bots exist as of writing
     title*: string
     group*: string
     # NOTE: How Should i keep tracks of older versions?
     #XXX nsaspy <2023-01-20 Fri> You dont. Each document is to be treated as a snapshot in time.
+    #XXX nsaspy <2023-02-04 Sat> We just wont track older versions, maybe just update the stats. FediWatch Will update the stats but this is not a hard
+    # requirement
     replyTo*: string ## Linked List, when isReply is false, assume you are at the last of the replies
 proc newMessage*(message, group, platform: string, user: BookerUsername, channel="", message_id="", date: int64 = 0): BookerMessage =
   ## Create a new message from a instant messaging platform

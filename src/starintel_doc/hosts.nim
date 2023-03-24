@@ -58,7 +58,3 @@ proc newHost*(ip, hostname: string = ""): BookerHost =
   var doc = BookerHost(hostname: hostname, ip: ip, dtype: "host")
   doc.makeMD5ID(doc.hostname & doc.ip)
   result = doc
-proc newHost*(ip, hostname: string, network: BookerNetwork): BookerHost =
-  var doc = BookerHost(hostname: hostname, ip: ip, network: network, dtype: "host")
-  doc.makeMD5ID(doc.hostname & doc.ip)
-  result = doc

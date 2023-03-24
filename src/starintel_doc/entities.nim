@@ -14,7 +14,6 @@ type
     reg*: string
     country*: string
     name*: string
-    officers*: seq[BookerPerson]
     website*: string
     bio*: string
   BookerPerson* = ref object of BookerEntity
@@ -33,6 +32,7 @@ type
     gender*: string
     region*: string
     misc*: seq[string]
+
 proc renameHook*(v: var BookerPerson, fieldName: var string) =
   if fieldName == "rev":
     fieldName = "_rev"
