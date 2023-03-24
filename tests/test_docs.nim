@@ -122,7 +122,7 @@ proc testBookerTarget() =
 proc testRelation() =
   let sourceId = "testfoobar"
   let targetId = "testbarfoo"
-  var doc = newRelation(source=sourceId, target=targetId, relation = Relations.to)
+  var doc = newRelation(source=sourceId, target=targetId, relation = Relations.to, dataset = "test")
   assert doc.source == sourceId
   assert doc.target == targetId
   assert doc.relation == Relations.to
