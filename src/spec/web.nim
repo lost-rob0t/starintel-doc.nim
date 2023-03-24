@@ -2,10 +2,13 @@ import documents, phones
 import uuids
 import json, strutils
 type
-
-  BookerCVE* = ref object of BookerDocument
-    cve_number*: string
-    score*: int
+  BookerWebDocument* = ref object of RootObj
+    eid*: string
+    id*: string
+    rev*: string
+    dataset*: string
+    date*: string
+    dtype*: string
 
 
   BookerBreach* = ref object of BookerDocument
