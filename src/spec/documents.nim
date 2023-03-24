@@ -1,6 +1,7 @@
 import std/[hashes, md5, sha1]
 import uuids
-import times
+from times import getTime, toUnix
+export getTime, toUnix
 import json
 type
     BookerDocument* = ref object of RootObj
@@ -43,12 +44,14 @@ template makeSHAID*[T](doc: T, data: string) =
 template timestamp*[T](doc: T) =
   ## Add a timestamp to the document
   ## Not done in helpers because sometimes you want the time from the data source
-  doc.date_added = now().toTime().toUnix()
-  doc.date_updated = now().toTime().toUnix()
+  let t = getTime()
+  doc.date_added = t.toUnix()
+  doc.date_updated = t.toUnix()
 
 template updateTime*[T](doc: T) =
   ## update the date_updated timestamp to the document
-  doc.date_updated = now().toTime().toUnix()
+  let t = getTime()
+  doc.date_updated = t.toUnix()
 
 proc dump*[T](doc: T): JsonNode =
   var jdoc = %*doc
@@ -56,8 +59,10 @@ proc dump*[T](doc: T): JsonNode =
   jdoc.delete("id")
   result = jdoc
 
-proc load*[T](doc: JsonNode): T =
-  var jdoc = doc
+
+
+proc load*[T](node: JsonNode, t: typedesc[T]): T =
+  var jdoc = node
   jdoc{"id"} = jdoc["_id"]
   jdoc{"rev"} = jdoc["_rev"]
-  result = jdoc.to(T)
+  result = jdoc.to(t)
