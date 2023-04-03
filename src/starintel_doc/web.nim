@@ -32,8 +32,6 @@ type
     url*: string # Url to the users page
     username*: string
     platform*: string
-    phones*: seq[BookerPhone]
-    emails*: seq[BookerEmail]
     misc*: seq[JsonNode]
     bio*: string
 
