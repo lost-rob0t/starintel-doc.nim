@@ -9,3 +9,10 @@ feel free to reach out if you need help.
 
 The ~master~ branch is a stable version.
 to get the lastest devel version use the ~dev~ branch.
+
+
+** *NOTICE* MAJOR API CHANGE
+
+if you are using ~starintel_doc~ Please notify [[https://pleroma.nobodyhasthe.biz/nott][me]] encase i wreck your project with version 1.0.0
+
+The major changes will be relating to the removal of embedded documents and moving to the "relation" object.
