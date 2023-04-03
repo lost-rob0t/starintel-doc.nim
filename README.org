@@ -1,8 +1,11 @@
 #+TITLE: Readme
 * Starintel-doc.nim
-Star intel is a project that helps osint operators injest larges amounts of information relating to social orgs for osint uses.
+Star Intel is a project that helps osint operators injest large amounts of information relating to social orgs for osint uses.
 
 some usage examples can be found in the ~tests/~ dir.
 You can also run
 ~nim doc --project src/starintel_doc.nim~ to get html docs.
 feel free to reach out if you need help.
+
+The ~master~ branch is a stable version.
+to get the lastest devel version use the ~dev~ branch.
