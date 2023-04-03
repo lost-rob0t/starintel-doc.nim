@@ -43,15 +43,13 @@ proc newMessage*(message, group, platform: string, user: BookerUsername, channel
 
 
 proc replyMessage*(source: var BookerMessage, dest: BookerMessage) =
-  source.reply_to = dest
+  source.reply_to = dest.id
 
 
 proc replyMessage*(source: BookerMessage, dest: BookerMessage): BookerMessage =
-  source.reply_to = dest
+  source.reply_to = dest.id
 
 
-proc getReply*(message: BookerMessage): BookerMessage =
-  result = message.reply_to
 
 proc hash(x: BookerSocialMPost): Hash =
   ## Create a hash for a Social media post
