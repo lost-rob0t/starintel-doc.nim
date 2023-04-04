@@ -9,6 +9,7 @@ proc testBookerMessage() =
   var user = newUsername("user", "localhost")
   var doc = newMessage(message=message, platform="irc", group="#star-intel-irc", user=user)
   var doc1 = newMessage(message=message1, platform="irc", group="#star-intel-irc", user=user)
+  doc1.replyMessage(doc)
   assert doc.message == message
   assert doc.user == user.id
   assert doc.platform == "irc"
