@@ -1,5 +1,5 @@
 import ../../src/starintel_doc/documents
-
+import times
 proc testBaseDocument() =
   let time = now().toTime.toUnix
   echo "time is, ", $time
