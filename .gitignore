@@ -7,6 +7,8 @@ expirment/
 *.txt
 *.db
 *.env
+*.out
+coverage/*
 docs/
 nimcache/
 notes.org
