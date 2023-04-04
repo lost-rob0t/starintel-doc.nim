@@ -64,6 +64,6 @@ proc hash(x: BookerSocialMPost): Hash =
 
 proc newPost*(user: BookerUsername, content: string, title, group, url: string = "", date: int64 = 0): BookerSocialMPost =
   ## Create a New social media post
-  var doc = BookerSocialMPost(user: user, content: content, title: title, group: group, url: url, dtype: "socialMPost")
+  var doc = BookerSocialMPost(user: user.id, content: content, title: title, group: group, url: url, dtype: "socialMPost")
   doc.makeMD5ID(content & url & $date)
   result = doc
