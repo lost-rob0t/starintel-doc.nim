@@ -10,8 +10,8 @@ proc testBookerPerson() =
                          date_added: time, date_updated: time, id: "test")
   doc.fname = "Joe"
   doc.mname = "l"
-  doc.lname = "shmoe"
-
+  doc.lname = "Smith"
+  doc.race = "white"
   doc.makeUUID
   doAssert doc.dataset == "Tests"
   doAssert doc.dtype == "person"
@@ -20,8 +20,8 @@ proc testBookerPerson() =
   doAssert doc.id != "test"
   doAssert doc.fname == "Joe"
   doAssert doc.mname == "l"
-  doAssert doc.lname == "shmoe"
-
+  doAssert doc.lname == "Smith"
+  doAssert doc.race == "white"
 proc testBookerOrg() =
   var doc = newOrg(name="Star Intel", etype="Software")
   assert doc.name == "Star Intel"
