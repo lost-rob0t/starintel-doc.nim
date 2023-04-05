@@ -7,5 +7,6 @@ mkShell {
     git
     pre-commit
     nim
+    lcov
   ];
 }

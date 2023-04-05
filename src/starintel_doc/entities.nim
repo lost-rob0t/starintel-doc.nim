@@ -24,12 +24,8 @@ type
     lname*: string
     bio*: string
     dob*: string
-    social_media*: seq[BookerUsername]
-    phones*: seq[BookerPhone]
-    emails*: seq[BookerEmail]
-    address*: seq[BookerAddress]
-    orgs*: seq[BookerOrg]
     gender*: string
+    race*: string
     region*: string
     misc*: seq[string]
 

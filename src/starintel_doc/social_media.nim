@@ -10,11 +10,11 @@ type
     # TODO add iterator to traverse replys
     message*: string
     platform*: string
-    user*: BookerUsername
+    user*: string # Link to the user doc
     is_reply*: bool
     media*: seq[string]
     message_id*: string
-    reply_to*: BookerMessage
+    reply_to*: string # Link to the reply.
     group*: string # if none assume dm chat
     channel*: string # for discord
     mentions*: seq[BookerUsername]
@@ -22,8 +22,8 @@ type
   BookerSocialMPost* = ref object of BookerDocument
     ## An Object Representing a social media post, Such as on reddit, mastodon, 4chan, ect
     content*: string
-    user*: BookerUsername
-    replies*: seq[BookerSocialMPost] ## Used when you have the complete reply chain.
+    user*: string
+    replies*: seq[string] ## Used when you have the complete reply chain.
     media*: seq[string]
     replyCount*: int
     repostCount*: int
@@ -34,28 +34,22 @@ type
     # XXX nsaspy <2023-02-04 Sat> Yes group and title can be usedd for reddit but no bots exist as of writing
     title*: string
     group*: string
-    # NOTE: How Should i keep tracks of older versions?
-    #XXX nsaspy <2023-01-20 Fri> You dont. Each document is to be treated as a snapshot in time.
-    #XXX nsaspy <2023-02-04 Sat> We just wont track older versions, maybe just update the stats. FediWatch Will update the stats but this is not a hard
-    # requirement
     replyTo*: string ## Linked List, when isReply is false, assume you are at the last of the replies
 proc newMessage*(message, group, platform: string, user: BookerUsername, channel="", message_id="", date: int64 = 0): BookerMessage =
   ## Create a new message from a instant messaging platform
   var doc = BookerMessage(message: message, platform: platform, group: group,
-                          user: user, message_id: message_id, channel: channel, reply_to: BookerMessage(), dtype: "instant-message")
+                          user: user.id, message_id: message_id, channel: channel, reply_to: "", dtype: "instant-message")
   result = doc
 
 
 proc replyMessage*(source: var BookerMessage, dest: BookerMessage) =
-  source.reply_to = dest
+  source.reply_to = dest.id
 
 
 proc replyMessage*(source: BookerMessage, dest: BookerMessage): BookerMessage =
-  source.reply_to = dest
+  source.reply_to = dest.id
 
 
-proc getReply*(message: BookerMessage): BookerMessage =
-  result = message.reply_to
 
 proc hash(x: BookerSocialMPost): Hash =
   ## Create a hash for a Social media post
@@ -70,6 +64,6 @@ proc hash(x: BookerSocialMPost): Hash =
 
 proc newPost*(user: BookerUsername, content: string, title, group, url: string = "", date: int64 = 0): BookerSocialMPost =
   ## Create a New social media post
-  var doc = BookerSocialMPost(user: user, content: content, title: title, group: group, url: url, dtype: "socialMPost")
+  var doc = BookerSocialMPost(user: user.id, content: content, title: title, group: group, url: url, dtype: "socialMPost")
   doc.makeMD5ID(content & url & $date)
   result = doc

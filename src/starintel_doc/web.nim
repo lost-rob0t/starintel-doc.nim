@@ -2,15 +2,6 @@ import documents, phones
 import uuids
 import json, strutils
 type
-  BookerWebDocument* = ref object of RootObj
-    eid*: string
-    id*: string
-    rev*: string
-    dataset*: string
-    date*: string
-    dtype*: string
-
-
   BookerBreach* = ref object of BookerDocument
     total*: int
     description*: string
@@ -41,8 +32,6 @@ type
     url*: string # Url to the users page
     username*: string
     platform*: string
-    phones*: seq[BookerPhone]
-    emails*: seq[BookerEmail]
     misc*: seq[JsonNode]
     bio*: string
 
