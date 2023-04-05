@@ -10,5 +10,5 @@ jobs:
       - uses: jiro4989/setup-nim-action@v1
         with:
           nim-version: '1.6.12'
-      - run: "nimble install"
+      - run: "nimble install -y"
       - run: "testament all --megatest: off"
