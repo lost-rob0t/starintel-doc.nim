@@ -53,6 +53,15 @@ Added targets
 Readded EID until local hashing is implemented
 
 * Changelog
+** [2023-04-05 Wed 18:59] 0.5.0
+
+This is the beginning of the migration from the nested documents.
+Not marked as 1.0.0 since there are more changes to be made
+
+Removed all doc parsing, moving to star-formatter (starf)
+
+
+[[file:~/Documents/Projects/starintel/doc/src/starintel_doc/entities.nim]]
 ** [2023-01-22 Sun 06:48] 0.4.1
 Timestamps from now on are unix timestamps
 Requires int64 to use.

@@ -16,3 +16,11 @@ to get the lastest devel version use the ~dev~ branch.
 if you are using ~starintel_doc~ Please notify [[https://pleroma.nobodyhasthe.biz/nott][me]] encase i wreck your project with version 1.0.0
 
 The major changes will be relating to the removal of embedded documents and moving to the "relation" object.
+
+
+
+** Contributing
+
+If you want something, make it happen with a pr or message me.
+
+XMR: 8Bt75mjmyreavdkZoANJUVSUrPBvTLhESfeRd3QJYnh5dYh6HMJVtxg7SRCgZzzhFQYHpzqh4URKWLk2CvrcKhiJCCfGh8L
