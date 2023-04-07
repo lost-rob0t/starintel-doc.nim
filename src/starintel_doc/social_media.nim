@@ -17,7 +17,7 @@ type
     reply_to*: string # Link to the reply.
     group*: string # if none assume dm chat
     channel*: string # for discord
-    mentions*: seq[BookerUsername]
+    mentions*: seq[string]
 
   BookerSocialMPost* = ref object of BookerDocument
     ## An Object Representing a social media post, Such as on reddit, mastodon, 4chan, ect
