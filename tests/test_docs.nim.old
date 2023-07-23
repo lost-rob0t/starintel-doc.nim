@@ -3,16 +3,16 @@ import strutils
 import options
 import json, jsony
 import times
-proc renameHook*(v: var BookerPerson, fieldName: var string) =
+proc renameHook*(v: var Person, fieldName: var string) =
   if fieldName == "rev":
     fieldName = "_rev"
   if fieldName == "id":
     fieldName = "_id"
-proc testBookerDoc() =
+proc testDoc() =
 
   let time = now().toTime.toUnix
   echo "time is, ", $time
-  var doc = BookerDocument(dataset: "Tests",
+  var doc = Document(dataset: "Tests",
                             dtype: "test_doc", date_added: time, date_updated: time, id: "test")
   assert doc.dataset == "Tests"
   assert doc.dtype == "test_doc"
@@ -20,13 +20,13 @@ proc testBookerDoc() =
   assert doc.date_updated == time
   assert doc.id == "test"
 
-proc testBookerPerson() =
+proc testPerson() =
   let time = now().toTime.toUnix
   echo "time is, ", $time
-  var doc = BookerPerson(dataset: "Tests", dtype: "person",
+  var doc = Person(dataset: "Tests", dtype: "person",
                          date_added: time, date_updated: time, id: "test")
   var phone = newPhone("1234567890")
-  link[BookerPerson, BookerPhone](doc, doc.phones, phone)
+  link[Person, Phone](doc, doc.phones, phone)
   doc.fname = "Joe"
   doc.mname = "l"
   doc.lname = "shmoe"
@@ -44,14 +44,14 @@ proc testBookerPerson() =
   assert doc.mname == "l"
   assert doc.lname == "shmoe"
   echo doc.toJson
-proc testBookerOrg() =
+proc testOrg() =
   var doc = newOrg(name="Star Intel", etype="Software")
   assert doc.name == "Star Intel"
   assert doc.etype == "Software"
   assert doc.dtype == "org"
   assert doc.id.len > 0
   echo doc.toJson
-proc testBookerEmail() =
+proc testEmail() =
   let email = "test@foo.bar"
   var doc = newEmail(email)
   assert doc.email_username == "test"
@@ -76,7 +76,7 @@ proc testBookerEmail() =
   echo doc2.toJson
 
 
-proc testBookerUsername() =
+proc testUsername() =
   var doc = newUsername("user", "localhost", "http://127.0.0.1")
   doc.bio = "He is the local host user!"
   doc.misc.add(%*{"foo": "bar"})
@@ -88,7 +88,7 @@ proc testBookerUsername() =
   assert doc.dtype == "user"
   echo doc.toJson
 
-proc testBookerMessage() =
+proc testMessage() =
   let message = "Wow Star intel is a really cool project!"
   let message1 = "Wow Star intel is a really awsome project!"
   var user = newUsername("user", "localhost")
@@ -108,7 +108,7 @@ proc testBookerMessage() =
   echo doc1.toJson
   echo doc3.toJson
 
-proc testBookerTarget() =
+proc testTarget() =
   let target = "nsaspy"
   let dataset = "git accounts"
   let actor = "GitBot"
@@ -141,21 +141,21 @@ proc testSocialMediaPost() =
   assert doc.replies[0].user == author1
   echo doc.toJson
 when isMainModule:
-  echo "Testing: BookerDocument"
-  testBookerDoc()
-  echo "Testing: BookerPerson"
-  testBookerPerson()
-  echo "Testing: BookerOrg"
-  testBookerOrg()
-  echo "Testing: BookerEmail"
-  testBookerEmail()
-  echo "Testing: BookerUsername"
-  testBookerUsername()
-  echo "Testing: BookerMessage"
-  testBookerMessage()
-  echo "Testing: BookerTarget"
-  testBookerTarget()
-  echo "Testing BookerRelations"
+  echo "Testing: Document"
+  testDoc()
+  echo "Testing: Person"
+  testPerson()
+  echo "Testing: Org"
+  testOrg()
+  echo "Testing: Email"
+  testEmail()
+  echo "Testing: Username"
+  testUsername()
+  echo "Testing: Message"
+  testMessage()
+  echo "Testing: Target"
+  testTarget()
+  echo "Testing Relations"
   testRelation()
-  echo "Testing BookerSocialMPost"
+  echo "Testing SocialMPost"
   testSocialMediaPost()

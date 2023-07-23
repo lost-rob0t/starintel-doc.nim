@@ -4,7 +4,7 @@ from times import getTime, toUnix
 export getTime, toUnix
 import json
 type
-    BookerDocument* = ref object of RootObj
+    Document* = ref object of RootObj
       ## Base Object to hold the document metadata thats used to make a dcoument and store it in couchdb
       id*: string
       dataset*: string

@@ -1,7 +1,7 @@
 import documents, locations, web, phones
 
 type
-  BookerEntity* = ref object of BookerDocument
+  Entity* = ref object of Document
     ## A base object that represents a entity
     ## Type of entity such as group, NGO, person, software, ect.
     etype*: string
@@ -10,13 +10,13 @@ type
     eid*: string
 
 
-  BookerOrg* = ref object of BookerEntity
+  Org* = ref object of Entity
     reg*: string
     country*: string
     name*: string
     website*: string
     bio*: string
-  BookerPerson* = ref object of BookerEntity
+  Person* = ref object of Entity
     ## A object that represents a person in starintel
     ## NOTE: person is merged with member and member is no longer used
     fname*: string
@@ -29,12 +29,12 @@ type
     region*: string
     misc*: seq[string]
 
-proc renameHook*(v: var BookerPerson, fieldName: var string) =
+proc renameHook*(v: var Person, fieldName: var string) =
   if fieldName == "rev":
     fieldName = "_rev"
   if fieldName == "id":
     fieldName = "_id"
-proc renameHook*(v: var BookerOrg, fieldName: var string) =
+proc renameHook*(v: var Org, fieldName: var string) =
   if fieldName == "rev":
     fieldName = "_rev"
   if fieldName == "id":
@@ -43,9 +43,9 @@ proc renameHook*(v: var BookerOrg, fieldName: var string) =
 
 
 
-proc newOrg*(name, etype: string): BookerOrg =
+proc newOrg*(name, etype: string): Org =
   ## Create a new booker organization
-  var o = BookerOrg(name: name, etype: etype, reg: "", country: "", website: "", dtype: "org")
+  var o = Org(name: name, etype: etype, reg: "", country: "", website: "", dtype: "org")
   o.makeMD5ID(name & etype)
   result = o
 

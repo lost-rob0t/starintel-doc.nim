@@ -3,7 +3,7 @@ import ../../src/starintel_doc/web
 
 
 
-proc testBookerMessage() =
+proc testMessage() =
   let message = "Wow Star intel is a really cool project!"
   let message1 = "Wow Star intel is a really awsome project!"
   var user = newUsername("user", "localhost")
@@ -31,7 +31,7 @@ proc testSocialMediaPost() =
   assert doc.replies[0] == post1.id
 
 when isMainModule:
-  echo "testing: BookerMessage"
-  testBookerMessage()
-  echo "testing: BookerSocialMediaPost"
+  echo "testing: Message"
+  testMessage()
+  echo "testing: SocialMediaPost"
   testSocialMediaPost()

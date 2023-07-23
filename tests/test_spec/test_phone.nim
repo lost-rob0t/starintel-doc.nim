@@ -1,6 +1,6 @@
 import ../../src/starintel_doc/phones
 
-proc testBookerPhone() =
+proc testPhone() =
   let pstr = "+12025832023"
   var phone = pstr.newPhone("verizon", "unknown", "cell")
   doAssert phone.phone == pstr
@@ -11,5 +11,5 @@ proc testBookerPhone() =
 
 
 when isMainModule:
-  echo "testing: BookerPhone"
-  testBookerPhone()
+  echo "testing: Phone"
+  testPhone()

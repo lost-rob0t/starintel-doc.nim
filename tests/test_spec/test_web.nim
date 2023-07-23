@@ -2,7 +2,7 @@ import ../../src/starintel_doc
 import times
 import json
 
-proc testBookerEmail() =
+proc testEmail() =
   let email = "test@foo.bar"
   var doc = newEmail(email)
   doAssert doc.email_username == "test"
@@ -22,7 +22,7 @@ proc testBookerEmail() =
   doAssert doc2.id.len > 0
 
 
-proc testBookerUsername() =
+proc testUsername() =
   var doc = newUsername("user", "localhost", "http://127.0.0.1")
   doc.bio = "He is the local host user!"
   doc.misc.add(%*{"foo": "bar"})
@@ -33,7 +33,7 @@ proc testBookerUsername() =
   doAssert doc.misc[0]["foo"].getStr == "bar"
   doAssert doc.dtype == "user"
 when isMainModule:
-  echo "testing: BookerEmail"
-  testBookerEmail()
-  echo "testing: BookerUsername"
-  testBookerUsername()
+  echo "testing: Email"
+  testEmail()
+  echo "testing: Username"
+  testUsername()

@@ -4,9 +4,9 @@ import json
 
 
 
-proc testBookerPerson() =
+proc testPerson() =
   let time = now().toTime.toUnix
-  var doc = BookerPerson(dataset: "Tests", dtype: "person",
+  var doc = Person(dataset: "Tests", dtype: "person",
                          date_added: time, date_updated: time, id: "test")
   doc.fname = "Joe"
   doc.mname = "l"
@@ -22,7 +22,7 @@ proc testBookerPerson() =
   doAssert doc.mname == "l"
   doAssert doc.lname == "Smith"
   doAssert doc.race == "white"
-proc testBookerOrg() =
+proc testOrg() =
   var doc = newOrg(name="Star Intel", etype="Software")
   assert doc.name == "Star Intel"
   assert doc.etype == "Software"
@@ -31,7 +31,7 @@ proc testBookerOrg() =
 
 
 when isMainModule:
-  echo "Testing: BookerPerson"
-  testBookerPerson()
-  echo "Testing: BookerOrg"
-  testBookerOrg()
+  echo "Testing: Person"
+  testPerson()
+  echo "Testing: Org"
+  testOrg()

@@ -1,6 +1,6 @@
 import documents
 type
-  BookerPhone* = ref object of BookerDocument
+  Phone* = ref object of Document
       ## A Phone number
       phone*: string
       carrier*: string
@@ -8,5 +8,5 @@ type
       phone_type*: string
 
 
-proc newPhone*(phone: string, carrier, status, phone_type = ""): BookerPhone =
-  BookerPhone(phone: phone, carrier: carrier, status: status, phone_type: phone_type, dtype: "phone")
+proc newPhone*(phone: string, carrier, status, phone_type = ""): Phone =
+  Phone(phone: phone, carrier: carrier, status: status, phone_type: phone_type, dtype: "phone")

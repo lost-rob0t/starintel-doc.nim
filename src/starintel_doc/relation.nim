@@ -8,7 +8,7 @@ type
     between = 5
     member = 6
 
-type BookerRelation* = ref object of BookerDocument
+type Relation* = ref object of Document
   ## A object that represents a relationship between two entities
   relation*: Relations
   ## The type of the relationship
@@ -16,8 +16,8 @@ type BookerRelation* = ref object of BookerDocument
   ## The ID of the source entity
   target*: string
   ## The ID of the target entity
-proc newRelation*(source, target: string, relation: Relations, dataset: string): BookerRelation =
-  ## Creates a new `BookerRelation` object with the specified `source`, `target`, and `relation` values
+proc newRelation*(source, target: string, relation: Relations, dataset: string): Relation =
+  ## Creates a new `Relation` object with the specified `source`, `target`, and `relation` values
   ##
   ## Parameters:
   ##   source (string): The ID of the source entity
@@ -25,8 +25,8 @@ proc newRelation*(source, target: string, relation: Relations, dataset: string):
   ##   relation (Relations): The type of the relationship
   ##
   ## Returns:
-  ##   BookerRelation: The newly created `BookerRelation` object
-  var doc = BookerRelation(source: source, target: target, relation: relation)
+  ##   Relation: The newly created `Relation` object
+  var doc = Relation(source: source, target: target, relation: relation)
   doc.makeUUID
   doc.timeStamp()
   result = doc

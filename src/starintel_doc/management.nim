@@ -1,5 +1,5 @@
 type
-  BookerLifeCycle = object
+  LifeCycle = object
     ## Experimental object, might remove
     dataset*: string
     maxAge*: int

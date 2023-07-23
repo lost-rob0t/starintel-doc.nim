@@ -2,7 +2,7 @@ import ../../src/starintel_doc/[documents, targets, relation]
 import times
 proc testBaseDocument() =
   let time = now().toTime.toUnix
-  var doc = BookerDocument(dataset: "Tests",
+  var doc = Document(dataset: "Tests",
                             dtype: "test_doc", date_added: time, date_updated: time, id: "test")
   doAssert doc.dataset == "Tests"
   doAssert doc.dtype == "test_doc"
@@ -12,7 +12,7 @@ proc testBaseDocument() =
 
 
 
-proc testBookerTarget() =
+proc testTarget() =
   let target = "nsaspy"
   let dataset = "git accounts"
   let actor = "GitBot"
@@ -30,9 +30,9 @@ proc testRelation() =
 
 
 when isMainModule:
-  echo "testing: BookerDocument"
+  echo "testing: Document"
   testBaseDocument()
-  echo "testing: BookerTarget"
-  testBookerTarget()
-  echo "testing: BookerRelation"
+  echo "testing: Target"
+  testTarget()
+  echo "testing: Relation"
   testRelation()

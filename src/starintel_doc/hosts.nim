@@ -2,59 +2,59 @@ import documents, entities
 ## Expiremental spec for defining hosts, domains, ports and services. For now split from web.nim
 
 type
-  BookerWeb* = ref object of BookerDocument
+  Web* = ref object of Document
     # Extra fields to track the source
     source*: string
 
-  BookerDomain* = ref object of BookerWeb
+  Domain* = ref object of Web
     recordType*: string
     domain*: string
     ip*: string
 
-  BookerPort* = object
+  Port* = object
     port*: int16
     services*: seq[string]
 
-  BookerASN* = object
+  ASN* = object
     asn*: int32
     subnet*: string
 
 
-  BookerNetwork* = object of BookerWeb
+  Network* = object of Web
     org*: string
-    asn*: BookerASN
+    asn*: ASN
 
 
-  BookerHost* = ref object of BookerWeb
+  Host* = ref object of Web
     hostname*: string
     ip*: string
-    ports*: seq[BookerPort]
+    ports*: seq[Port]
     os*: string
 
-  BookerUrl* = ref object of BookerWeb
+  Url* = ref object of Web
     url*: string
     content*: string
 
 
-proc newDomain*(domain: string, recordType, ip: string = ""): BookerDomain =
-  var doc = BookerDomain(recordType: recordType, domain: domain, ip: ip, dtype: "domain")
+proc newDomain*(domain: string, recordType, ip: string = ""): Domain =
+  var doc = Domain(recordType: recordType, domain: domain, ip: ip, dtype: "domain")
   doc.makeMD5ID(doc.domain & doc.ip & doc.recordType)
   result = doc
 
-proc newPort*(port: int16): BookerPort =
-  BookerPort(port: port)
+proc newPort*(port: int16): Port =
+  Port(port: port)
 
-proc newPort*(port: int16, services: seq[string]): BookerPort =
-  BookerPort(port: port, services: services)
+proc newPort*(port: int16, services: seq[string]): Port =
+  Port(port: port, services: services)
 
-proc newASN*(asn: int32, subnet: string): BookerASN =
-  BookerASN(asn: asn, subnet: subnet)
+proc newASN*(asn: int32, subnet: string): ASN =
+  ASN(asn: asn, subnet: subnet)
 
-proc newNetwork*(asn: BookerASN, org: string): BookerNetwork =
-  BookerNetwork(asn: asn, org: org, dtype: "network")
+proc newNetwork*(asn: ASN, org: string): Network =
+  Network(asn: asn, org: org, dtype: "network")
 
 
-proc newHost*(ip, hostname: string = ""): BookerHost =
-  var doc = BookerHost(hostname: hostname, ip: ip, dtype: "host")
+proc newHost*(ip, hostname: string = ""): Host =
+  var doc = Host(hostname: hostname, ip: ip, dtype: "host")
   doc.makeMD5ID(doc.hostname & doc.ip)
   result = doc
