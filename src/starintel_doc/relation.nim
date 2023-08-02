@@ -1,23 +1,13 @@
 import documents
-type
-  Relations* = enum
-    to = 1
-    origin = 2
-    parent = 3
-    child = 4
-    between = 5
-    member = 6
-
 type Relation* = ref object of Document
   ## A object that represents a relationship between two entities
-  relation*: Relations
-  ## The type of the relationship
   source*: string
   ## The ID of the source entity
   target*: string
   ## The ID of the target entity
-proc newRelation*(source, target: string, relation: Relations, dataset: string): Relation =
-  ## Creates a new `Relation` object with the specified `source`, `target`, and `relation` values
+  note*: string
+proc newRelation*(source, target: string, note: string = "", dataset: string): Relation =
+  ## Creates a new `Relation` object with the specified `source`, `target`, and `note` values
   ##
   ## Parameters:
   ##   source (string): The ID of the source entity
@@ -26,7 +16,8 @@ proc newRelation*(source, target: string, relation: Relations, dataset: string):
   ##
   ## Returns:
   ##   Relation: The newly created `Relation` object
-  var doc = Relation(source: source, target: target, relation: relation)
+  var doc = Relation(source: source, target: target, note: note)
   doc.makeUUID
   doc.timeStamp()
   result = doc
+

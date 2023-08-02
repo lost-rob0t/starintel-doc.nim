@@ -23,11 +23,10 @@ proc testTarget() =
 proc testRelation() =
   let sourceId = "testfoobar"
   let targetId = "testbarfoo"
-  var doc = newRelation(source=sourceId, target=targetId, relation = Relations.to, dataset = "test")
+  var doc = newRelation(source=sourceId, target=targetId, note = "Hello Graphs", dataset = "test")
   assert doc.source == sourceId
   assert doc.target == targetId
-  assert doc.relation == Relations.to
-
+  assert doc.note == "Hello Graphs"
 
 when isMainModule:
   echo "testing: Document"
