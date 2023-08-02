@@ -1,4 +1,19 @@
 * Changelog
+** [2023-08-02 Wed 17:44] 0.5.4 Updated Relations
+The relations enum has been removed, as it made little sense for a graph.
+Added a note field to the ~Relation~ object
+
+[[file:~/Documents/Projects/starintel/spec/doc-nim/changelog.org::*\[2023-01-06 Fri 04:25\] 0.4.0][[2023-01-06 Fri 04:25] 0.4.0]]
+** [2023-07-23 Sun 03:42] 0.5.2 Removal of Booker prefix
+
+This was never needed and should never have been a thing, to migrate your code use sed against it just removing the Booker Prefix
+
+#+begin_src shell
+find . -type f -exec sed -i 's/Booker//g' {} +
+#+end_src
+
+
+[[file:~/Documents/Projects/starintel/spec/doc-nim/starintel_doc.nimble]]
 ** [2023-04-05 Wed 18:59] 0.5.0
 
 This is the beginning of the migration from the nested documents.
