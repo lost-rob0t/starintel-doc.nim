@@ -20,6 +20,7 @@ type
     body*: string
     subject*: string
     to*: string
+    # FIXME Bad name fromF
     fromF*: string
     headers*: string
     cc*: seq[string]
