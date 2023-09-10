@@ -27,6 +27,9 @@ type
     bcc*: seq[string]
 
 
+  # HACK Improve this
+  # the misc field seems like a bad idea?
+  # whatever it should be a raw json node is a bad idea, maybe it should be just json as a string.
   Username* = ref object of Document
     ## A object that represents a user
     url*: string # Url to the users page
