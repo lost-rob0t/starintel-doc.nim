@@ -1,6 +1,7 @@
 import documents, phones
 import uuids
 import json, strutils
+
 type
   Breach* = ref object of Document
     total*: int
@@ -30,10 +31,10 @@ type
   # HACK Improve this
   # the misc field seems like a bad idea?
   # whatever it should be a raw json node is a bad idea, maybe it should be just json as a string.
-  Username* = ref object of Document
+  User* = ref object of Document
     ## A object that represents a user
     url*: string # Url to the users page
-    username*: string
+    name*: string
     platform*: string
     misc*: seq[JsonNode]
     bio*: string
@@ -60,7 +61,7 @@ proc newEmail*(username, domain, password: string): Email =
 
 
 proc newUsername*(username, platform: string, url: string = ""): Username =
-  var doc = Username(username: username, platform: platform, url: url, dtype: "user")
+  var doc = Username(name: username, platform: platform, url: url, dtype: "user")
   doc.makeMD5ID(username & url)
   result = doc
 # TODO hash procs for username and email docs, uuids are deprecated
