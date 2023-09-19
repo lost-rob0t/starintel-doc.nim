@@ -3,7 +3,7 @@ import uuids
 from times import getTime, toUnix
 export getTime, toUnix
 import json
-
+import typetraits
 
 type
     Document* = ref object of RootObj
@@ -63,6 +63,8 @@ template updateTime*[T](doc: T) =
   doc.date_updated = t.toUnix()
 
 
+template setType*[T](doc: T) = doc.dtype = $typeOf(doc)
+
 proc dump*[T](doc: T): JsonNode =
   var jdoc = %*doc
   jdoc{"_id"} = newJString(doc.id)
@@ -75,3 +77,15 @@ proc load*[T](node: JsonNode, t: typedesc[T]): T =
   jdoc{"id"} = jdoc["_id"]
   jdoc{"rev"} = jdoc["_rev"]
   result = jdoc.to(t)
+
+
+template setMeta*[T](doc: T, dataset: string) =
+  doc.dataset = dataset
+  doc.timestamp
+  doc.setType
+
+
+when isMainModule:
+  var doc = Document()
+  doc.setDtype()
+  echo doc.dump
