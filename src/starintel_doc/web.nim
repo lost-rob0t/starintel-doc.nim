@@ -1,5 +1,4 @@
 import documents, phones
-import uuids
 import json, strutils
 
 type
