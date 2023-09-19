@@ -1,10 +1,9 @@
 import std/[hashes, md5, sha1]
-import uuids
 from times import getTime, toUnix
 export getTime, toUnix
 import json
 import typetraits
-
+import ulid
 type
     Document* = ref object of RootObj
         ## Base Object to hold the document metadata thats used to make a dcoument and store it in couchdb
@@ -28,7 +27,7 @@ template link*[T, V](doc: T, field: untyped, data: V) =
 
 template makeUUID*[T](doc: T) =
     ## Generate a UUID for a document
-    doc.id = $genUUID()
+    doc.id = ulid()
 
 
 template makeEID*[T](doc: T, data: string) =
