@@ -8,15 +8,15 @@ type
 
   Domain* = ref object of Web
     recordType*: string
-    domain*: string
+    record*: string
     ip*: string
 
   Port* = object
-    port*: int16
+    number*: int16
     services*: seq[string]
 
   ASN* = object
-    asn*: int32
+    number*: int32
     subnet*: string
 
 
@@ -37,18 +37,18 @@ type
 
 
 proc newDomain*(domain: string, recordType, ip: string = ""): Domain =
-  var doc = Domain(recordType: recordType, domain: domain, ip: ip, dtype: "domain")
-  doc.makeMD5ID(doc.domain & doc.ip & doc.recordType)
+  var doc = Domain(recordType: recordType, record: domain, ip: ip, dtype: "domain")
+  doc.makeMD5ID(doc.record & doc.ip & doc.recordType)
   result = doc
 
 proc newPort*(port: int16): Port =
-  Port(port: port)
+  Port(number: port)
 
 proc newPort*(port: int16, services: seq[string]): Port =
-  Port(port: port, services: services)
+  Port(number: port, services: services)
 
 proc newASN*(asn: int32, subnet: string): ASN =
-  ASN(asn: asn, subnet: subnet)
+  ASN(number: asn, subnet: subnet)
 
 proc newNetwork*(asn: ASN, org: string): Network =
   Network(asn: asn, org: org, dtype: "network")
