@@ -60,8 +60,13 @@ proc newEmail*(username, domain, password: string): Email =
   result = e
 
 
-proc newUsername*(username, platform: string, url: string = ""): Username =
-  var doc = Username(name: username, platform: platform, url: url, dtype: "user")
+proc newUser*(username, platform: string, url: string = ""): User =
+  var doc = User(name: username, platform: platform, url: url, dtype: "user")
   doc.makeMD5ID(username & url)
   result = doc
+# TODO hash procs for username and email docs, uuids are deprecated
+
+
+proc newUsername*(username, platform: string, url: string = ""): User =
+  result = newUser(username, platform, url)
 # TODO hash procs for username and email docs, uuids are deprecated

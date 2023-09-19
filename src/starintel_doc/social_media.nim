@@ -35,11 +35,18 @@ type
     title*: string
     group*: string
     replyTo*: string ## Linked List, when isReply is false, assume you are at the last of the replies
-proc newMessage*(message, group, platform: string, user: Username, channel="", message_id="", date: int64 = 0): Message =
+proc newMessage*(message, group, platform: string, user: User, channel="", message_id="", date: int64 = 0): Message =
   ## Create a new message from a instant messaging platform
   var doc = Message(message: message, platform: platform, group: group,
-                          user: user.id, message_id: message_id, channel: channel, reply_to: "", dtype: "instant-message")
+                          user: user.name, message_id: message_id, channel: channel, reply_to: "", dtype: "instant-message")
   result = doc
+
+proc newMessage*(message, group, platform: string, user: string, channel="", message_id="", date: int64 = 0): Message =
+  ## Create a new message from a instant messaging platform
+  var doc = Message(message: message, platform: platform, group: group,
+                          user: user, message_id: message_id, channel: channel, reply_to: "", dtype: "instant-message")
+  result = doc
+
 
 
 proc replyMessage*(source: var Message, dest: Message) =
@@ -62,8 +69,13 @@ proc hash(x: SocialMPost): Hash =
   h = h !& hash(x.url)
   result = !$h
 
-proc newPost*(user: Username, content: string, title, group, url: string = "", date: int64 = 0): SocialMPost =
+proc newPost*(user: User, content: string, title, group, url: string = "", date: int64 = 0): SocialMPost =
   ## Create a New social media post
-  var doc = SocialMPost(user: user.id, content: content, title: title, group: group, url: url, dtype: "socialMPost")
+  var doc = SocialMPost(user: user.name, content: content, title: title, group: group, url: url, dtype: "socialMPost")
+  doc.makeMD5ID(content & url & $date)
+  result = doc
+proc newPost*(user: string, content: string, title, group, url: string = "", date: int64 = 0): SocialMPost =
+  ## Create a New social media post
+  var doc = SocialMPost(user: user, content: content, title: title, group: group, url: url, dtype: "socialMPost")
   doc.makeMD5ID(content & url & $date)
   result = doc
