@@ -5,7 +5,7 @@ import std/[hashes, md5, sha1]
 proc testUUID() =
   var doc = Document()
   doc.makeUUID
-  doAssert doc.id.len == 36
+  doAssert doc.id.len == 26
 
 proc testMD5ID() =
   var doc = Document()
