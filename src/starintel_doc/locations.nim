@@ -15,7 +15,9 @@ type
     street*: string
     street2*: string
 
-proc newAddress*(street, street2, city, postal, state, country: string, lat, long = 0.0): Address =
-  var doc = Address(street: street, street2: street2, city: city, postal: postal, state: state, country: country, lat: lat, long: long)
+proc newAddress*(street, street2, city, postal, state, country: string, lat,
+    long = 0.0): Address =
+  var doc = Address(street: street, street2: street2, city: city,
+      postal: postal, state: state, country: country, lat: lat, long: long)
   doc.makeMD5ID(street & street2 & city & state & country & postal)
   result = doc

@@ -6,7 +6,8 @@ type Relation* = ref object of Document
   target*: string
   ## The ID of the target entity
   note*: string
-proc newRelation*(source, target: string, note: string = "", dataset: string): Relation =
+proc newRelation*(source, target: string, note: string = "",
+    dataset: string): Relation =
   ## Creates a new `Relation` object with the specified `source`, `target`, and `note` values
   ##
   ## Parameters:
@@ -20,4 +21,3 @@ proc newRelation*(source, target: string, note: string = "", dataset: string): R
   doc.makeUUID
   doc.timeStamp()
   result = doc
-

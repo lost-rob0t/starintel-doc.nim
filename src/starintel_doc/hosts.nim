@@ -31,13 +31,15 @@ type
     ports*: seq[Port]
     os*: string
 
+
   Url* = ref object of Web
     url*: string
     content*: string
 
 
 proc newDomain*(domain: string, recordType, ip: string = ""): Domain =
-  var doc = Domain(recordType: recordType, record: domain, ip: ip, dtype: "domain")
+  var doc = Domain(recordType: recordType, record: domain, ip: ip,
+      dtype: "domain")
   doc.makeMD5ID(doc.record & doc.ip & doc.recordType)
   result = doc
 
