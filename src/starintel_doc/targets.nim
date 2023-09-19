@@ -14,7 +14,8 @@ type
     options*: JsonNode
 
 proc newTarget*(dataset, target, actor: string, options: JsonNode): Target =
-  var doc = Target(dataset: dataset, target: target, actor: actor, options: options)
+  var doc = Target(dataset: dataset, target: target, actor: actor,
+      options: options)
   doc.makeMD5ID(dataset & target & actor)
   result = doc
 
