@@ -5,20 +5,20 @@ import json
 proc testEmail() =
   let email = "test@foo.bar"
   var doc = newEmail(email)
-  doAssert doc.email_username == "test"
-  doAssert doc.email_domain == "foo.bar"
+  doAssert doc.user == "test"
+  doAssert doc.domain == "foo.bar"
   doAssert doc.id.len > 0
   doAssert doc.dtype == "email"
 
   var doc1 = newEmail("test", "foo.bar")
-  doAssert doc1.email_username == "test"
-  doAssert doc1.email_domain == "foo.bar"
+  doAssert doc1.user == "test"
+  doAssert doc1.domain == "foo.bar"
   doAssert doc.id.len > 0
   doAssert doc1.id.len > 0
   var doc2 = newEmail("test", "foo.bar", "password")
-  doAssert doc2.email_username == "test"
-  doAssert doc2.email_domain == "foo.bar"
-  doAssert doc2.email_password == "password"
+  doAssert doc2.user == "test"
+  doAssert doc2.domain == "foo.bar"
+  doAssert doc2.password == "password"
   doAssert doc2.id.len > 0
 
 

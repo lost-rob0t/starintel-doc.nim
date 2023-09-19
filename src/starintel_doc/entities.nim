@@ -29,18 +29,6 @@ type
     region*: string
     misc*: seq[string]
 
-proc renameHook*(v: var Person, fieldName: var string) =
-  if fieldName == "rev":
-    fieldName = "_rev"
-  if fieldName == "id":
-    fieldName = "_id"
-proc renameHook*(v: var Org, fieldName: var string) =
-  if fieldName == "rev":
-    fieldName = "_rev"
-  if fieldName == "id":
-    fieldName = "_id"
-
-
 
 
 proc newOrg*(name, etype: string): Org =

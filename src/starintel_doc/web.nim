@@ -12,9 +12,9 @@ type
     ## A email address
     ## Owner and Password is Optional
     ## data_breach is used to track what breaches the email is part of
-    email_username*: string
-    email_domain*: string
-    email_password*: string
+    user*: string
+    domain*: string
+    password*: string
 
   EmailMessage* = ref object of Document
     ## a object represented as a email message
@@ -43,20 +43,20 @@ type
 proc newEmail*(email: string): Email =
   ## Take a email in the format of user@foo.bar and return a booker email
   let emailData = email.split("@")
-  var e = Email(email_username: emailData[0], email_domain: emailData[1], dtype: "email")
-  e.makeMD5ID(e.email_password & e.email_domain)
+  var e = Email(user: emailData[0], domain: emailData[1], dtype: "email")
+  e.makeMD5ID(e.password & e.domain & e.user)
   result = e
 
-proc newEmail*(username, domain: string): Email =
-  ## Create a new Email from username and domain
-  var e = Email(email_username: username, email_domain: domain, dtype: "email")
-  e.makeMD5ID(e.email_username & e.email_domain)
+proc newEmail*(user, domain: string): Email =
+  ## Create a new Email from user and domain
+  var e = Email(user: user, domain: domain, dtype: "email")
+  e.makeMD5ID(e.user & e.domain)
   result = e
 
-proc newEmail*(username, domain, password: string): Email =
-  ## Create a new Email from username and domain with the leaked password
-  var e = Email(email_username: username, email_domain: domain, email_password: password, dtype: "email")
-  e.makeMD5ID(e.email_username & e.email_domain & e.email_password)
+proc newEmail*(user, domain, password: string): Email =
+  ## Create a new Email from user and domain with the leaked password
+  var e = Email(user: user, domain: domain, password: password, dtype: "email")
+  e.makeMD5ID(e.user & e.domain & e.password)
   result = e
 
 
