@@ -23,11 +23,12 @@ proc testEmail() =
 
 
 proc testUsername() =
-  var doc = newUsername("user", "localhost", "http://127.0.0.1")
+  var doc = newUser("user", "localhost", "http://127.0.0.1")
+  var doc1 = newUsername("user", "localhost", "http://127.0.0.1") # keep old functionality i like this name
   doc.bio = "He is the local host user!"
   doc.misc.add(%*{"foo": "bar"})
   doAssert doc.url == "http://127.0.0.1"
-  doAssert doc.username == "user"
+  doAssert doc.name == "user"
   doAssert doc.platform == "localhost"
   doAssert doc.bio == "He is the local host user!"
   doAssert doc.misc[0]["foo"].getStr == "bar"
