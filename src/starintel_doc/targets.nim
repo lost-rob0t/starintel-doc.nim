@@ -7,7 +7,6 @@ type
     ## Actor should be used as a bot id
     ## Options field may be used by the bot but SHOULD NOT be indexed into the database.
     id*: string
-    rev*: string
     actor*: string
     dataset*: string
     target*: string
