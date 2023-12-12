@@ -66,6 +66,21 @@ template updateTime*[T](doc: T) =
 
 template setType*[T](doc: T) = doc.dtype = $typeOf(doc)
 
+template addMetadata*[T](doc: T, dataset: string = "star-intel") =
+  ## Add Metadata to the document
+  ## if a field is set, it will not set it.
+  ## If the dataset is missing, it will set default from `dataset` argument.
+  let t = getTime()
+  if doc.date_added = 0:
+      doc.date_added = t.toUnix()
+  if doc.date_updated = 0:
+      doc.date_updated = t.toUnix()
+  if doc.id.len == 0:
+    doc.makeUUID
+  if doc.dataset.len == 0:
+    doc.dataset = dataset
+  doc.setType
+
 proc dump*[T](doc: T): JsonNode =
     var jdoc = %*doc
     jdoc{"_id"} = newJString(doc.id)
