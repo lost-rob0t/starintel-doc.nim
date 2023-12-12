@@ -1,9 +1,11 @@
-import std/[hashes, md5, sha1]
+when not defined(js):
+  import std/[hashes, md5, sha1]
+  import ulid
 from times import getTime, toUnix
 export getTime, toUnix
 import json
 import typetraits
-import ulid
+
 type
     Document* = ref object of RootObj
         ## Base Object to hold the document metadata thats used to make a dcoument and store it in couchdb
@@ -14,10 +16,10 @@ type
         date_updated*: int64
 
 
-proc makeHash*(input: string): string =
-    result = $hash(input)
-    when defined(debug):
-        echo $result
+# proc makeHash*(input: string): string =
+#     result = $hash(input)
+#     when defined(debug):
+#         echo $result
 
 
 template link*[T, V](doc: T, field: untyped, data: V) =
@@ -29,12 +31,12 @@ template makeUUID*[T](doc: T) =
     ## Generate a UUID for a document
     doc.id = ulid()
 
-
-template makeEID*[T](doc: T, data: string) =
-    ## Generate a EID
-    ## for data include enough data to make it unique
-    ## For example for a person; first name, middle name, last name can be used
-    doc.eid = makeHash(data)
+# TODO remove this
+# template makeEID*[T](doc: T, data: string) =
+#     ## Generate a EID
+#     ## for data include enough data to make it unique
+#     ## For example for a person; first name, middle name, last name can be used
+#     doc.eid = makeHash(data)
 
 
 
@@ -86,5 +88,5 @@ template setMeta*[T](doc: T, dataset: string) =
 
 when isMainModule:
     var doc = Document()
-    doc.setDtype()
+    doc.setType()
     echo doc.dump

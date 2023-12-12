@@ -35,6 +35,8 @@ type
     title*: string
     group*: string
     replyTo*: string ## Linked List, when isReply is false, assume you are at the last of the replies
+
+
 proc newMessage*(message, group, platform: string, user: User, channel = "",
     message_id = "", date: int64 = 0): Message =
   ## Create a new message from a instant messaging platform

@@ -9,3 +9,4 @@ srcDir       = "src"
 
 requires "nim >= 1.6.0"
 requires "ulid"
+requires "regex"

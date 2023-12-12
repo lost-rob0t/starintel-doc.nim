@@ -1,4 +1,4 @@
-import documents, entities
+import documents, entities, tables
 ## Expiremental spec for defining hosts, domains, ports and services. For now split from web.nim
 
 type
@@ -34,12 +34,17 @@ type
 
   Url* = ref object of Web
     url*: string
+    statusCode*: int
+    headers*: Table[string, string]
     content*: string
 
+  Finding* = ref object of Web
+    data*: string
 
-proc newDomain*(domain: string, recordType, ip: string = ""): Domain =
+
+proc newDomain*(domain: string, recordType, ip, source: string): Domain =
   var doc = Domain(recordType: recordType, record: domain, ip: ip,
-      dtype: "domain")
+                   dtype: "Domain", source: source)
   doc.makeMD5ID(doc.record & doc.ip & doc.recordType)
   result = doc
 
@@ -52,11 +57,11 @@ proc newPort*(port: int16, services: seq[string]): Port =
 proc newASN*(asn: int32, subnet: string): ASN =
   ASN(number: asn, subnet: subnet)
 
-proc newNetwork*(asn: ASN, org: string): Network =
-  Network(asn: asn, org: org, dtype: "network")
+proc newNetwork*(asn: ASN, org, source: string): Network =
+  Network(asn: asn, org: org, dtype: "network", source: source)
 
 
-proc newHost*(ip, hostname: string = ""): Host =
+proc newHost*(ip, hostname, source: string): Host =
   var doc = Host(hostname: hostname, ip: ip, dtype: "host")
   doc.makeMD5ID(doc.hostname & doc.ip)
   result = doc
