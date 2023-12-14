@@ -1,4 +1,4 @@
-import ../../src/starintel_doc/[documents, targets, relation]
+import ../../src/starintel_doc/[documents, targets, relation, scope]
 import times
 proc testBaseDocument() =
   let time = now().toTime.toUnix
@@ -20,6 +20,23 @@ proc testTarget() =
   assert doc.target == target
   assert doc.dataset == dataset
   assert doc.actor == actor
+
+proc testScan() =
+  let target = "nsaspy"
+  let dataset = "git accounts"
+  let actor = "GitBot"
+  var scope = newScope("HackerOne", "HackerOne is a platform for bug bounty programs.")
+  scope.inScopeAdd(".*.hackerone.com")
+  scope.inscopeAdd("api.hackerone.com")
+  scope.outScopeAdd("testhackerone.com")
+  var scan = newScan(dataset, target, actor, scope)
+  assert scan.target.target == target
+  assert scan.target.dataset == dataset
+  assert scan.target.actor == actor
+  assert scan.scope.dataset == "HackerOne"
+
+
+
 proc testRelation() =
   let sourceId = "testfoobar"
   let targetId = "testbarfoo"
@@ -33,5 +50,7 @@ when isMainModule:
   testBaseDocument()
   echo "testing: Target"
   testTarget()
+  echo "testing: ScanInput"
+  testScan()
   echo "testing: Relation"
   testRelation()
