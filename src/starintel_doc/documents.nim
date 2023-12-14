@@ -8,19 +8,14 @@ import typetraits
 
 type
     Document* = ref object of RootObj
-        ## Base Object to hold the document metadata thats used to make a dcoument and store it in couchdb
+        ## Base Object to hold the document metadata thats used to make a dcoument and store it in the database.
         id*: string
         dataset*: string
         dtype*: string
         date_added*: int64
         date_updated*: int64
-
-
-# proc makeHash*(input: string): string =
-#     result = $hash(input)
-#     when defined(debug):
-#         echo $result
-
+        version*: int
+        sources*: seq[string]
 
 template link*[T, V](doc: T, field: untyped, data: V) =
     field.add(data)
@@ -66,14 +61,14 @@ template updateTime*[T](doc: T) =
 
 template setType*[T](doc: T) = doc.dtype = $typeOf(doc)
 
-template addMetadata*[T](doc: T, dataset: string = "star-intel") =
+template setMeta*[T](doc: T, dataset: string = "star-intel") =
   ## Add Metadata to the document
   ## if a field is set, it will not set it.
   ## If the dataset is missing, it will set default from `dataset` argument.
   let t = getTime()
-  if doc.date_added = 0:
+  if doc.date_added == 0:
       doc.date_added = t.toUnix()
-  if doc.date_updated = 0:
+  if doc.date_updated == 0:
       doc.date_updated = t.toUnix()
   if doc.id.len == 0:
     doc.makeUUID
@@ -81,24 +76,25 @@ template addMetadata*[T](doc: T, dataset: string = "star-intel") =
     doc.dataset = dataset
   doc.setType
 
+proc addSource*[T](doc: T, tag: string) =
+  ## Adds a tag to the document.
+  doc.sources.add(tag)
+
 proc dump*[T](doc: T): JsonNode =
-    var jdoc = %*doc
-    jdoc{"_id"} = newJString(doc.id)
-    jdoc.delete("id")
-    result = jdoc
+  ## Dump a document to json, This is only needed since couchdb uses _id as the id.
+  var jdoc = %*doc
+  jdoc{"_id"} = newJString(doc.id)
+  jdoc.delete("id")
+  result = jdoc
 
 
 proc load*[T](node: JsonNode, t: typedesc[T]): T =
-    var jdoc = node
-    jdoc{"id"} = jdoc["_id"]
-    jdoc{"rev"} = jdoc["_rev"]
-    result = jdoc.to(t)
+  ## Loads a document from json, This is only needed since couchdb uses _id as the id.
+  var jdoc = node
+  jdoc{"id"} = jdoc["_id"]
+  jdoc{"rev"} = jdoc["_rev"]
+  result = jdoc.to(t)
 
-
-template setMeta*[T](doc: T, dataset: string) =
-    doc.dataset = dataset
-    doc.timestamp
-    doc.setType
 
 
 when isMainModule:
