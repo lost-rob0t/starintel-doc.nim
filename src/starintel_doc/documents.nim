@@ -6,6 +6,9 @@ export getTime, toUnix
 import json
 import typetraits
 
+#any changes requires this to be bumped
+const DOC_VERSION* = "0.7.2"
+
 type
     Document* = ref object of RootObj
         ## Base Object to hold the document metadata thats used to make a dcoument and store it in the database.
@@ -14,7 +17,7 @@ type
         dtype*: string
         date_added*: int64
         date_updated*: int64
-        version*: int
+        version*: string = DOC_VERSION
         sources*: seq[string]
 
 template link*[T, V](doc: T, field: untyped, data: V) =

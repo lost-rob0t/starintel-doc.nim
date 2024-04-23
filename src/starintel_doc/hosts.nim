@@ -38,10 +38,9 @@ type
     data*: string
 
 
-proc newDomain*(domain: string, recordType): Domain =
-  var doc = Domain(recordType: recordType, record: domain
-                   dtype: "Domain")
-  doc.makeMD5ID(doc.record & doc.ip & doc.recordType)
+proc newDomain*(domain, recordType: string): Domain =
+  var doc = Domain(recordType: recordType, record: domain, dtype: "Domain")
+  doc.makeMD5ID(doc.record & doc.recordType)
   result = doc
 
 proc newPort*(port: int16): Port =
@@ -54,7 +53,7 @@ proc newASN*(asn: int32, subnet: string): ASN =
   ASN(number: asn, subnet: subnet)
 
 proc newNetwork*(asn: ASN, org, source: string): Network =
-  Network(asn: asn, org: org, dtype: "network", source: source)
+  Network(asn: asn, org: org, dtype: "network")
 
 
 proc newHost*(ip, hostname, source: string): Host =

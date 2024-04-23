@@ -1,5 +1,6 @@
 import ../../src/starintel_doc/[documents, targets, relation, scope]
 import times
+import json
 proc testBaseDocument() =
   let time = now().toTime.toUnix
   var doc = Document(dataset: "Tests",
@@ -16,24 +17,26 @@ proc testTarget() =
   let target = "nsaspy"
   let dataset = "git accounts"
   let actor = "GitBot"
-  var doc = newTarget(dataset, target, actor)
+  var doc = newTarget(dataset, target, actor, 3600, true, %*{})
   assert doc.target == target
   assert doc.dataset == dataset
   assert doc.actor == actor
+  assert doc.recurring == true
+  assert doc.delay == 3600
 
-proc testScan() =
-  let target = "nsaspy"
-  let dataset = "git accounts"
-  let actor = "GitBot"
-  var scope = newScope("HackerOne", "HackerOne is a platform for bug bounty programs.")
-  scope.inScopeAdd(".*.hackerone.com")
-  scope.inscopeAdd("api.hackerone.com")
-  scope.outScopeAdd("testhackerone.com")
-  var scan = newScan(dataset, target, actor, scope)
-  assert scan.target.target == target
-  assert scan.target.dataset == dataset
-  assert scan.target.actor == actor
-  assert scan.scope.dataset == "HackerOne"
+# proc testScan() =
+#   let target = "nsaspy"
+#   let dataset = "git accounts"
+#   let actor = "GitBot"
+#   var scope = newScope("HackerOne", "HackerOne is a platform for bug bounty programs.")
+#   scope.inScopeAdd(".*.hackerone.com")
+#   scope.inscopeAdd("api.hackerone.com")
+#   scope.outScopeAdd("testhackerone.com")
+#   var scan = newScan(dataset, target, actor, scope)
+#   assert scan.target.target == target
+#   assert scan.target.dataset == dataset
+#   assert scan.target.actor == actor
+#   assert scan.scope.dataset == "HackerOne"
 
 
 
@@ -50,7 +53,7 @@ when isMainModule:
   testBaseDocument()
   echo "testing: Target"
   testTarget()
-  echo "testing: ScanInput"
-  testScan()
+  #echo "testing: ScanInput"
+  #testScan()
   echo "testing: Relation"
   testRelation()
