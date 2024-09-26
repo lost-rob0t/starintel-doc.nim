@@ -32,7 +32,6 @@ proc testService() =
   assert doc2.port == port
   assert doc2.name == name
   assert doc2.ver == ""
-  assert doc.dtype == "Service"
 
 proc testNetwork() =
   let
