@@ -5,58 +5,58 @@ type
   Domain* = ref object of Document
     recordType*: string
     record*: string
-    ips*: seq[string]
+    resolved*: seq[string]
 
-  Port* = object
-    number*: int16
-    services*: seq[string]
-
-  ASN* = object
-    number*: int32
-    subnet*: string
+  Service* = ref object of Document
+    port*: int16
+    name*: string
+    ver*: string
 
 
   Network* = object of Document
     org*: string
-    asn*: ASN
+    asn*: int
+    subnet*: string
 
 
   Host* = ref object of Document
     hostname*: string
     ip*: string
-    ports*: seq[Port]
     os*: string
 
 
   Url* = ref object of Document
     url*: string
-    statusCode*: int
-    headers*: Table[string, string]
+    path*: string
+    query*: string
     content*: string
-
-  Finding* = ref object of Document
-    data*: string
 
 
 proc newDomain*(domain, recordType: string): Domain =
-  var doc = Domain(recordType: recordType, record: domain, dtype: "Domain")
-  doc.makeMD5ID(doc.record & doc.recordType)
-  result = doc
+  result = Domain(recordType: recordType, record: domain)
+  result.makeMD5ID(result.record & result.recordType)
+  result.setType
 
-proc newPort*(port: int16): Port =
-  Port(number: port)
+proc newDomain*(domain, recordType: string, resolved: seq[string]): Domain =
+  result = Domain(recordType: recordType, record: domain, resolved: resolved)
+  result.makeMD5ID(result.record & result.recordType)
+  result.setType
 
-proc newPort*(port: int16, services: seq[string]): Port =
-  Port(number: port, services: services)
 
-proc newASN*(asn: int32, subnet: string): ASN =
-  ASN(number: asn, subnet: subnet)
 
-proc newNetwork*(asn: ASN, org, source: string): Network =
-  Network(asn: asn, org: org, dtype: "network")
+proc newService*(port: int16, name: string): Service =
+  Service(port: port, name: name)
+
+proc newService*(port: int16, name: string, version: string): Service =
+  result = Service(port: port, name: name, ver: version)
+  result.setType
+
+proc newNetwork*(asn: int, org, source: string): Network =
+  result = Network(asn: asn, org: org)
+  result.setType
 
 
 proc newHost*(ip, hostname, source: string): Host =
-  var doc = Host(hostname: hostname, ip: ip, dtype: "host")
-  doc.makeMD5ID(doc.hostname & doc.ip)
-  result = doc
+  result = Host(hostname: hostname, ip: ip)
+  result.makeMD5ID(result.ip)
+  result.setType
