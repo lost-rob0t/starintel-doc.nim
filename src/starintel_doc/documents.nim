@@ -1,13 +1,12 @@
-when not defined(js):
-  import std/[hashes, md5, sha1]
-  import ulid
+import std/[hashes, md5, sha1]
+import ulid
 from times import getTime, toUnix
 export getTime, toUnix
 import json
 import typetraits
 
 #any changes requires this to be bumped
-const DOC_VERSION* = "0.7.2"
+const DOC_VERSION* = "0.7.3"
 
 type
     Document* = ref object of RootObj
