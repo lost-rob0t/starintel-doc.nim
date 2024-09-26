@@ -7,7 +7,7 @@ type
     record*: string
     resolved*: seq[string]
 
-  Service* = ref object of Document
+  Service* = object
     port*: int16
     name*: string
     ver*: string
@@ -23,7 +23,7 @@ type
     hostname*: string
     ip*: string
     os*: string
-
+    ports*: seq[Service]
 
   Url* = ref object of Document
     url*: string
@@ -45,14 +45,15 @@ proc newDomain*(domain, recordType: string, resolved: seq[string]): Domain =
 
 
 proc newService*(port: int16, name: string): Service =
-  Service(port: port, name: name)
+  result = Service(port: port, name: name)
+
 
 proc newService*(port: int16, name: string, version: string): Service =
   result = Service(port: port, name: name, ver: version)
-  result.setType
 
 proc newNetwork*(asn: int, org, source: string): Network =
   result = Network(asn: asn, org: org)
+  result.makeMD5ID($asn & org)
   result.setType
 
 
