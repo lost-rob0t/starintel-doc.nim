@@ -1,4 +1,9 @@
 * Changelog
+** [2023-12-12 Tue 10:40] 0.7.0
+
+Add Scope type
+
+[[file:~/Documents/Projects/starintel/spec/doc-nim/tests/test_spec/test_scope.nim::echo "testing: Scope Creation"]]
 ** [2023-09-19 Tue 12:18] 0.6.0
 + Renamed Username => User
 + Renamed fields:

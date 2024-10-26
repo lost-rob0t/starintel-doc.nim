@@ -1,62 +1,63 @@
-import documents, entities
+import documents, entities, tables
 ## Expiremental spec for defining hosts, domains, ports and services. For now split from web.nim
 
 type
-  Web* = ref object of Document
-    # Extra fields to track the source
-    source*: string
-
-  Domain* = ref object of Web
+  Domain* = ref object of Document
     recordType*: string
     record*: string
-    ip*: string
+    resolved*: seq[string]
 
-  Port* = object
-    number*: int16
-    services*: seq[string]
+  Service* = object
+    port*: int16
+    name*: string
+    ver*: string
 
-  ASN* = object
-    number*: int32
+
+  Network* = object of Document
+    org*: string
+    asn*: int
     subnet*: string
 
 
-  Network* = object of Web
-    org*: string
-    asn*: ASN
-
-
-  Host* = ref object of Web
+  Host* = ref object of Document
     hostname*: string
     ip*: string
-    ports*: seq[Port]
     os*: string
+    ports*: seq[Service]
 
-
-  Url* = ref object of Web
+  Url* = ref object of Document
     url*: string
+    path*: string
+    query*: string
     content*: string
 
 
-proc newDomain*(domain: string, recordType, ip: string = ""): Domain =
-  var doc = Domain(recordType: recordType, record: domain, ip: ip,
-      dtype: "domain")
-  doc.makeMD5ID(doc.record & doc.ip & doc.recordType)
-  result = doc
+proc newDomain*(domain, recordType: string): Domain =
+  result = Domain(recordType: recordType, record: domain)
+  result.makeMD5ID(result.record & result.recordType)
+  result.setType
 
-proc newPort*(port: int16): Port =
-  Port(number: port)
-
-proc newPort*(port: int16, services: seq[string]): Port =
-  Port(number: port, services: services)
-
-proc newASN*(asn: int32, subnet: string): ASN =
-  ASN(number: asn, subnet: subnet)
-
-proc newNetwork*(asn: ASN, org: string): Network =
-  Network(asn: asn, org: org, dtype: "network")
+proc newDomain*(domain, recordType: string, resolved: seq[string]): Domain =
+  result = Domain(recordType: recordType, record: domain, resolved: resolved)
+  result.makeMD5ID(result.record & result.recordType)
+  result.setType
 
 
-proc newHost*(ip, hostname: string = ""): Host =
-  var doc = Host(hostname: hostname, ip: ip, dtype: "host")
-  doc.makeMD5ID(doc.hostname & doc.ip)
-  result = doc
+
+proc newService*(port: int16, name: string): Service =
+  result = Service(port: port, name: name)
+
+
+proc newService*(port: int16, name: string, version: string): Service =
+  result = Service(port: port, name: name, ver: version)
+
+proc newNetwork*(asn: int, org, source: string): Network =
+  result = Network(asn: asn, org: org)
+  result.makeMD5ID($asn & org)
+  result.setType
+
+
+proc newHost*(ip, hostname, source: string): Host =
+  result = Host(hostname: hostname, ip: ip)
+  result.makeMD5ID(result.ip)
+  result.setType

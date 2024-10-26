@@ -7,8 +7,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: jiro4989/setup-nim-action@v1
+      - uses: jiro4989/setup-nim-action@v2
         with:
-          nim-version: '1.6.12'
+          nim-version: '2.0.8'
       - run: "nimble install -y"
       - run: "testament all --megatest: off"

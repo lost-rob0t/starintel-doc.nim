@@ -8,5 +8,6 @@ mkShell {
     pre-commit
     nim
     lcov
+    nodejs
   ];
 }
