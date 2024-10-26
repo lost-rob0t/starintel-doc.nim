@@ -22,7 +22,8 @@ type
 proc newTarget*(dataset, target, actor: string, delay: int = 0,
     recurring: bool = false, options: JsonNode): Target =
   var doc = Target(dataset: dataset, target: target, actor: actor,
-                   options: options, recurring: recurring, delay: delay)
+                   options: options, recurring: recurring, delay: delay,
+                   dtype: "target")
   doc.makeMD5ID(dataset & target & actor & $recurring & $delay)
   result = doc
 

@@ -1,4 +1,4 @@
-import std/[hashes, md5, sha1]
+import std/[hashes, md5, sha1, strutils]
 import ulid
 from times import getTime, toUnix
 export getTime, toUnix
@@ -35,7 +35,8 @@ template makeUUID*[T](doc: T) =
 #     ## For example for a person; first name, middle name, last name can be used
 #     doc.eid = makeHash(data)
 
-
+# TODO setId
+# overload for each type
 
 template makeMD5ID*[T](doc: T, data: string) =
     ## Generate a MD5 checksum for the document id
@@ -61,41 +62,42 @@ template updateTime*[T](doc: T) =
     doc.date_updated = t.toUnix()
 
 
-template setType*[T](doc: T) = doc.dtype = $typeOf(doc)
+template setType*[T](doc: T) =
+    doc.dtype = toLowerAscii($typeOf(doc))
 
-template setMeta*[T](doc: T, dataset: string = "star-intel") =
-  ## Add Metadata to the document
-  ## if a field is set, it will not set it.
-  ## If the dataset is missing, it will set default from `dataset` argument.
-  let t = getTime()
-  if doc.date_added == 0:
-      doc.date_added = t.toUnix()
-  if doc.date_updated == 0:
-      doc.date_updated = t.toUnix()
-  if doc.id.len == 0:
-    doc.makeUUID
-  if doc.dataset.len == 0:
-    doc.dataset = dataset
-  doc.setType
+template setMeta*[T](doc: T, docDataset: string = "star-intel") =
+    ## Add Metadata to the document
+    ## if a field is set, it will not set it.
+    ## If the dataset is missing, it will set default from `dataset` argument.
+    let t = getTime()
+    doc.setType
+    if doc.date_added == 0:
+        doc.date_added = t.toUnix()
+    if doc.date_updated == 0:
+        doc.date_updated = t.toUnix()
+    if doc.id.len == 0:
+        doc.makeUUID
+    if doc.dataset.len == 0:
+        doc.dataset = docDataset
 
 proc addSource*[T](doc: T, tag: string) =
-  ## Adds a tag to the document.
-  doc.sources.add(tag)
+    ## Adds a tag to the document.
+    doc.sources.add(tag)
 
 proc dump*[T](doc: T): JsonNode =
-  ## Dump a document to json, This is only needed since couchdb uses _id as the id.
-  var jdoc = %*doc
-  jdoc{"_id"} = newJString(doc.id)
-  jdoc.delete("id")
-  result = jdoc
+    ## Dump a document to json, This is only needed since couchdb uses _id as the id.
+    var jdoc = %*doc
+    jdoc{"_id"} = newJString(doc.id)
+    jdoc.delete("id")
+    result = jdoc
 
 
 proc load*[T](node: JsonNode, t: typedesc[T]): T =
-  ## Loads a document from json, This is only needed since couchdb uses _id as the id.
-  var jdoc = node
-  jdoc{"id"} = jdoc["_id"]
-  jdoc{"rev"} = jdoc["_rev"]
-  result = jdoc.to(t)
+    ## Loads a document from json, This is only needed since couchdb uses _id as the id.
+    var jdoc = node
+    jdoc{"id"} = jdoc["_id"]
+    jdoc{"rev"} = jdoc["_rev"]
+    result = jdoc.to(t)
 
 
 

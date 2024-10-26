@@ -16,7 +16,7 @@ proc testDomain() =
   assert doc2.record == record
   assert doc.recordType == recordType
   assert doc2.recordType == recordType
-  assert doc.dtype == "Domain"
+  assert doc.dtype == "domain"
 
 proc testService() =
   let
@@ -42,7 +42,7 @@ proc testNetwork() =
 
   assert doc.asn == asn
   assert doc.org == org
-  assert doc.dtype == "Network"
+  assert doc.dtype == "network"
 
 proc testHost() =
   let
@@ -54,7 +54,7 @@ proc testHost() =
   assert doc.ip == ip
   assert doc.hostname == hostname
   assert len(doc.id) > 0
-  assert doc.dtype == "Host"
+  assert doc.dtype == "host"
 
 when isMainModule:
   echo "Testing: Domain"
