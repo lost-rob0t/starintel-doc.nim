@@ -150,6 +150,62 @@ proc structuredSources(values: seq[string]): JsonNode =
       "url": source
     })
 
+proc wireDataKey(key: string): string =
+  case key
+  of "fromF", "from_":
+    return "from"
+  of "resolved":
+    return "resolved_addresses"
+  else:
+    discard
+
+  for index, character in key:
+    if character.isUpperAscii:
+      if index > 0:
+        result.add('_')
+      result.add(character.toLowerAscii)
+    else:
+      result.add(character)
+
+proc stringField(data: JsonNode, key: string): string =
+  if data.kind == JObject and data.hasKey(key) and data[key].kind == JString:
+    data[key].getStr
+  else:
+    ""
+
+proc normalizeRequiredData(dtype: string, data: var JsonNode) =
+  case dtype
+  of "relation":
+    if not data.hasKey("subject"):
+      data["subject"] = %stringField(data, "source")
+    if not data.hasKey("object"):
+      data["object"] = %stringField(data, "target")
+    if not data.hasKey("predicate") or stringField(data, "predicate").len == 0:
+      data["predicate"] = %"related_to"
+  of "domain":
+    if not data.hasKey("domain"):
+      data["domain"] = %stringField(data, "record")
+  of "email":
+    if not data.hasKey("address"):
+      let user = stringField(data, "user")
+      let domain = stringField(data, "domain")
+      data["address"] = %(if user.len > 0 and domain.len > 0: user & "@" & domain else: "")
+  of "email-message":
+    if data.hasKey("to") and data["to"].kind == JString:
+      let recipient = data["to"].getStr
+      var recipients = newJArray()
+      if recipient.len > 0:
+        recipients.add(%recipient)
+      data["to"] = recipients
+    if data.hasKey("headers") and data["headers"].kind == JString:
+      let raw = data["headers"].getStr
+      var headers = newJObject()
+      if raw.len > 0:
+        headers["raw"] = %raw
+      data["headers"] = headers
+  else:
+    discard
+
 proc dump*[T](doc: T): JsonNode =
   ## Emit the canonical v0.9 wire object while preserving legacy subtype APIs.
   doc.setMeta(if doc.dataset.len > 0: doc.dataset else: "star-intel")
@@ -172,8 +228,9 @@ proc dump*[T](doc: T): JsonNode =
       if isEnvelopeKey(key):
         result[key] = value
       else:
-        subtypeData[key] = value
+        subtypeData[wireDataKey(key)] = value
 
+  normalizeRequiredData(doc.dtype, subtypeData)
   result["data"] = subtypeData
 
 proc load*[T](node: JsonNode, t: typedesc[T]): T =
