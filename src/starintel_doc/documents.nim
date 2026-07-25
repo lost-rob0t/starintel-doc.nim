@@ -1,107 +1,197 @@
-import std/[hashes, md5, sha1, strutils]
+import std/[hashes, json, md5, sha1, strutils, times, typetraits]
 import ulid
-from times import getTime, toUnix
-export getTime, toUnix
-import json
-import typetraits
+import schema_org
 
-#any changes requires this to be bumped
-const DOC_VERSION* = "0.7.3"
+export getTime, toUnix
+export schema_org
+
+const DOC_VERSION* = "0.9.0"
 
 type
-    Document* = ref object of RootObj
-        ## Base Object to hold the document metadata thats used to make a dcoument and store it in the database.
-        id*: string
-        dataset*: string
-        dtype*: string
-        date_added*: int64
-        date_updated*: int64
-        version*: string = DOC_VERSION
-        sources*: seq[string]
+  Document* = ref object of RootObj
+    ## Canonical StarIntel v0.9 envelope. Subtype fields are nested under data by dump().
+    id*: string
+    rev*: string
+    dataset*: string
+    dtype*: string
+    schema_version*: string = DOC_VERSION
+    version*: int = 1
+    date_added*: string
+    date_updated*: string
+    title*: string
+    summary*: string
+    description*: string
+    status*: string
+    language*: string
+    tags*: seq[string]
+    labels*: seq[string]
+    aliases*: seq[string]
+    keywords*: seq[string]
+    identifiers*: seq[JsonNode]
+    sources*: seq[string]
+    evidence*: seq[JsonNode]
+    temporal*: JsonNode
+    provenance*: JsonNode
+    assessment*: JsonNode
+    verification*: JsonNode
+    handling*: JsonNode
+    lineage*: JsonNode
+    quality*: JsonNode
+    workflow*: JsonNode
+    geospatial*: JsonNode
+    attachments*: seq[JsonNode]
+    related_ids*: seq[string]
+    notes*: seq[string]
+    schema_org*: JsonNode
+    data*: JsonNode
+    extensions*: JsonNode
 
-template link*[T, V](doc: T, field: untyped, data: V) =
-    field.add(data)
+template link*[T, V](doc: T, field: untyped, value: V) =
+  field.add(value)
 
+proc utcNow*(): string =
+  now().utc.format("yyyy-MM-dd'T'HH:mm:ss'.'fff'Z'")
 
+proc ensureObject(node: var JsonNode) =
+  if node.isNil or node.kind != JObject:
+    node = newJObject()
 
 template makeUUID*[T](doc: T) =
-    ## Generate a UUID for a document
-    doc.id = ulid()
+  doc.id = ulid()
 
-# TODO remove this
-# template makeEID*[T](doc: T, data: string) =
-#     ## Generate a EID
-#     ## for data include enough data to make it unique
-#     ## For example for a person; first name, middle name, last name can be used
-#     doc.eid = makeHash(data)
+# Compatibility helpers retained for existing callers.
+template makeMD5ID*[T](doc: T, value: string) =
+  doc.id = $toMD5(value)
 
-# TODO setId
-# overload for each type
-
-template makeMD5ID*[T](doc: T, data: string) =
-    ## Generate a MD5 checksum for the document id
-    doc.id = $toMD5(data)
-
-
-template makeSHAID*[T](doc: T, data: string) =
-    ## Generate a SHA1 checksume for the document ID
-    doc.id = $secureHash(data)
-
+template makeSHAID*[T](doc: T, value: string) =
+  doc.id = $secureHash(value)
 
 template timestamp*[T](doc: T) =
-    ## Add a timestamp to the document
-    ## Not done in helpers because sometimes you want the time from the data source
-    let t = getTime()
-    doc.date_added = t.toUnix()
-    doc.date_updated = t.toUnix()
-
+  let stamp = utcNow()
+  doc.date_added = stamp
+  doc.date_updated = stamp
 
 template updateTime*[T](doc: T) =
-    ## update the date_updated timestamp to the document
-    let t = getTime()
-    doc.date_updated = t.toUnix()
-
+  doc.date_updated = utcNow()
+  doc.version = max(1, doc.version) + 1
 
 template setType*[T](doc: T) =
-    doc.dtype = toLowerAscii($typeOf(doc))
+  var typeName = $typeOf(doc)
+  if typeName.startsWith("ref "):
+    typeName = typeName[4 .. ^1]
+  doc.dtype = canonicalDtype(typeName)
+
+proc ensureSchemaOrg*[T](doc: T) =
+  let defaults = schemaOrgMetadata(doc.dtype, doc.id)
+  if doc.schema_org.isNil or doc.schema_org.kind != JObject:
+    doc.schema_org = defaults
+  else:
+    for key, value in defaults.pairs:
+      if key == "@id" or not doc.schema_org.hasKey(key):
+        doc.schema_org[key] = value
 
 template setMeta*[T](doc: T, docDataset: string = "star-intel") =
-    ## Add Metadata to the document
-    ## if a field is set, it will not set it.
-    ## If the dataset is missing, it will set default from `dataset` argument.
-    let t = getTime()
-    doc.setType
-    if doc.date_added == 0:
-        doc.date_added = t.toUnix()
-    if doc.date_updated == 0:
-        doc.date_updated = t.toUnix()
-    if doc.id.len == 0:
-        doc.makeUUID
-    if doc.dataset.len == 0:
-        doc.dataset = docDataset
+  doc.setType
+  if doc.date_added.len == 0 or doc.date_updated.len == 0:
+    doc.timestamp
+  if doc.id.len == 0:
+    doc.makeUUID
+  if doc.dataset.len == 0:
+    doc.dataset = docDataset
+  doc.schema_version = DOC_VERSION
+  if doc.version < 1:
+    doc.version = 1
+  if doc.status.len == 0:
+    doc.status = "recorded"
+  if doc.language.len == 0:
+    doc.language = "en"
+  ensureObject(doc.temporal)
+  ensureObject(doc.provenance)
+  ensureObject(doc.assessment)
+  ensureObject(doc.verification)
+  if not doc.verification.hasKey("status"):
+    doc.verification["status"] = %"unverified"
+  if not doc.verification.hasKey("verified"):
+    doc.verification["verified"] = %false
+  ensureObject(doc.handling)
+  if not doc.handling.hasKey("visibility"):
+    doc.handling["visibility"] = %"public"
+  if not doc.handling.hasKey("sensitive"):
+    doc.handling["sensitive"] = %false
+  if not doc.handling.hasKey("pii"):
+    doc.handling["pii"] = %false
+  ensureObject(doc.lineage)
+  ensureObject(doc.quality)
+  ensureObject(doc.workflow)
+  ensureObject(doc.geospatial)
+  ensureObject(doc.data)
+  ensureObject(doc.extensions)
+  doc.ensureSchemaOrg
 
-proc addSource*[T](doc: T, tag: string) =
-    ## Adds a tag to the document.
-    doc.sources.add(tag)
+proc addSource*[T](doc: T, source: string) =
+  doc.sources.add(source)
+
+proc isEnvelopeKey(key: string): bool =
+  key in [
+    "dataset", "dtype", "schema_version", "version", "date_added", "date_updated",
+    "title", "summary", "description", "status", "language", "tags", "labels",
+    "aliases", "keywords", "identifiers", "evidence", "temporal", "provenance",
+    "assessment", "verification", "handling", "lineage", "quality", "workflow",
+    "geospatial", "attachments", "related_ids", "notes", "schema_org", "extensions"
+  ]
+
+proc structuredSources(values: seq[string]): JsonNode =
+  result = newJArray()
+  for source in values:
+    result.add(%*{
+      "kind": "web",
+      "name": source,
+      "uri": source,
+      "url": source
+    })
 
 proc dump*[T](doc: T): JsonNode =
-    ## Dump a document to json, This is only needed since couchdb uses _id as the id.
-    var jdoc = %*doc
-    jdoc{"_id"} = newJString(doc.id)
-    jdoc.delete("id")
-    result = jdoc
+  ## Emit the canonical v0.9 wire object while preserving legacy subtype APIs.
+  doc.setMeta(if doc.dataset.len > 0: doc.dataset else: "star-intel")
+  let raw = %*doc
+  result = newJObject()
+  var subtypeData = if doc.data.isNil or doc.data.kind != JObject: newJObject() else: doc.data
 
+  for key, value in raw.pairs:
+    case key
+    of "id":
+      result["_id"] = value
+    of "rev":
+      if value.kind == JString and value.getStr.len > 0:
+        result["_rev"] = value
+    of "sources":
+      result["sources"] = structuredSources(doc.sources)
+    of "data":
+      discard
+    else:
+      if isEnvelopeKey(key):
+        result[key] = value
+      else:
+        subtypeData[key] = value
+
+  result["data"] = subtypeData
 
 proc load*[T](node: JsonNode, t: typedesc[T]): T =
-    ## Loads a document from json, This is only needed since couchdb uses _id as the id.
-    var jdoc = node
-    jdoc{"id"} = jdoc["_id"]
-    jdoc{"rev"} = jdoc["_rev"]
-    result = jdoc.to(t)
-
-
+  ## Load canonical v0.9 JSON into the legacy-compatible Nim object hierarchy.
+  var flattened = node
+  if flattened.hasKey("_id"):
+    flattened["id"] = flattened["_id"]
+    flattened.delete("_id")
+  if flattened.hasKey("_rev"):
+    flattened["rev"] = flattened["_rev"]
+    flattened.delete("_rev")
+  if flattened.hasKey("data") and flattened["data"].kind == JObject:
+    for key, value in flattened["data"].pairs:
+      flattened[key] = value
+  result = flattened.to(t)
+  result.setMeta(if result.dataset.len > 0: result.dataset else: "star-intel")
 
 when isMainModule:
-    var doc = Document()
-    doc.setType()
-    echo doc.dump
+  var doc = Document()
+  doc.setMeta()
+  echo doc.dump
