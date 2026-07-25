@@ -178,13 +178,24 @@ proc dump*[T](doc: T): JsonNode =
 
 proc load*[T](node: JsonNode, t: typedesc[T]): T =
   ## Load canonical v0.9 JSON into the legacy-compatible Nim object hierarchy.
-  var flattened = node
+  var flattened = parseJson($node)
   if flattened.hasKey("_id"):
     flattened["id"] = flattened["_id"]
     flattened.delete("_id")
   if flattened.hasKey("_rev"):
     flattened["rev"] = flattened["_rev"]
     flattened.delete("_rev")
+  if flattened.hasKey("sources") and flattened["sources"].kind == JArray:
+    var legacySources = newJArray()
+    for source in flattened["sources"].items:
+      if source.kind == JString:
+        legacySources.add(source)
+      elif source.kind == JObject:
+        if source.hasKey("url") and source["url"].kind == JString:
+          legacySources.add(source["url"])
+        elif source.hasKey("uri") and source["uri"].kind == JString:
+          legacySources.add(source["uri"])
+    flattened["sources"] = legacySources
   if flattened.hasKey("data") and flattened["data"].kind == JObject:
     for key, value in flattened["data"].pairs:
       flattened[key] = value
