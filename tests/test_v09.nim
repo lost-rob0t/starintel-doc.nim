@@ -33,6 +33,30 @@ suite "StarIntel v0.9 Nim runtime":
     check restored.dataset == "test"
     check restored.schema_version == "0.9.0"
 
+  test "required relation fields are promoted":
+    let relation = newRelation(
+      "starintel:person:ada",
+      "starintel:org:analytical-engine",
+      predicate = "worked_for",
+      dataset = "test"
+    )
+    let wire = relation.dump
+    check wire["data"]["subject"].getStr == "starintel:person:ada"
+    check wire["data"]["object"].getStr == "starintel:org:analytical-engine"
+    check wire["data"]["predicate"].getStr == "worked_for"
+
+  test "domain and email required fields are promoted":
+    var domain = newDomain("example.com", "A")
+    domain.dataset = "test"
+    let domainWire = domain.dump
+    check domainWire["data"]["domain"].getStr == "example.com"
+    check domainWire["data"]["record_type"].getStr == "A"
+
+    var email = newEmail("ada", "example.com")
+    email.dataset = "test"
+    let emailWire = email.dump
+    check emailWire["data"]["address"].getStr == "ada@example.com"
+
   test "Schema.org map covers every v0.9 dtype":
     check CanonicalDtypes.len == 49
     for dtype in CanonicalDtypes:
