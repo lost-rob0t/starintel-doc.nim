@@ -1,0 +1,61 @@
+name: StarIntel conformance
+
+on:
+  pull_request:
+  push:
+    branches: [dev]
+
+permissions:
+  contents: read
+
+jobs:
+  nim:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Checkout pinned conformance source
+        uses: actions/checkout@v6
+        with:
+          repository: lost-rob0t/starintel-gpt-auto-dig
+          ref: 9f96fcf1852c65e100441c86c8a1c72843e760b8
+          path: conformance-source
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+
+      - name: Set up Nim
+        uses: jiro4989/setup-nim-action@v2
+        with:
+          nim-version: "2.2.4"
+
+      - name: Run Nim tests
+        env:
+          STARINTEL_CONFORMANCE_ROOT: ${{ github.workspace }}/conformance-source
+        run: |
+          mkdir -p artifacts
+          set -o pipefail
+          nim c -r --path:src tests/test_conformance.nim 2>&1 | tee artifacts/nim-test.log
+
+      - name: Build Nim adapter
+        run: |
+          set -o pipefail
+          nim c -d:release --path:src --out:starintel_conformance src/starintel_conformance.nim \
+            2>&1 | tee artifacts/nim-build.log
+
+      - name: Run Nim fixture suite
+        working-directory: conformance-source
+        run: |
+          python -m conformance.runner test \
+            --producer nim \
+            --consumer nim \
+            --adapter "nim=$GITHUB_WORKSPACE/starintel_conformance"
+
+      - name: Upload Nim diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: nim-conformance-diagnostics
+          path: artifacts/
+          if-no-files-found: warn
