@@ -1,4 +1,4 @@
-import std/[json, os, strutils, algorithm, re]
+import std/[json, os, strutils, algorithm]
 
 const
   SpecVersion* = "0.9.0"
@@ -50,9 +50,56 @@ proc isNumber(value: JsonNode): bool = value.kind in {JInt, JFloat}
 proc asFloat(value: JsonNode): float =
   if value.kind == JInt: value.getInt.float else: value.getFloat
 
+proc digits(value: string, first, last: int): bool =
+  if first < 0 or last >= value.len or first > last:
+    return false
+  for index in first .. last:
+    if value[index] notin {'0' .. '9'}:
+      return false
+  true
+
+proc component(value: string, first, last: int): int =
+  parseInt(value[first .. last])
 
 proc validDateTime(value: string): bool =
-  value.match(re"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?(Z|[+-]\d{2}:\d{2})$")
+  if value.len < 20:
+    return false
+  if value[4] != '-' or value[7] != '-' or value[10] != 'T' or
+     value[13] != ':' or value[16] != ':':
+    return false
+  if not digits(value, 0, 3) or not digits(value, 5, 6) or
+     not digits(value, 8, 9) or not digits(value, 11, 12) or
+     not digits(value, 14, 15) or not digits(value, 17, 18):
+    return false
+  let month = component(value, 5, 6)
+  let day = component(value, 8, 9)
+  let hour = component(value, 11, 12)
+  let minute = component(value, 14, 15)
+  let second = component(value, 17, 18)
+  if month notin 1 .. 12 or day notin 1 .. 31 or hour notin 0 .. 23 or
+     minute notin 0 .. 59 or second notin 0 .. 60:
+    return false
+
+  var zone = 19
+  if value[zone] == '.':
+    inc zone
+    let fractionStart = zone
+    while zone < value.len and value[zone] in {'0' .. '9'}:
+      inc zone
+    if zone == fractionStart:
+      return false
+  if zone >= value.len:
+    return false
+  if value[zone] == 'Z':
+    return zone == value.high
+  if value[zone] notin {'+', '-'} or zone + 5 != value.high:
+    return false
+  if value[zone + 3] != ':' or not digits(value, zone + 1, zone + 2) or
+     not digits(value, zone + 4, zone + 5):
+    return false
+  let offsetHour = component(value, zone + 1, zone + 2)
+  let offsetMinute = component(value, zone + 4, zone + 5)
+  offsetHour <= 23 and offsetMinute <= 59
 
 
 proc matchesType(value: JsonNode, expected: string): bool =
@@ -137,8 +184,8 @@ proc validateValue*(value, schema: JsonNode, path = "$" ): ValidationResult =
       if pattern == "^[^/\\\\\\x00]+$":
         if text.len == 0 or '/' in text or '\\' in text or '\0' in text:
           return failure("pattern_mismatch", path & ": string does not match pattern")
-      elif not text.contains(re(pattern)):
-        return failure("pattern_mismatch", path & ": string does not match pattern")
+      else:
+        return failure("adapter_failure", path & ": unsupported schema pattern " & pattern)
 
   if isNumber(value):
     if schema.hasKey("minimum") and asFloat(value) < asFloat(schema["minimum"]):
