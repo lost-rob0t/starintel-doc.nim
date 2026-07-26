@@ -18,7 +18,7 @@ jobs:
         uses: actions/checkout@v6
         with:
           repository: lost-rob0t/starintel-gpt-auto-dig
-          ref: agent/starintel-v090-conformance
+          ref: 9f96fcf1852c65e100441c86c8a1c72843e760b8
           path: conformance-source
 
       - uses: actions/setup-python@v6
