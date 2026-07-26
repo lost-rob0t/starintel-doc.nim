@@ -28,6 +28,10 @@
           checkPhase = ''
             runHook preCheck
 
+            export HOME="$TMPDIR"
+            export NIMBLE_DIR="$TMPDIR/nimble"
+            mkdir -p "$HOME" "$NIMBLE_DIR"
+
             command -v nimble >/dev/null
             nimble dump >/dev/null
 
