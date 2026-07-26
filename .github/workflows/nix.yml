@@ -1,0 +1,22 @@
+name: Nix
+
+on:
+  pull_request:
+  push:
+
+permissions:
+  contents: read
+
+jobs:
+  flake:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: DeterminateSystems/determinate-nix-action@v3
+
+      - name: Evaluate flake outputs
+        run: nix flake show --all-systems
+
+      - name: Build and check
+        run: nix flake check --show-trace
