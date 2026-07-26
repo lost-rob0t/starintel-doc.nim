@@ -5,35 +5,30 @@ export getTime, toUnix
 import json
 import typetraits
 
-#any changes requires this to be bumped
-const DOC_VERSION* = "0.7.3"
+const
+    DOC_VERSION* = "0.9.0"
+    LEGACY_DOC_VERSION* = "0.7.3"
 
 type
     Document* = ref object of RootObj
-        ## Base Object to hold the document metadata thats used to make a dcoument and store it in the database.
+        ## Legacy flat 0.7.x compatibility object.
+        ## New code should use starintel_doc/v090 for strict v0.9.0 documents.
         id*: string
         dataset*: string
         dtype*: string
         date_added*: int64
         date_updated*: int64
-        version*: string = DOC_VERSION
+        version*: string = LEGACY_DOC_VERSION
         sources*: seq[string]
 
 template link*[T, V](doc: T, field: untyped, data: V) =
     field.add(data)
 
 
-
 template makeUUID*[T](doc: T) =
     ## Generate a UUID for a document
     doc.id = ulid()
 
-# TODO remove this
-# template makeEID*[T](doc: T, data: string) =
-#     ## Generate a EID
-#     ## for data include enough data to make it unique
-#     ## For example for a person; first name, middle name, last name can be used
-#     doc.eid = makeHash(data)
 
 # TODO setId
 # overload for each type
@@ -44,7 +39,7 @@ template makeMD5ID*[T](doc: T, data: string) =
 
 
 template makeSHAID*[T](doc: T, data: string) =
-    ## Generate a SHA1 checksume for the document ID
+    ## Generate a SHA1 checksum for the document ID
     doc.id = $secureHash(data)
 
 
@@ -57,7 +52,7 @@ template timestamp*[T](doc: T) =
 
 
 template updateTime*[T](doc: T) =
-    ## update the date_updated timestamp to the document
+    ## Update the date_updated timestamp on the document
     let t = getTime()
     doc.date_updated = t.toUnix()
 
@@ -65,10 +60,9 @@ template updateTime*[T](doc: T) =
 template setType*[T](doc: T) =
     doc.dtype = toLowerAscii($typeOf(doc))
 
+
 template setMeta*[T](doc: T, docDataset: string = "star-intel") =
-    ## Add Metadata to the document
-    ## if a field is set, it will not set it.
-    ## If the dataset is missing, it will set default from `dataset` argument.
+    ## Add metadata to the legacy document.
     let t = getTime()
     doc.setType
     if doc.date_added == 0:
@@ -80,12 +74,13 @@ template setMeta*[T](doc: T, docDataset: string = "star-intel") =
     if doc.dataset.len == 0:
         doc.dataset = docDataset
 
+
 proc addSource*[T](doc: T, tag: string) =
-    ## Adds a tag to the document.
     doc.sources.add(tag)
 
+
 proc dump*[T](doc: T): JsonNode =
-    ## Dump a document to json, This is only needed since couchdb uses _id as the id.
+    ## Dump a legacy document to JSON, renaming id to CouchDB _id.
     var jdoc = %*doc
     jdoc{"_id"} = newJString(doc.id)
     jdoc.delete("id")
@@ -93,12 +88,12 @@ proc dump*[T](doc: T): JsonNode =
 
 
 proc load*[T](node: JsonNode, t: typedesc[T]): T =
-    ## Loads a document from json, This is only needed since couchdb uses _id as the id.
-    var jdoc = node
+    ## Load a legacy document from JSON, accepting optional CouchDB _rev.
+    var jdoc = node.copy()
     jdoc{"id"} = jdoc["_id"]
-    jdoc{"rev"} = jdoc["_rev"]
+    if jdoc.hasKey("_rev"):
+        jdoc{"rev"} = jdoc["_rev"]
     result = jdoc.to(t)
-
 
 
 when isMainModule:
