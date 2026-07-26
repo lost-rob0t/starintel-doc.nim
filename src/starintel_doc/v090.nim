@@ -237,7 +237,8 @@ proc validateDocument*(document, schema: JsonNode): ValidationResult =
     let dtype = document["dtype"].getStr
     if dtype notin objectTypes(schema):
       let aliases = ["organization", "organisation", "investigation_target", "social_media_post",
-                     "email_message", "financial_observation", "research_pass", "dataset_manifest",
+                     "email_message", "financial_observation", "research_pass", "research_node",
+                     "dataset_manifest",
                      "actor_manifest", "legal_case", "lobbying_filing", "campaign_finance"]
       if dtype in aliases:
         return failure("invalid_enum", "$.dtype: alias is not canonical")
