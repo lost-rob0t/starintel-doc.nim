@@ -1,12 +1,15 @@
 # Package
 
-version = "0.7.3"
-author      = "nsaspy"
-description = "Parse and handle starintel docs"
-license     = "MIT"
-srcDir       = "src"
-# Deps
+version = "0.9.0"
+author = "nsaspy"
+description = "StarIntel v0.9.0 parser, validator, serializer, and conformance adapter"
+license = "MIT"
+srcDir = "src"
+bin = @["starintel_conformance"]
 
 requires "nim >= 2.0.0"
 requires "ulid"
 requires "regex"
+
+task test, "Run StarIntel tests":
+  exec "nim c -r --path:src tests/test_conformance.nim"
