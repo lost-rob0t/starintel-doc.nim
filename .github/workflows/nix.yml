@@ -16,7 +16,21 @@ jobs:
       - uses: DeterminateSystems/determinate-nix-action@v3
 
       - name: Evaluate flake outputs
-        run: nix flake show --all-systems
+        shell: bash
+        run: |
+          set -o pipefail
+          nix flake show --all-systems 2>&1 | tee nix-eval.log
 
       - name: Build and check
-        run: nix flake check --show-trace
+        shell: bash
+        run: |
+          set -o pipefail
+          nix flake check --show-trace 2>&1 | tee nix-check.log
+
+      - name: Upload failure logs
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: nix-failure-logs
+          path: nix-*.log
+          if-no-files-found: ignore
