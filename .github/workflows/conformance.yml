@@ -1,0 +1,47 @@
+name: StarIntel conformance
+
+on:
+  pull_request:
+  push:
+    branches: [dev]
+
+permissions:
+  contents: read
+
+jobs:
+  nim:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Checkout pinned conformance source
+        uses: actions/checkout@v6
+        with:
+          repository: lost-rob0t/starintel-gpt-auto-dig
+          ref: agent/starintel-v090-conformance
+          path: conformance-source
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+
+      - name: Set up Nim
+        uses: jiro4989/setup-nim-action@v2
+        with:
+          nim-version: "2.2.4"
+
+      - name: Run Nim tests
+        env:
+          STARINTEL_CONFORMANCE_ROOT: ${{ github.workspace }}/conformance-source
+        run: nim c -r --path:src tests/test_conformance.nim
+
+      - name: Build Nim adapter
+        run: nim c -d:release --path:src --out:starintel_conformance src/starintel_conformance.nim
+
+      - name: Run Nim fixture suite
+        working-directory: conformance-source
+        run: |
+          python -m conformance.runner test \
+            --producer nim \
+            --consumer nim \
+            --adapter "nim=$GITHUB_WORKSPACE/starintel_conformance"
