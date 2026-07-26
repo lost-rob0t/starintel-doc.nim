@@ -147,8 +147,8 @@ proc validateValue*(value, schema: JsonNode, path = "$" ): ValidationResult =
       return failure("above_maximum", path & ": number is above maximum")
 
   if value.kind == JArray and schema.hasKey("items"):
-    for index, item in value.items:
-      let checked = validateValue(item, schema["items"], path & "[" & $index & "]")
+    for index in 0 ..< value.len:
+      let checked = validateValue(value[index], schema["items"], path & "[" & $index & "]")
       if not checked.ok:
         return checked
 
