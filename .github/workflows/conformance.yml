@@ -14,11 +14,15 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
+      - name: Read canonical schema lock
+        id: schema-lock
+        run: echo "commit=$(jq -r .canonical_commit schema/starintel-schema.lock.json)" >> "$GITHUB_OUTPUT"
+
       - name: Checkout pinned conformance source
         uses: actions/checkout@v6
         with:
           repository: lost-rob0t/starintel-gpt-auto-dig
-          ref: 35ea4a7d1577133d52833d2815405e3966ecb5f2
+          ref: ${{ steps.schema-lock.outputs.commit }}
           path: conformance-source
 
       - uses: actions/setup-python@v6
