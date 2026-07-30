@@ -3,7 +3,7 @@
 version = "0.9.0"
 author = "nsaspy"
 description = "StarIntel v0.9.0 parser, validator, serializer, and conformance adapter"
-license = "MIT"
+license = "AGPL-3.0-only"
 srcDir = "src"
 bin = @["starintel_conformance"]
 
