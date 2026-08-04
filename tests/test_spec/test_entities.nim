@@ -11,7 +11,7 @@ proc testPerson() =
   doc.fname = "Joe"
   doc.mname = "l"
   doc.lname = "Smith"
-  doc.race = "white"
+  doc.ethnicity = "white"
   doc.makeUUID
   doAssert doc.dataset == "Tests"
   doAssert doc.dtype == "person"
@@ -21,7 +21,7 @@ proc testPerson() =
   doAssert doc.fname == "Joe"
   doAssert doc.mname == "l"
   doAssert doc.lname == "Smith"
-  doAssert doc.race == "white"
+  doAssert doc.ethnicity == "white"
 proc testOrg() =
   var doc = newOrg(name="Star Intel", etype="Software")
   assert doc.name == "Star Intel"
