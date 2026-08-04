@@ -119,7 +119,8 @@ proc requireString(node: JsonNode, key, path: string) =
 proc requireStringArray(node: JsonNode, key, path: string) =
   if not node.hasKey(key) or node[key].kind != JArray:
     raise newException(ValueError, path & "." & key & " must be an array")
-  for index, item in node[key].items:
+  for index in 0 ..< node[key].len:
+    let item = node[key][index]
     if item.kind != JString or item.getStr.len == 0:
       raise newException(
         ValueError,
