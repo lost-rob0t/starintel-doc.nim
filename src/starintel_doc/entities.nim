@@ -25,6 +25,7 @@ type
     bio*: string
     dob*: string
     gender*: string
+    race*: string
     region*: string
     misc*: seq[string]
 
