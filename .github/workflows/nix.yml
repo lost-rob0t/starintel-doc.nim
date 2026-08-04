@@ -1,0 +1,36 @@
+name: Nix
+
+on:
+  pull_request:
+  push:
+
+permissions:
+  contents: read
+
+jobs:
+  flake:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: DeterminateSystems/determinate-nix-action@v3
+
+      - name: Evaluate flake outputs
+        shell: bash
+        run: |
+          set -o pipefail
+          nix flake show --all-systems 2>&1 | tee nix-eval.log
+
+      - name: Build and check
+        shell: bash
+        run: |
+          set -o pipefail
+          nix flake check --show-trace 2>&1 | tee nix-check.log
+
+      - name: Upload failure logs
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: nix-failure-logs
+          path: nix-*.log
+          if-no-files-found: ignore
