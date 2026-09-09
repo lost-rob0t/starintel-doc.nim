@@ -1,8 +1,8 @@
 # Package
 
-version = "0.9.0"
+version = "0.9.1"
 author = "nsaspy"
-description = "StarIntel v0.9.0 parser, validator, serializer, and conformance adapter"
+description = "StarIntel 0.9.1 parser, validator, serializer, and operation-compatible conformance adapter"
 license = "AGPL-3.0-only"
 srcDir = "src"
 bin = @["starintel_conformance"]
