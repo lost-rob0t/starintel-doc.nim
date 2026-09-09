@@ -1,6 +1,5 @@
 #+TITLE: Readme
 * Starintel-doc.nim
-[[Build Status][https://github.com/lost-rob0t/starintel-doc.nim/actions/workflows/main.yml]]
 
 Star Intel is a project that helps osint operators injest large amounts of information relating to social orgs for osint uses.
 

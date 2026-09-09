@@ -43,7 +43,7 @@ proc newMessage*(message, group, platform: string, user: User, channel = "",
   var doc = Message(message: message, platform: platform, group: group,
                           user: user.name, message_id: message_id,
                           channel: channel, reply_to: "",
-                          dtype: "instant-message")
+                          dtype: "message")
   result = doc
 
 proc newMessage*(message, group, platform: string, user: string, channel = "",
@@ -51,7 +51,7 @@ proc newMessage*(message, group, platform: string, user: string, channel = "",
   ## Create a new message from a instant messaging platform
   var doc = Message(message: message, platform: platform, group: group,
                           user: user, message_id: message_id, channel: channel,
-                          reply_to: "", dtype: "instant-message")
+                          reply_to: "", dtype: "message")
   result = doc
 
 
@@ -80,13 +80,13 @@ proc newPost*(user: User, content: string, title, group, url: string = "",
     date: int64 = 0): SocialMPost =
   ## Create a New social media post
   var doc = SocialMPost(user: user.name, content: content, title: title,
-      group: group, url: url, dtype: "socialMPost")
+                        group: group, url: url, dtype: "socialmpost")
   doc.makeMD5ID(content & url & $date)
   result = doc
 proc newPost*(user: string, content: string, title, group, url: string = "",
     date: int64 = 0): SocialMPost =
   ## Create a New social media post
   var doc = SocialMPost(user: user, content: content, title: title,
-      group: group, url: url, dtype: "socialMPost")
+      group: group, url: url, dtype: "socialmpost")
   doc.makeMD5ID(content & url & $date)
   result = doc

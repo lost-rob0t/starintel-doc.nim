@@ -6,4 +6,6 @@ type
     ## Expirmental object to represent an event in the real world
     eventName*: string
     eventType*: string
-    location*: Address
+    description*: string
+    startDate*: int64
+    endDate*: int64

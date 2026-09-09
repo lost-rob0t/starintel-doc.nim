@@ -4,7 +4,8 @@ import json
 proc testBaseDocument() =
   let time = now().toTime.toUnix
   var doc = Document(dataset: "Tests",
-                            dtype: "test_doc", date_added: time, date_updated: time, id: "test")
+                            dtype: "test_doc", date_added: time,
+                            date_updated: time, id: "test")
   doAssert doc.dataset == "Tests"
   doAssert doc.dtype == "test_doc"
   doAssert doc.date_added == time
@@ -18,12 +19,14 @@ proc testTarget() =
   let dataset = "git accounts"
   let actor = "GitBot"
   var doc = newTarget(dataset, target, actor, 3600, true, %*{})
+  setMeta(doc)
   assert doc.target == target
   assert doc.dataset == dataset
   assert doc.actor == actor
   assert doc.recurring == true
   assert doc.delay == 3600
-
+  assert doc.dtype == "target"
+  assert doc.dateUpdated != 0
 # proc testScan() =
 #   let target = "nsaspy"
 #   let dataset = "git accounts"
@@ -43,7 +46,8 @@ proc testTarget() =
 proc testRelation() =
   let sourceId = "testfoobar"
   let targetId = "testbarfoo"
-  var doc = newRelation(source=sourceId, target=targetId, note = "Hello Graphs", dataset = "test")
+  var doc = newRelation(source = sourceId, target = targetId,
+      note = "Hello Graphs", dataset = "test")
   assert doc.source == sourceId
   assert doc.target == targetId
   assert doc.note == "Hello Graphs"
