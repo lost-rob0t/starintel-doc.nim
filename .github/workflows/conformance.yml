@@ -14,6 +14,13 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
+      - name: Validate canonical schema lock
+        run: |
+          test "$(jq -r .canonical_repository schema/starintel-schema.lock.json)" = "lost-rob0t/starintel-gpt-auto-dig"
+          test "$(jq -r .release_version schema/starintel-schema.lock.json)" = "0.9.1"
+          jq -e '.required_dtypes | index("research-node") != null' schema/starintel-schema.lock.json > /dev/null
+          jq -e '.required_dtypes | index("operation") != null' schema/starintel-schema.lock.json > /dev/null
+
       - name: Read canonical schema lock
         id: schema-lock
         run: echo "commit=$(jq -r .canonical_commit schema/starintel-schema.lock.json)" >> "$GITHUB_OUTPUT"
