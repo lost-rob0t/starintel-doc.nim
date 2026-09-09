@@ -1,5 +1,5 @@
 {
-  description = "StarIntel v0.9.0 document specification for Nim";
+  description = "StarIntel 0.9.1 document specification release for Nim";
 
   inputs.nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
 
@@ -15,7 +15,7 @@
       mkPackage = pkgs:
         pkgs.stdenvNoCC.mkDerivation {
           pname = "starintel-doc-nim";
-          version = "0.9.0";
+          version = "0.9.1";
           src = self;
 
           nativeBuildInputs = [ pkgs.nim ]
@@ -41,7 +41,7 @@
           installPhase = ''
             runHook preInstall
 
-            root="$out/share/nimble/starintel_doc-0.9.0"
+            root="$out/share/nimble/starintel_doc-0.9.1"
             mkdir -p "$root"
 
             for path in src starintel_doc.nimble README.md LICENSE changelog.org; do
@@ -50,7 +50,7 @@
               fi
             done
 
-            ln -s "starintel_doc-0.9.0" "$out/share/nimble/starintel_doc"
+            ln -s "starintel_doc-0.9.1" "$out/share/nimble/starintel_doc"
 
             runHook postInstall
           '';
@@ -61,7 +61,7 @@
           };
 
           meta = {
-            description = "StarIntel v0.9.0 parser, validator, serializer, and conformance adapter for Nim";
+            description = "StarIntel 0.9.1 parser, validator, serializer, and operation-compatible conformance adapter for Nim";
             homepage = "https://github.com/lost-rob0t/starintel-doc.nim";
           };
         };
