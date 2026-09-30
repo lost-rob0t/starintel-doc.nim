@@ -1,8 +1,8 @@
 # Package
 
-version = "0.9.0"
+version = "0.10.1"
 author = "nsaspy"
-description = "StarIntel v0.9.0 parser, validator, serializer, and conformance adapter"
+description = "StarIntel 0.10.1 Nim binding generated from the Star-Lang authority"
 license = "AGPL-3.0-only"
 srcDir = "src"
 bin = @["starintel_conformance"]
@@ -13,3 +13,4 @@ requires "regex"
 
 task test, "Run StarIntel tests":
   exec "nim c -r --path:src tests/test_conformance.nim"
+  exec "nim c -r --path:src tests/test_v0101_migration.nim"

@@ -1,5 +1,6 @@
-import std/[json, strutils]
-import starintel_doc/v090
+import std/json
+import starintel_doc/v0101
+import starintel_doc/migration
 
 proc emit(value: JsonNode) =
   stdout.write($value & "\n")
@@ -14,30 +15,39 @@ proc main(): int =
       emit(errorResponse("adapter_failure", "request must be a JSON object"))
       return 2
     let command = if request.hasKey("command"): request["command"].getStr else: ""
-    let schema = loadSchema()
-
     if command == "version":
-      emit(%*{"ok": true, "language": "nim", "spec_version": SpecVersion, "adapter_version": AdapterVersion})
+      emit(%*{"ok": true, "language": "nim", "specVersion": SpecVersion, "adapterVersion": AdapterVersion})
       return 0
     if command == "capabilities":
       emit(%*{
         "ok": true,
         "language": "nim",
-        "adapter_version": AdapterVersion,
-        "spec_versions": [SpecVersion],
-        "commands": ["validate", "normalize", "roundtrip", "version", "capabilities", "schema-inventory"],
-        "object_types": objectTypes(schema),
-        "preserves_unknown_extensions": true,
-        "preserves_missing_optional_fields": true
+        "adapterVersion": AdapterVersion,
+        "specVersions": ["0.9.0", SpecVersion],
+        "emittedSpecVersion": SpecVersion,
+        "commands": ["validate", "normalize", "roundtrip", "migrate", "migrateBatch", "version", "capabilities", "schemaInventory"],
+        "objectTypes": objectTypes(),
+        "preservesUnknownExtensions": true,
+        "preservesMissingOptionalFields": true
       })
       return 0
 
-    if request.hasKey("spec_version") and request["spec_version"].getStr != SpecVersion:
-      emit(errorResponse("unsupported_spec_version", request["spec_version"].getStr))
+    let requestedVersion = if request.hasKey("specVersion"): request["specVersion"].getStr
+      elif request.hasKey("spec_version"): request["spec_version"].getStr
+      else: SpecVersion
+    if requestedVersion notin ["0.9.0", SpecVersion]:
+      emit(errorResponse("unsupportedSchemaVersion", requestedVersion))
       return 3
 
-    if command == "schema-inventory":
-      emit(%*{"ok": true, "spec_version": SpecVersion, "inventory": schemaInventory(schema)})
+    if command in ["schemaInventory", "schema-inventory"]:
+      emit(%*{"ok": true, "specVersion": SpecVersion, "inventory": schemaInventory()})
+      return 0
+
+    if command == "migrateBatch":
+      let migrated = migrateBatch(request["documents"])
+      migrated["ok"] = %true
+      migrated["specVersion"] = %SpecVersion
+      emit(migrated)
       return 0
 
     if not request.hasKey("document"):
@@ -45,24 +55,33 @@ proc main(): int =
       return 1
 
     let document = request["document"]
+    if command == "migrate":
+      var documents = newJArray()
+      for migrated in migrateDocument(document):
+        documents.add(migrated)
+      emit(%*{"ok": true, "specVersion": SpecVersion, "documents": documents})
+      return 0
     if command == "validate":
-      let checked = validateDocument(document, schema)
+      let checked = validateDocument(document)
       if checked.ok:
-        emit(%*{"ok": true, "spec_version": SpecVersion, "warnings": []})
+        emit(%*{"ok": true, "specVersion": SpecVersion, "warnings": []})
         return 0
       emit(errorResponse(checked.category, checked.message))
-      return if checked.category == "unsupported_spec_version": 3 else: 1
+      return if checked.category == "unsupportedSchemaVersion": 3 else: 1
 
     if command in ["normalize", "roundtrip"]:
-      let checked = roundtrip(document, schema)
+      let checked = roundtrip(document)
       if checked.validation.ok:
-        emit(%*{"ok": true, "spec_version": SpecVersion, "document": checked.document, "warnings": []})
+        emit(%*{"ok": true, "specVersion": SpecVersion, "document": checked.document, "warnings": []})
         return 0
       emit(errorResponse(checked.validation.category, checked.validation.message))
-      return if checked.validation.category == "unsupported_spec_version": 3 else: 1
+      return if checked.validation.category == "unsupportedSchemaVersion": 3 else: 1
 
     emit(errorResponse("adapter_failure", "unsupported command: " & command))
     return 2
+  except MigrationError as error:
+    emit(errorResponse(error.reasonCode, error.msg))
+    return 1
   except CatchableError as error:
     stderr.writeLine("nim adapter failure: " & error.msg)
     emit(errorResponse("adapter_failure", error.msg))

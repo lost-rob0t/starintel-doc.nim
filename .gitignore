@@ -18,6 +18,9 @@ test.jl
 tests/.~lock.test.csv#
 tests/big.csv
 tests/megatest
+/src/starintel_conformance
+/tests/test_conformance
+/tests/test_v0101_migration
 tests/test_docs
 tests/test_docs.html
 tests/test_parse

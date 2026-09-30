@@ -1,5 +1,7 @@
 import starintel_doc/v090
 export v090
+import starintel_doc/migration
+export migration
 
 # Legacy flat 0.7.x model modules remain available for explicit migration work.
 import starintel_doc/[documents, entities, locations, phones, web, targets, relation,
