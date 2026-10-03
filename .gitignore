@@ -4,6 +4,8 @@
 tmp/
 expirment/
 *.json
+!schema/*.json
+!schemas/**
 *.txt
 *.db
 *.env

@@ -15,14 +15,17 @@
       mkPackage = pkgs:
         pkgs.stdenvNoCC.mkDerivation {
           pname = "starintel-doc-nim";
-          version = "0.9.0";
+          version = "0.10.1";
           src = self;
 
-          nativeBuildInputs = [ pkgs.nim ]
+          nativeBuildInputs = [ pkgs.nim pkgs.stdenv.cc pkgs.makeWrapper pkgs.python3 ]
             ++ pkgs.lib.optional (pkgs ? nimble) pkgs.nimble;
 
           dontConfigure = true;
-          dontBuild = true;
+          buildPhase = ''
+            nim c -d:release --nimcache:"$TMPDIR/nimcache" --path:src --out:starintel_conformance src/starintel_conformance.nim
+            nim c -d:release --nimcache:"$TMPDIR/nimcache-legacy" --path:src --out:starintel_legacy_conformance src/starintel_legacy_conformance.nim
+          '';
 
           doCheck = true;
           checkPhase = ''
@@ -34,6 +37,10 @@
 
             command -v nimble >/dev/null
             nimble dump >/dev/null
+            python3 scripts/sync-starintel-schema.py --offline
+            export LD_LIBRARY_PATH="${pkgs.lib.makeLibraryPath [ pkgs.pcre ]}"
+            nim c -r --nimcache:"$TMPDIR/nimcache-tests" --path:src tests/test_canonical.nim
+            nim c -r --nimcache:"$TMPDIR/nimcache-legacy-tests" --path:src tests/test_conformance.nim
 
             runHook postCheck
           '';
@@ -41,16 +48,19 @@
           installPhase = ''
             runHook preInstall
 
-            root="$out/share/nimble/starintel_doc-0.9.0"
+            root="$out/share/nimble/starintel_doc-0.10.1"
             mkdir -p "$root"
 
-            for path in src starintel_doc.nimble README.md LICENSE changelog.org; do
+            for path in src schemas schema scripts starintel_doc.nimble README.md LICENSE changelog.org; do
               if [ -e "$path" ]; then
                 cp -R "$path" "$root/"
               fi
             done
 
-            ln -s "starintel_doc-0.9.0" "$out/share/nimble/starintel_doc"
+            ln -s "starintel_doc-0.10.1" "$out/share/nimble/starintel_doc"
+            mkdir -p "$out/bin"
+            install -m755 starintel_conformance starintel_legacy_conformance "$out/bin/"
+            wrapProgram "$out/bin/starintel_conformance" --prefix LD_LIBRARY_PATH : "${pkgs.lib.makeLibraryPath [ pkgs.pcre ]}"
 
             runHook postInstall
           '';

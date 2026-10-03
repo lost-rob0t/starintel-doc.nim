@@ -1,8 +1,4 @@
-import starintel_doc/v090
-export v090
+import starintel_doc/[canonical, generated]
+export canonical, generated
 
-# Legacy flat 0.7.x model modules remain available for explicit migration work.
-import starintel_doc/[documents, entities, locations, phones, web, targets, relation,
-  social_media, hosts, manifests]
-export documents, entities, locations, phones, web, targets, relation, social_media,
-  hosts, manifests
+# Historical models are explicitly available through starintel_doc/legacy.
