@@ -25,3 +25,14 @@ tests/test_docs.html
 tests/test_parse
 tests/test_relations.nim
 tests/test_remap
+starintel_conformance
+starintel_legacy_conformance
+tests/megatest.nim
+tests/test_functions/test_ids
+tests/test_spec/test_base
+tests/test_spec/test_entities
+tests/test_spec/test_hosts
+tests/test_spec/test_phone
+tests/test_spec/test_scope
+tests/test_spec/test_social
+tests/test_spec/test_web

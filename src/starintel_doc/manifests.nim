@@ -1,4 +1,5 @@
 import std/json
+import std/jsonutils
 
 type
   ManifestImplementation* = object
@@ -167,11 +168,11 @@ proc validateDatasetManifestJson*(node: JsonNode) =
 
 proc parseActorManifest*(node: JsonNode): ActorManifest =
   validateActorManifestJson(node)
-  result = node.to(ActorManifest)
+  result = jsonTo(node, ActorManifest, Joptions(allowMissingKeys: true))
 
 proc parseDatasetManifest*(node: JsonNode): DatasetManifest =
   validateDatasetManifestJson(node)
-  result = node.to(DatasetManifest)
+  result = jsonTo(node, DatasetManifest, Joptions(allowMissingKeys: true))
 
 proc dump*(manifest: ActorManifest): JsonNode =
   %*manifest
