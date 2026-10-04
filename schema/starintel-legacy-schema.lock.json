@@ -1,0 +1,12 @@
+{
+  "schema_version": "0.9.0",
+  "canonical_repository": "lost-rob0t/starintel-gpt-auto-dig",
+  "canonical_commit": "ff814ff63868286d68e21502122832802cd5e361",
+  "canonical_pull_request": 46,
+  "schema_path": "schemas/starintel-doc-v0.9.0.schema.json",
+  "expansion_path": "schemas/starintel-doc-v0.9.0.expansion.json",
+  "manifest_path": "schemas/starintel-doc-v0.9.0.manifest.json",
+  "required_dtypes": [
+    "research-node"
+  ]
+}

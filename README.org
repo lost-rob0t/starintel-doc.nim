@@ -1,3 +1,6 @@
+* Specification authority
+StarLang owns the document specification. See README.md for the generated 0.10.1 API and explicit historical compatibility.
+
 #+TITLE: Readme
 * Starintel-doc.nim
 

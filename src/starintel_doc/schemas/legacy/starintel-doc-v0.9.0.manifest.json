@@ -1,0 +1,13 @@
+{
+  "base_schema_path": "schemas/starintel-doc-v0.9.0.schema.json",
+  "compatibility": "additive-v0.9",
+  "dtype_count": 50,
+  "expansion_content_hash": "ee8394cc4480257f3682a2359146679c0f9c27b317320ab8c2982787f7a8c9f1",
+  "expansion_hash_algorithm": "sha256-canonical-json",
+  "expansion_registry_path": "schemas/starintel-doc-v0.9.0.expansion.json",
+  "materialization": "Apply the expansion registry to the immutable v0.9.0 base schema before validation.",
+  "profile": "starintel-core",
+  "profile_version": "0.9",
+  "schema_revision": "0.9.0+fields.20260726.2",
+  "schema_version": "0.9.0"
+}
