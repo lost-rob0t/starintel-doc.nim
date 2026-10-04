@@ -40,4 +40,4 @@ tests/test_spec/test_web
 !src/starintel_doc/schemas/**
 
 # Shared raw-text JSON conformance corpus.
-!tests/fixtures/raw-json-unique-keys.json
+!fixtures/raw-json-unique-keys.json

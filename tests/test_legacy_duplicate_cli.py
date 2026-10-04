@@ -8,7 +8,7 @@ import subprocess
 p = argparse.ArgumentParser()
 p.add_argument('binary')
 a = p.parse_args()
-cases = json.loads((Path(__file__).parent / 'fixtures/raw-json-unique-keys.json').read_text())['cases']
+cases = json.loads((Path(__file__).parent.parent / 'fixtures/raw-json-unique-keys.json').read_text())['cases']
 for case in cases:
     request = '{"command":"version","probe":' + case['wire'] + '}'
     result = subprocess.run([a.binary], input=request, text=True, capture_output=True, timeout=30)

@@ -70,6 +70,6 @@ must use the wire API before a lossy parser, not after values have been rounded.
 Raw JSON parsers reject duplicate decoded object keys, including equal values
 and escaped spellings, before a mapping can overwrite them. Each object has its
 own key scope. Unicode normalization is not applied to distinct key strings.
-The shared raw-text regression corpus is vendored in tests/fixtures/raw-json-unique-keys.json;
+The shared raw-text regression corpus is vendored in fixtures/raw-json-unique-keys.json;
 it must match the StarLang specs/starintel/wire authority copy. Already-parsed
 objects cannot recover duplicates discarded by an upstream decoder.

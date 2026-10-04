@@ -3,7 +3,7 @@ import ../src/starintel_doc/validation
 
 # Keep the fixture text raw until it enters the SDK-owned boundary. std/json
 # reads only the fixture container; it must never pre-parse an entry's wire.
-const FixtureText = staticRead("fixtures/raw-json-unique-keys.json")
+const FixtureText = staticRead("../fixtures/raw-json-unique-keys.json")
 let fixture = parseJson(FixtureText)
 var count = 0
 for entry in fixture["cases"]:
