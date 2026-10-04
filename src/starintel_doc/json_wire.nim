@@ -1,6 +1,6 @@
 ## Lossless JSON wire numbers. Keep std/json raw numeric tokens, never turn
 ## unbounded canonical integers or opaque decimal numbers into machine floats.
-import std/[json, strutils, re, algorithm]
+import std/[json, strutils, re, algorithm, sets]
 
 
 proc requireStrictJson(text: string) =
@@ -64,8 +64,19 @@ proc requireStrictJson(text: string) =
     of '{':
       inc index; spaces()
       if index < text.len and text[index] == '}': inc index; return
+      var keys = initHashSet[string]()
       while true:
-        spaces(); stringToken(); spaces(); take(':'); value(depth + 1); spaces()
+        spaces()
+        let start = index
+        stringToken()
+        # Decode only the already-validated key token, never numeric values.
+        # Each object owns its set; decoded escapes share identity without
+        # applying Unicode normalization to otherwise distinct strings.
+        let key = parseJson(text[start..<index]).getStr
+        if key in keys:
+          raise newException(ValueError, "duplicate JSON key at byte " & $start)
+        keys.incl(key)
+        spaces(); take(':'); value(depth + 1); spaces()
         if index < text.len and text[index] == '}': inc index; return
         take(',')
     of '[':

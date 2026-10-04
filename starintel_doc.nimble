@@ -15,3 +15,4 @@ requires "regex"
 
 task test, "Run StarIntel tests":
   exec "nim c -r --path:src tests/test_conformance.nim"
+  exec "nim c -r --path:src tests/test_duplicate_keys.nim"

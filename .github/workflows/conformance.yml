@@ -50,12 +50,16 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y libpcre3
           nim c -r --path:src tests/test_canonical.nim
+          nim c -r --path:src tests/test_duplicate_keys.nim
 
       - name: Build Nim adapter
         run: |
           set -o pipefail
           nim c -d:release --path:src --out:starintel_legacy_conformance src/starintel_legacy_conformance.nim \
             2>&1 | tee artifacts/nim-build.log
+
+      - name: Check historical raw JSON key rejection
+        run: python3 tests/test_legacy_duplicate_cli.py ./starintel_legacy_conformance
 
       - name: Verify Nimble installed library closure
         run: python3 scripts/test-installed-package.py

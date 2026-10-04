@@ -1,6 +1,6 @@
 {
   "canonical_repository": "lost-rob0t/star-lang",
-  "canonical_commit": "9198370f7a6f3e2a5ea00af3efdb6d705e102650",
+  "canonical_commit": "96d26c338078676ec1dc6928755901636c9f7ef0",
   "release_version": "0.10.1",
   "schema_version": "0.10.1",
   "authority_library": "org.starintel/core@1",
