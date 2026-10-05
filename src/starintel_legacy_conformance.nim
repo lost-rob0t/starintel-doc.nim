@@ -1,5 +1,6 @@
 import std/[json, strutils]
 import starintel_doc/v090
+import starintel_doc/json_wire
 
 proc emit(value: JsonNode) =
   stdout.write($value & "\n")
@@ -9,7 +10,11 @@ proc errorResponse(category, message: string): JsonNode =
 
 proc main(): int =
   try:
-    let request = parseJson(stdin.readAll())
+    let input = stdin.readAll()
+    # Preflight raw keys before the historical decoder can overwrite them.
+    # Keep its existing numeric representation and schema behavior.
+    discard parseWireJson(input)
+    let request = parseJson(input)
     if request.kind != JObject:
       emit(errorResponse("adapter_failure", "request must be a JSON object"))
       return 2

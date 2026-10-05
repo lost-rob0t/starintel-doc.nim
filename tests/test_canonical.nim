@@ -1,4 +1,4 @@
-import std/[json, strutils]
+import std/[json, strutils, os]
 import ../src/starintel_doc/canonical
 
 let schema = loadSchema()
@@ -38,8 +38,10 @@ proc document(dtype: string): JsonNode =
   result["dataset"] = %"conformance"
   result["dtype"] = %dtype
   result["schemaVersion"] = %SpecVersion
+  if dtype == "operation":
+    result["phases"] = %*[{"phaseId":"collect", "objective":"Collect evidence", "state":"planned"}]
 
-doAssert objectTypes(schema).len == 60
+doAssert objectTypes(schema).len == 90
 for dtype in objectTypes(schema):
   let value = document(dtype)
   let encoded = roundtrip(value)
@@ -66,4 +68,14 @@ let opaque = document("person")
 opaque["deleted"] = %false
 opaque["extensions"] = %*{"example.vendor": {"opaque_key": nil, "flag": false, "items": []}}
 doAssert roundtrip(opaque).document == opaque
-echo "StarLang 0.10.1: all 60 generated Nim document bindings and strict runtime checks passed"
+echo "StarLang 0.10.1: all 90 generated Nim document bindings and strict runtime checks passed"
+
+for fixturePath in commandLineParams():
+  for fixture in parseFile(fixturePath):
+    let checked = validateDocument(fixture["document"])
+    doAssert checked.ok == fixture["valid"].getBool, fixture["name"].getStr & ": " & checked.message
+    if checked.ok:
+      let converted = roundtrip(fixture["document"])
+      doAssert converted.validation.ok, fixture["name"].getStr & ": " & converted.validation.message
+      doAssert converted.document == fixture["document"], fixture["name"].getStr & ": nested omission changed"
+  echo "Fixture suite passed: ", fixturePath

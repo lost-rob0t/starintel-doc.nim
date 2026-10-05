@@ -36,3 +36,8 @@ tests/test_spec/test_phone
 tests/test_spec/test_scope
 tests/test_spec/test_social
 tests/test_spec/test_web
+
+!src/starintel_doc/schemas/**
+
+# Shared raw-text JSON conformance corpus.
+!fixtures/raw-json-unique-keys.json

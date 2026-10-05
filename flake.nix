@@ -1,5 +1,5 @@
 {
-  description = "StarIntel v0.9.0 document specification for Nim";
+  description = "StarIntel 0.10.1 document specification for Nim";
 
   inputs.nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
 
@@ -40,7 +40,9 @@
             python3 scripts/sync-starintel-schema.py --offline
             export LD_LIBRARY_PATH="${pkgs.lib.makeLibraryPath [ pkgs.pcre ]}"
             nim c -r --nimcache:"$TMPDIR/nimcache-tests" --path:src tests/test_canonical.nim
+            nim c -r --nimcache:"$TMPDIR/nimcache-raw-json" --path:src tests/test_duplicate_keys.nim
             nim c -r --nimcache:"$TMPDIR/nimcache-legacy-tests" --path:src tests/test_conformance.nim
+            python3 tests/test_legacy_duplicate_cli.py ./starintel_legacy_conformance
 
             runHook postCheck
           '';
@@ -51,7 +53,7 @@
             root="$out/share/nimble/starintel_doc-0.10.1"
             mkdir -p "$root"
 
-            for path in src schemas schema scripts starintel_doc.nimble README.md LICENSE changelog.org; do
+            for path in src schema scripts starintel_doc.nimble README.md LICENSE changelog.org; do
               if [ -e "$path" ]; then
                 cp -R "$path" "$root/"
               fi
@@ -61,6 +63,7 @@
             mkdir -p "$out/bin"
             install -m755 starintel_conformance starintel_legacy_conformance "$out/bin/"
             wrapProgram "$out/bin/starintel_conformance" --prefix LD_LIBRARY_PATH : "${pkgs.lib.makeLibraryPath [ pkgs.pcre ]}"
+            wrapProgram "$out/bin/starintel_legacy_conformance" --prefix LD_LIBRARY_PATH : "${pkgs.lib.makeLibraryPath [ pkgs.pcre ]}"
 
             runHook postInstall
           '';
@@ -71,7 +74,7 @@
           };
 
           meta = {
-            description = "StarIntel v0.9.0 parser, validator, serializer, and conformance adapter for Nim";
+            description = "StarIntel 0.10.1 parser, validator, serializer, and conformance adapter for Nim";
             homepage = "https://github.com/lost-rob0t/starintel-doc.nim";
           };
         };

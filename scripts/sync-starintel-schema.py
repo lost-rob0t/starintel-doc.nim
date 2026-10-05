@@ -139,7 +139,7 @@ def main() -> None:
     parser.add_argument("--lock", type=Path, default=Path("schema/starintel-schema.lock.json"))
     parser.add_argument("--source", type=Path, help="local StarLang git checkout (otherwise fetch immutable URLs)")
     parser.add_argument("--commit", help="sync to this full SHA; omit to check without writes")
-    parser.add_argument("--destination", default="schemas/starintel-0.10.1")
+    parser.add_argument("--destination", default="src/starintel_doc/schemas/starintel-0.10.1")
     parser.add_argument("--offline", action="store_true", help="verify local package closure; CI must also check exact upstream bytes")
     args = parser.parse_args()
     if args.offline and (args.commit or args.source):

@@ -1,9 +1,9 @@
 import std/[json, strutils]
-import starintel_doc/canonical
+import starintel_doc/validation
 
 proc main(): int =
   try:
-    let request = parseJson(stdin.readAll())
+    let request = parseWireJson(stdin.readAll())
     let command = request["command"].getStr
     if request.hasKey("spec_version") and request["spec_version"].getStr != SpecVersion:
       stdout.writeLine($(%*{"ok": false, "error": "unsupported_spec_version"}))
@@ -19,7 +19,7 @@ proc main(): int =
         stdout.writeLine($(%*{"ok": false, "error": checked.category, "message": checked.message}))
         return 1
       if command == "roundtrip":
-        let encoded = roundtrip(document)
+        let encoded = roundtripWireDocument(document)
         if not encoded.validation.ok: raise newException(ValueError, encoded.validation.message)
         stdout.writeLine($(%*{"ok": true, "document": encoded.document}))
       else: stdout.writeLine($(%*{"ok": true}))
