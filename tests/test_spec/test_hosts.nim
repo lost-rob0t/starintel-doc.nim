@@ -1,4 +1,4 @@
-import ../../src/starintel_doc
+import ../../src/starintel_doc/legacy
 import times
 import json
 

@@ -3,6 +3,7 @@ import std/[json, os, strutils, algorithm]
 const
   SpecVersion* = "0.9.0"
   AdapterVersion* = 1
+  LegacySchemaText = staticRead("schemas/legacy/starintel-doc-v0.9.0.schema.json")
 
 
 type ValidationResult* = object
@@ -24,10 +25,12 @@ proc schemaPath*(): string =
   let root = getEnv("STARINTEL_CONFORMANCE_ROOT")
   if root.len > 0:
     return root / "schemas" / "starintel-doc-v0.9.0.schema.json"
-  result = getCurrentDir() / "schemas" / "starintel-doc-v0.9.0.schema.json"
+  result = currentSourcePath().parentDir / "schemas/legacy/starintel-doc-v0.9.0.schema.json"
 
 
 proc loadSchema*(): JsonNode =
+  if getEnv("STARINTEL_SCHEMA").len == 0 and getEnv("STARINTEL_CONFORMANCE_ROOT").len == 0:
+    return parseJson(LegacySchemaText)
   let target = schemaPath()
   if not fileExists(target):
     raise newException(IOError, "StarIntel schema not found: " & target)

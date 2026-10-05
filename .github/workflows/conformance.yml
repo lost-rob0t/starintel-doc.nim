@@ -3,7 +3,7 @@ name: StarIntel conformance
 on:
   pull_request:
   push:
-    branches: [dev]
+    branches: [master]
 
 permissions:
   contents: read
@@ -14,9 +14,12 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
+      - name: Verify the complete StarLang release against its immutable commit
+        run: python3 scripts/sync-starintel-schema.py
+
       - name: Read canonical schema lock
         id: schema-lock
-        run: echo "commit=$(jq -r .canonical_commit schema/starintel-schema.lock.json)" >> "$GITHUB_OUTPUT"
+        run: echo "commit=$(jq -r .canonical_commit schema/starintel-legacy-schema.lock.json)" >> "$GITHUB_OUTPUT"
 
       - name: Checkout pinned conformance source
         uses: actions/checkout@v6
@@ -42,11 +45,24 @@ jobs:
           set -o pipefail
           nim c -r --path:src tests/test_conformance.nim 2>&1 | tee artifacts/nim-test.log
 
+      - name: Test every generated 0.10.1 binding
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libpcre3
+          nim c -r --path:src tests/test_canonical.nim
+          nim c -r --path:src tests/test_duplicate_keys.nim
+
       - name: Build Nim adapter
         run: |
           set -o pipefail
-          nim c -d:release --path:src --out:starintel_conformance src/starintel_conformance.nim \
+          nim c -d:release --path:src --out:starintel_legacy_conformance src/starintel_legacy_conformance.nim \
             2>&1 | tee artifacts/nim-build.log
+
+      - name: Check historical raw JSON key rejection
+        run: python3 tests/test_legacy_duplicate_cli.py ./starintel_legacy_conformance
+
+      - name: Verify Nimble installed library closure
+        run: python3 scripts/test-installed-package.py
 
       - name: Run Nim fixture suite
         working-directory: conformance-source
@@ -54,7 +70,7 @@ jobs:
           python -m conformance.runner test \
             --producer nim \
             --consumer nim \
-            --adapter "nim=$GITHUB_WORKSPACE/starintel_conformance"
+            --adapter "nim=$GITHUB_WORKSPACE/starintel_legacy_conformance"
 
       - name: Upload Nim diagnostics
         if: always()
