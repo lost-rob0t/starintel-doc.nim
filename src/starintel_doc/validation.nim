@@ -85,6 +85,10 @@ proc validateValue(value, node, root, manifest: JsonNode, path: string): Validat
         if constraint.hasKey("scale") and decimalParts(text).fraction.len > constraint["scale"].getInt:
           return failure("invalid_scale", path & ": exceeds decimal scale")
     return success()
+  if node.hasKey("allOf"):
+    for branch in node["allOf"]:
+      let checked = validateValue(value, branch, root, manifest, path)
+      if not checked.ok: return checked
   if node.hasKey("anyOf"):
     for branch in node["anyOf"]:
       let checked = validateValue(value, branch, root, manifest, path)
