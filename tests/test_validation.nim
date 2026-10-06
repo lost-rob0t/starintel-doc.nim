@@ -35,6 +35,13 @@ proc requiredSample(node, schema: JsonNode): JsonNode =
       return %"https://example.test/"
     result = if node.hasKey("pattern"): %"0" else: %"fixture"
 
+proc checkWireRoundtrip(value: JsonNode, context: string) =
+  let roundtrip = roundtripWireDocument(value)
+  doAssert roundtrip.validation.ok, context & ": " & roundtrip.validation.message
+  # The exact parser uses raw-number nodes, which differ from native JInt/JFloat
+  # storage. Compare the maintained wire serialization instead of host node kinds.
+  doAssert stringifyWireJson(roundtrip.document) == stringifyWireJson(value), context
+
 block defaultFieldConformance:
   let schema = loadSchema()
   var checkedFields = 0
@@ -47,14 +54,14 @@ block defaultFieldConformance:
       value["dtype"] = %dtype
       value["schemaVersion"] = %SpecVersion
       doAssert validateDocument(value).ok, dtype & ": required-only baseline"
-      doAssert roundtripWireDocument(value).document == value, dtype & ": optional omission"
+      checkWireRoundtrip(value, dtype & ": optional omission")
       value[field] = constraint["default"]
       doAssert validateDocument(value).ok, dtype & "." & field & ": declared default"
-      doAssert roundtripWireDocument(value).document == value, dtype & "." & field & ": preserve default"
+      checkWireRoundtrip(value, dtype & "." & field & ": preserve default")
       let expected = constraint["allOf"][0]["type"].getStr
       if expected == "boolean":
         value[field] = %(not constraint["default"].getBool)
-        doAssert roundtripWireDocument(value).validation.ok, dtype & "." & field & ": opposite boolean"
+        checkWireRoundtrip(value, dtype & "." & field & ": opposite boolean")
       let wrongPrimitive = if expected == "boolean": %"false" else: %7
       for invalid in [wrongPrimitive, newJNull(), newJObject(), newJArray()]:
         value[field] = invalid
